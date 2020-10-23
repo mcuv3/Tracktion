@@ -64,8 +64,8 @@ class BodyPartWidget extends StatelessWidget {
             children: [
               SvgPicture.asset(
                 '${file}.svg',
-                width: 60,
-                height: 60,
+                width: width * 0.6,
+                height: height * 0.6,
               ),
               SizedBox(
                 height: 5,

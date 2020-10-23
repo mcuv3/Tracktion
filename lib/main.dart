@@ -6,6 +6,7 @@ import 'package:tracktion/screens/loading.dart';
 import 'package:tracktion/screens/main.dart';
 import './screens/exercise.dart';
 import './colors/custom_colors.dart';
+import './screens/search-exercise.dart';
 
 void main() => runApp(MyApp());
 
@@ -34,7 +35,10 @@ class MyApp extends StatelessWidget {
           if (state is AuthFailed) return AuthScreen();
           return LoadingScreen();
         }),
-        routes: {ExerciseScreen.routeName: (ctx) => ExerciseScreen()},
+        routes: {
+          ExerciseScreen.routeName: (ctx) => ExerciseScreen(),
+          SearchExercise.routeName: (ctx) => SearchExercise()
+        },
       ),
     );
   }
