@@ -7,7 +7,9 @@ class BodyPartWidget extends StatelessWidget {
   final double width;
   final double height;
   final BodyPart bodyPart;
-  BodyPartWidget(this.bodyPart, [this.width = 110, this.height = 110]);
+  final bool withTitle;
+  BodyPartWidget(this.bodyPart,
+      [this.withTitle = true, this.width = 110, this.height = 110]);
 
   @override
   Widget build(BuildContext context) {
@@ -70,11 +72,12 @@ class BodyPartWidget extends StatelessWidget {
               SizedBox(
                 height: 5,
               ),
-              Text(
-                bodyPart.toString().split('.')[1],
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.exerciseLight),
-              )
+              if (withTitle)
+                Text(
+                  bodyPart.toString().split('.')[1],
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.exerciseLight),
+                )
             ],
           )),
     );

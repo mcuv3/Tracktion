@@ -23,6 +23,8 @@ class MyApp extends StatelessWidget {
             primaryColor: Color(0xFFB71C1C),
             accentColor: Color(0xFF9E9E9E),
             visualDensity: VisualDensity.adaptivePlatformDensity,
+            // textTheme: ThemeData.light().textTheme.copyWith(
+            //     body2: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             buttonTheme: const ButtonThemeData(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
