@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tracktion/models/boyd-parts.dart';
+import 'package:tracktion/models/body-parts.dart';
 import 'package:tracktion/widgets/ExerciseItem.dart';
 import 'package:tracktion/widgets/InputSearch.dart';
 import '../colors/custom_colors.dart';
@@ -50,7 +50,12 @@ class SearchExercise extends StatelessWidget {
                         const EdgeInsets.symmetric(vertical: 15, horizontal: 0),
                     child: Hero(
                         tag: bodyPart,
-                        child: BodyPartWidget(bodyPart, false, 200, 200)),
+                        child: BodyPartWidget(
+                          bodyPart,
+                          withTitle: false,
+                          width: 200,
+                          height: 200,
+                        )),
                   ),
                   Container(
                     height: query.size.height * 0.47,

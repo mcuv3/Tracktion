@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tracktion/screens/exercise.dart';
+import 'package:tracktion/screens/body-part.dart';
 import '../colors/custom_colors.dart';
 
 class MainScreen extends StatelessWidget {

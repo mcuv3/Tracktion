@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tracktion/bloc/cubit/auth_cubit.dart';
+import 'package:tracktion/bloc/auth/auth_cubit.dart';
 
 class AuthForm extends StatefulWidget {
   @override

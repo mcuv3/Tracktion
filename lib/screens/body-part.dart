@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tracktion/models/boyd-parts.dart';
+import 'package:tracktion/models/body-parts.dart';
+import 'package:tracktion/screens/add-edit-exercise.dart';
 import 'package:tracktion/screens/search-exercise.dart';
 import 'package:tracktion/widgets/body-part.dart';
 import '../colors/custom_colors.dart';
@@ -49,7 +50,9 @@ class ExerciseScreen extends StatelessWidget {
         floatingActionButton: FlatButton.icon(
           colorBrightness: Brightness.light,
           padding: EdgeInsets.all(8),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).pushNamed(AddEditExerciseScreen.routeName);
+          },
           icon: Icon(Icons.add),
           label: Text('Add Exercise'),
           textColor: Colors.white,

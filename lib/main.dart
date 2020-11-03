@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tracktion/bloc/cubit/auth_cubit.dart';
+import 'package:tracktion/bloc/auth/auth_cubit.dart';
+import 'package:tracktion/screens/add-edit-exercise.dart';
 import 'package:tracktion/screens/auth.dart';
 import 'package:tracktion/screens/loading.dart';
 import 'package:tracktion/screens/main.dart';
-import './screens/exercise.dart';
+import 'screens/body-part.dart';
 import './colors/custom_colors.dart';
 import './screens/search-exercise.dart';
 
@@ -23,8 +24,8 @@ class MyApp extends StatelessWidget {
             primaryColor: Color(0xFFB71C1C),
             accentColor: Color(0xFF9E9E9E),
             visualDensity: VisualDensity.adaptivePlatformDensity,
-            // textTheme: ThemeData.light().textTheme.copyWith(
-            //     body2: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            textTheme: TextTheme(
+                title: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
             buttonTheme: const ButtonThemeData(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
@@ -39,7 +40,8 @@ class MyApp extends StatelessWidget {
         }),
         routes: {
           ExerciseScreen.routeName: (ctx) => ExerciseScreen(),
-          SearchExercise.routeName: (ctx) => SearchExercise()
+          SearchExercise.routeName: (ctx) => SearchExercise(),
+          AddEditExerciseScreen.routeName: (ctx) => AddEditExerciseScreen()
         },
       ),
     );

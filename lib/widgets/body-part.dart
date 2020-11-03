@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:tracktion/models/boyd-parts.dart';
+import 'package:tracktion/models/body-parts.dart';
 import '../colors/custom_colors.dart';
 
 class BodyPartWidget extends StatelessWidget {
@@ -8,8 +8,12 @@ class BodyPartWidget extends StatelessWidget {
   final double height;
   final BodyPart bodyPart;
   final bool withTitle;
+  final bool active;
   BodyPartWidget(this.bodyPart,
-      [this.withTitle = true, this.width = 110, this.height = 110]);
+      {this.withTitle = true,
+      this.width = 110,
+      this.height = 110,
+      this.active = false});
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +59,9 @@ class BodyPartWidget extends StatelessWidget {
       ),
       child: Container(
           decoration: BoxDecoration(
+              color: active
+                  ? Theme.of(context).colorScheme.routinesLight
+                  : Colors.white,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
                   width: 0.5, color: Theme.of(context).colorScheme.exercise)),
@@ -76,7 +83,9 @@ class BodyPartWidget extends StatelessWidget {
                 Text(
                   bodyPart.toString().split('.')[1],
                   style: TextStyle(
-                      color: Theme.of(context).colorScheme.exerciseLight),
+                      color: active
+                          ? Colors.white
+                          : Theme.of(context).colorScheme.exerciseLight),
                 )
             ],
           )),
