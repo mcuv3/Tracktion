@@ -3,6 +3,14 @@ part of 'auth_cubit.dart';
 @immutable
 abstract class AuthState {}
 
+
+class AuthInitial extends AuthState{
+  final String email;
+  final DateTime expiryDate;
+  final String token;
+  AuthInitial({this.email, this.expiryDate, this.token});
+}
+
 class AuthLoading extends AuthState {}
 
 class AuthSuccess extends AuthState {

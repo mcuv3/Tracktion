@@ -25,30 +25,30 @@ class AuthScreen extends StatelessWidget {
         ),
         body: Column(
           children: [
-            HomeVector(),
-            Expanded(
-              child: Stack(
-                children: [
-                  AbstractShape(
-                    height: 100,
-                    width: double.infinity,
-                    shape: AuthShape(Theme.of(context).primaryColorLight),
-                  ),
-                  AbstractShape(
-                    height: 120,
-                    width: double.infinity,
-                    shape: AuthShape(Theme.of(context).primaryColor),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 100),
-                    child: AuthForm(),
-                  ),
-                ],
-              ),
+            Stack(
+              children: [
+                AbstractShape(
+                  height: query.size.height * 0.8,
+                  width: double.infinity,
+                  shape: AuthShape(Theme.of(context).primaryColorLight),
+                ),
+                AbstractShape(
+                  height: query.size.height * 0.868,
+                  width: double.infinity,
+                  shape: AuthShape(Theme.of(context).primaryColor),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    HomeVector(),
+                    SizedBox(
+                      height: 60,
+                    ),
+                    AuthForm(),
+                  ],
+                )
+              ],
             ),
-            // Expanded(
-            //   child: SignUp(),
-            // ),
           ],
         ));
   }

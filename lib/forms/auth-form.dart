@@ -12,11 +12,21 @@ class _AuthFormState extends State<AuthForm> {
   Map<String, String> fields = {};
   var isSingUp = true;
 
-  void submitForm() {
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<AuthCubit>(context).checkCredentials();
+  }
+
+  void submitForm() async {
     final isValid = form.currentState.validate();
     if (isValid) {
-      BlocProvider.of<AuthCubit>(context)
-          .login(fields['email'], fields['password']);
+      if (isSingUp) {
+        BlocProvider.of<AuthCubit>(context)
+            .register(fields['email'], fields['name'], fields['password']);
+      } else
+        BlocProvider.of<AuthCubit>(context)
+            .login(fields['email'], fields['password']);
     }
   }
 
@@ -25,7 +35,6 @@ class _AuthFormState extends State<AuthForm> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(40),
-      decoration: BoxDecoration(color: Theme.of(context).primaryColor),
       child: Form(
         key: form,
         child: Column(
@@ -40,7 +49,7 @@ class _AuthFormState extends State<AuthForm> {
               child: Column(
                 children: [
                   TextFormField(
-                      onSaved: (v) {
+                      onChanged: (v) {
                         fields['email'] = v;
                       },
                       validator: (val) {
@@ -66,7 +75,7 @@ class _AuthFormState extends State<AuthForm> {
                     height: 10,
                   ),
                   TextFormField(
-                      onSaved: (v) {
+                      onChanged: (v) {
                         fields['password'] = v;
                       },
                       validator: (val) {
@@ -101,6 +110,9 @@ class _AuthFormState extends State<AuthForm> {
                     child: isSingUp
                         ? TextFormField(
                             onSaved: (v) {
+                              fields['confirmPassword'] = v;
+                            },
+                            onChanged: (v) {
                               fields['confirmPassword'] = v;
                             },
                             validator: (val) {

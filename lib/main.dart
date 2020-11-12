@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tracktion/bloc/auth/auth_cubit.dart';
 import 'package:tracktion/screens/add-edit-exercise.dart';
 import 'package:tracktion/screens/auth.dart';
@@ -9,7 +10,10 @@ import 'screens/body-part.dart';
 import './colors/custom_colors.dart';
 import './screens/search-exercise.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  //SharedPreferences.setMockInitialValues();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override

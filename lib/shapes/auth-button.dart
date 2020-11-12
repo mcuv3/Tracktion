@@ -6,55 +6,64 @@ class AuthShape extends Shape {
   AuthShape(this.color) : super(color);
   @override
   void paint(Canvas canvas, Size size) {
-    Paint paint = new Paint()
+
+  Paint paint_0 = new Paint()
       ..color = color
       ..style = PaintingStyle.fill
       ..strokeWidth = 1;
+     
+        Path path_0 = Path();
+    path_0.moveTo(0,size.height*0.30);
+    path_0.quadraticBezierTo(size.width*0.21,size.height*0.39,size.width*0.51,size.height*0.30);
+    path_0.quadraticBezierTo(size.width*0.77,size.height*0.22,size.width,size.height*0.33);
+    path_0.lineTo(size.width,size.height);
+    path_0.lineTo(0,size.height);
+    path_0.lineTo(0,size.height*0.30);
+    path_0.close();
 
-    Path path = Path();
-    path.moveTo(0, size.height * 0.50);
-    path.quadraticBezierTo(size.width * 0.10, size.height * 1.01,
-        size.width * 0.50, size.height * 0.50);
-    path.quadraticBezierTo(
-        size.width * 0.90, size.height * 0.01, size.width, size.height * 0.50);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.lineTo(0, size.height * 0.50);
-    path.close();
-
-    canvas.drawPath(path, paint);
+    canvas.drawPath(path_0, paint_0);
+  
+    
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
   }
+  
 }
 
-class RPSCustomPainter extends CustomPainter {
+class RPSCustomPainter extends CustomPainter{
+  
   @override
   void paint(Canvas canvas, Size size) {
-    Paint paint = new Paint()
+    
+    
+
+  Paint paint_0 = new Paint()
       ..color = Color.fromARGB(255, 33, 150, 243)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
+     
+         
+    Path path_0 = Path();
+    path_0.moveTo(0,size.height*0.30);
+    path_0.quadraticBezierTo(size.width*0.21,size.height*0.39,size.width*0.51,size.height*0.30);
+    path_0.quadraticBezierTo(size.width*0.77,size.height*0.22,size.width,size.height*0.33);
+    path_0.lineTo(size.width,size.height);
+    path_0.lineTo(0,size.height);
+    path_0.lineTo(0,size.height*0.30);
+    path_0.close();
 
-    Path path = Path();
-    path.moveTo(0, size.height * 0.50);
-    path.quadraticBezierTo(size.width * 0.10, size.height * 1.01,
-        size.width * 0.50, size.height * 0.50);
-    path.quadraticBezierTo(
-        size.width * 0.90, size.height * 0.01, size.width, size.height * 0.50);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.lineTo(0, size.height * 0.50);
-    path.close();
-
-    canvas.drawPath(path, paint);
+    canvas.drawPath(path_0, paint_0);
+  
+    
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
   }
+  
 }
+
