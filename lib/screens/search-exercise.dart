@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/models/body-parts.dart';
+import 'package:tracktion/widgets/ErrorMessage.dart';
 import 'package:tracktion/widgets/ExerciseItem.dart';
 import 'package:tracktion/widgets/InputSearch.dart';
 import '../colors/custom_colors.dart';
@@ -8,12 +11,27 @@ import 'package:tracktion/shapes/exercise-search-shape.dart';
 import 'package:tracktion/widgets/body-part.dart';
 import '../colors/custom_colors.dart';
 
-class SearchExercise extends StatelessWidget {
-  final _controller = TextEditingController();
+class SearchExercise extends StatefulWidget {
   static const routeName = '/exercise-search';
+
+  @override
+  _SearchExerciseState createState() => _SearchExerciseState();
+}
+
+class _SearchExerciseState extends State<SearchExercise> {
+  final _controller = TextEditingController();
 
   void searchHandler(String val) {
     print(val);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero).then((d) {
+      print('CALLED');
+      BlocProvider.of<ExerciseBloc>(context).add(FetchExers());
+    });
   }
 
   @override
@@ -43,7 +61,7 @@ class SearchExercise extends StatelessWidget {
           Center(
             child: SingleChildScrollView(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
                     padding:
@@ -57,13 +75,47 @@ class SearchExercise extends StatelessWidget {
                           height: 200,
                         )),
                   ),
-                  Container(
-                    height: query.size.height * 0.47,
-                    width: query.size.width * 0.9,
-                    child: ListView.builder(
-                      itemBuilder: (ctx, i) => ExerciseItem(),
-                      itemCount: 26,
-                    ),
+                  BlocBuilder<ExerciseBloc, ExerciseState>(
+                    builder: (ctx, state) {
+                      Widget main;
+
+                      if (state is Exercises) {
+                        print(state.exerceies);
+                        final exs = state.exerceies;
+                        return Container(
+                          height: query.size.height * 0.47,
+                          width: query.size.width * 0.9,
+                          child: ListView.builder(
+                            itemBuilder: (ctx, i) => ExerciseItem(exs[i]),
+                            itemCount: exs.length,
+                          ),
+                        );
+                      }
+
+                      if (state is ExercisesLoading) {
+                        main = Center(
+                          child: CircularProgressIndicator(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.exercise,
+                          ),
+                        );
+                      }
+
+                      if (state is ExerciseFailure) {
+                        main = ErrorMessage(
+                            primaryColor:
+                                Theme.of(context).colorScheme.exercise,
+                            secundaryColor:
+                                Theme.of(context).colorScheme.exercise,
+                            text: state.message);
+                      }
+
+                      return Container(
+                        height: query.size.height * 0.47,
+                        width: query.size.width * 0.9,
+                        child: main,
+                      );
+                    },
                   ),
                   Container(
                     width: 350,

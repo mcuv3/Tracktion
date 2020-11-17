@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/models/body-parts.dart';
+import 'package:tracktion/models/difficulties.dart';
+import 'package:tracktion/models/exercise.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/create-exercise.dart';
 import 'package:tracktion/util/difficulty.dart';
@@ -18,11 +22,24 @@ class AddEditExerciseScreen extends StatefulWidget {
 class _AddEditExerciseScreenState extends State<AddEditExerciseScreen> {
   final Map<String, String> exerciseInputs = {};
   List<Map<String, dynamic>> bodyParts = [];
+  List<BodyPart> bds = [];
   var difficulty = 'Difficulty';
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Exercise exs = ModalRoute.of(context).settings.arguments;
+    if (exs != null) {
+      bds = exs.bodyParts;
+      difficulty = enumToString(exs.difficulty);
+      exerciseInputs["name"] = exs.name;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+
     this.bodyParts = BodyPart.values.map((b) {
       return {"body": b, "active": false};
     }).toList();
@@ -38,6 +55,36 @@ class _AddEditExerciseScreenState extends State<AddEditExerciseScreen> {
     setState(() {
       exerciseInputs[field] = val;
     });
+  }
+
+  void submit() {
+    List<BodyPart> parts = [];
+    bodyParts.forEach((b) {
+      if (b["active"]) parts.add(b["body"]);
+    });
+    var dt = Difficulty.Easy;
+    switch (difficulty) {
+      case "Easy":
+        dt = Difficulty.Easy;
+        break;
+      case "Easy":
+        dt = Difficulty.Normal;
+        break;
+      case "Hard":
+        dt = Difficulty.Hard;
+        break;
+      case "Pro":
+        dt = Difficulty.Pro;
+        break;
+    }
+    final exe = Exercise(
+        id: 0,
+        bodyParts: parts,
+        difficulty: dt,
+        notes: exerciseInputs["notes"],
+        name: exerciseInputs["name"]);
+
+    BlocProvider.of<ExerciseBloc>(context).add(CreateExe(exe));
   }
 
   @override
@@ -62,7 +109,6 @@ class _AddEditExerciseScreenState extends State<AddEditExerciseScreen> {
                   iconTheme: IconThemeData(
                     color: Colors.black,
                   ),
-                  // Make the initial height of the SliverAppBar larger than normal.
                 ),
               ],
             ),
@@ -141,7 +187,7 @@ class _AddEditExerciseScreenState extends State<AddEditExerciseScreen> {
         floatingActionButton: FlatButton.icon(
           colorBrightness: Brightness.light,
           padding: EdgeInsets.all(8),
-          onPressed: () {},
+          onPressed: submit,
           icon: Icon(Icons.save),
           label: Text('Save'),
           textColor: Colors.white,

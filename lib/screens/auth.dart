@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tracktion/forms/auth-form.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/auth-button.dart';
-import 'package:tracktion/shapes/head.dart';
+import '../colors/custom_colors.dart';
 import 'package:tracktion/vectors/home.dart';
 
 class AuthScreen extends StatelessWidget {
@@ -14,7 +14,7 @@ class AuthScreen extends StatelessWidget {
           centerTitle: true,
           title: Text(
             'Wellcome to TrackTion',
-            style: TextStyle(fontSize: 27),
+            style: TextStyle(fontSize: 24),
           ),
           shadowColor: Colors.black45,
           shape: RoundedRectangleBorder(
@@ -23,33 +23,44 @@ class AuthScreen extends StatelessWidget {
             ),
           ),
         ),
-        body: Column(
-          children: [
-            Stack(
+        body: SingleChildScrollView(
+          child: Container(
+            color: query.size.height < 550
+                ? Theme.of(context).colorScheme.routines
+                : Colors.transparent,
+            child: Column(
               children: [
-                AbstractShape(
-                  height: query.size.height * 0.8,
-                  width: double.infinity,
-                  shape: AuthShape(Theme.of(context).primaryColorLight),
-                ),
-                AbstractShape(
-                  height: query.size.height * 0.868,
-                  width: double.infinity,
-                  shape: AuthShape(Theme.of(context).primaryColor),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    HomeVector(),
-                    SizedBox(
-                      height: 60,
-                    ),
-                    AuthForm(),
-                  ],
-                )
+                query.size.height > 550
+                    ? Stack(
+                        // alignment: Alignment.center,
+                        children: [
+                          AbstractShape(
+                            height: query.size.height * .9,
+                            width: double.infinity,
+                            shape:
+                                AuthShape(Theme.of(context).primaryColorLight),
+                          ),
+                          Container(
+                            child: AbstractShape(
+                              height: query.size.height,
+                              width: double.infinity,
+                              shape: AuthShape(Theme.of(context).primaryColor),
+                            ),
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              HomeVector(),
+                              SizedBox(height: 60),
+                              AuthForm(),
+                            ],
+                          )
+                        ],
+                      )
+                    : AuthForm(),
               ],
             ),
-          ],
+          ),
         ));
   }
 }

@@ -26,7 +26,7 @@ class BodyPartWidget extends StatelessWidget {
       case BodyPart.Back:
         file += 'back';
         break;
-      case BodyPart.Butt:
+      case BodyPart.GLUTEUS:
         file += 'butt';
         break;
       case BodyPart.Calfs:
