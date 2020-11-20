@@ -26,6 +26,6 @@ class Exercise {
         'name': name,
         'difficulty': difficultyToInt(difficulty),
         'body_part': bodyPartToInt(bodyParts),
-        'notes': notes,
+        'notes': notes == null ? "" : notes,
       });
 }

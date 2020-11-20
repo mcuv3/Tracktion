@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/models/body-parts.dart';
+import 'package:tracktion/util/enumToString.dart';
 import 'package:tracktion/widgets/ErrorMessage.dart';
 import 'package:tracktion/widgets/ExerciseItem.dart';
 import 'package:tracktion/widgets/InputSearch.dart';
@@ -20,18 +21,26 @@ class SearchExercise extends StatefulWidget {
 
 class _SearchExerciseState extends State<SearchExercise> {
   final _controller = TextEditingController();
+  var search = '';
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
 
   void searchHandler(String val) {
-    print(val);
+    setState(() {
+      search = val;
+    });
   }
 
   @override
   void initState() {
-    super.initState();
-    Future.delayed(Duration.zero).then((d) {
-      print('CALLED');
-      BlocProvider.of<ExerciseBloc>(context).add(FetchExers());
+    // TODO: implement initState
+
+    Future.delayed(Duration.zero).then((_) {
+      final bd = ModalRoute.of(context).settings.arguments as BodyPart;
+      final bodyPart = enumToString(bd).toUpperCase();
+      BlocProvider.of<ExerciseBloc>(context).add(FetchExers(bodyPart));
+      super.didChangeDependencies();
     });
+    super.initState();
   }
 
   @override
@@ -80,12 +89,17 @@ class _SearchExerciseState extends State<SearchExercise> {
                       Widget main;
 
                       if (state is Exercises) {
-                        print(state.exerceies);
-                        final exs = state.exerceies;
+                        final exs = state.exs
+                            .where((ex) => ex.name
+                                .toLowerCase()
+                                .contains(search.toLowerCase()))
+                            .toList();
                         return Container(
                           height: query.size.height * 0.47,
                           width: query.size.width * 0.9,
                           child: ListView.builder(
+                            shrinkWrap: true,
+                            reverse: true,
                             itemBuilder: (ctx, i) => ExerciseItem(exs[i]),
                             itemCount: exs.length,
                           ),

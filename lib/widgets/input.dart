@@ -4,7 +4,7 @@ class TracktionInput extends StatelessWidget {
   final String initialValue;
   final String hint;
   final int maxlines;
-  final Function validator;
+  final String Function(String) validator;
   final Function(String) change;
 
   TracktionInput(
@@ -24,7 +24,7 @@ class TracktionInput extends StatelessWidget {
         onFieldSubmitted: change,
         onSaved: change,
         decoration: InputDecoration(
-            errorStyle: TextStyle(color: Colors.white),
+            errorStyle: TextStyle(color: Colors.black),
             fillColor: Colors.white,
             filled: true,
             border: OutlineInputBorder(

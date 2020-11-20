@@ -17,7 +17,7 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     ExerciseEvent event,
   ) async* {
     if (event is FetchExers) {
-      yield* _fetchExes();
+      yield* _fetchExes(event);
     } else if (event is CreateExe) {
       yield* _createExe(event);
     } else if (event is EditExe) {
@@ -42,15 +42,12 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
   }
 
   Stream<ExerciseState> _createExe(CreateExe event) async* {
-    // final exes = (state as Exercises).exerceies;
     yield ExercisesLoading();
     try {
       final exe = event.exe;
-
-      final res = await Ht.post('/api/exercise/exercise/', body: exe.toJson());
+      final res = await Ht.post('/api/exercise/v1/', body: exe.toJson());
       print(res.body);
-
-      yield Exercises([]);
+      yield ExerciseCreatedSuccess();
     } catch (e) {
       print(e);
       yield ExerciseFailure(
@@ -58,10 +55,11 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     }
   }
 
-  Stream<ExerciseState> _fetchExes() async* {
+  Stream<ExerciseState> _fetchExes(FetchExers event) async* {
     yield ExercisesLoading();
     try {
-      final res = await Ht.get("/api/exercise/");
+      final bd = event.bodyPart;
+      final res = await Ht.get("/api/exercise/v1/?body_part=$bd");
       final data = Ht.conv(res.body) as List<dynamic>;
       final List<Exercise> exs = [];
 

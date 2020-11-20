@@ -15,8 +15,9 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     Response response;
     try {
+      final parserJson = json.encode({"email": email, "password": password});
       response = await Ht.post('/api/user/token/',
-          body: {"email": email, "password": password});
+          body: parserJson);
     } catch (e) {
       print(e);
       return emit(AuthFailed());
@@ -62,11 +63,9 @@ class AuthCubit extends Cubit<AuthState> {
 
     emit(AuthLoading());
     try {
-      print(email);
-      print(name);
-      print(password);
+      final parserJson = json.encode({"email": email, "password": password, "name": name});
       res = await Ht.post('/api/user/create/',
-          body: {"email": email, "password": password, "name": name});
+          body: parserJson);
     } catch (e) {
       print(e);
       return true;

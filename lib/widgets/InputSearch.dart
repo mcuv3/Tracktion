@@ -18,17 +18,6 @@ class InputSearch extends StatefulWidget {
 
 class _InputSearchState extends State<InputSearch> {
   @override
-  void initState() {
-    super.initState();
-    fetchExercises();
-  }
-
-  Future<http.Response> fetchExercises() async {
-    final res = await http.get('https://jsonplaceholder.typicode.com/albums/1');
-    print(res.body);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return TextFormField(
         onChanged: (val) {

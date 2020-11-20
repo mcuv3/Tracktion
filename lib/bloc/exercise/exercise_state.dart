@@ -8,8 +8,8 @@ class ExercisesLoading extends ExerciseState {}
 class ExercisesInitial extends ExerciseState {}
 
 class Exercises extends ExerciseState {
-  final List<Exercise> exerceies;
-  Exercises(this.exerceies);
+  final List<Exercise> exs;
+  Exercises(this.exs);
 }
 
 class ExerciseFailure extends ExerciseState {
@@ -18,3 +18,5 @@ class ExerciseFailure extends ExerciseState {
 
   ExerciseFailure({this.message, this.statusCode});
 }
+
+class ExerciseCreatedSuccess extends ExerciseState {}

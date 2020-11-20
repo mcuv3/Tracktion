@@ -3,7 +3,10 @@ part of 'exercise_bloc.dart';
 @immutable
 abstract class ExerciseEvent {}
 
-class FetchExers extends ExerciseEvent {}
+class FetchExers extends ExerciseEvent {
+  final String bodyPart;
+  FetchExers(this.bodyPart);
+}
 
 class CreateExe extends ExerciseEvent {
   final Exercise exe;
