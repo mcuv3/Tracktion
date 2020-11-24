@@ -5,6 +5,7 @@ import 'package:tracktion/bloc/auth/auth_cubit.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/screens/add-edit-exercise.dart';
 import 'package:tracktion/screens/auth.dart';
+import 'package:tracktion/screens/exercise-workout.dart';
 import 'package:tracktion/screens/loading.dart';
 import 'package:tracktion/screens/main.dart';
 import 'screens/body-part.dart';
@@ -60,7 +61,8 @@ class MyApp extends StatelessWidget {
             routes: {
               ExerciseScreen.routeName: (ctx) => ExerciseScreen(),
               SearchExercise.routeName: (ctx) => SearchExercise(),
-              AddEditExerciseScreen.routeName: (ctx) => AddEditExerciseScreen()
+              AddEditExerciseScreen.routeName: (ctx) => AddEditExerciseScreen(),
+              ExerciseWorkOut.routeName: (ctx) => ExerciseWorkOut(),
             },
           ),
         ));

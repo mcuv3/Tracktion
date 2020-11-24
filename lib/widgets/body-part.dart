@@ -9,11 +9,15 @@ class BodyPartWidget extends StatelessWidget {
   final BodyPart bodyPart;
   final bool withTitle;
   final bool active;
+  final Color textColor;
+  final Color bgColor;
   BodyPartWidget(this.bodyPart,
       {this.withTitle = true,
       this.width = 110,
       this.height = 110,
-      this.active = false});
+      this.active = false,
+      this.textColor = Colors.white,
+      this.bgColor});
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +64,10 @@ class BodyPartWidget extends StatelessWidget {
       child: Container(
           decoration: BoxDecoration(
               color: active
-                  ? Theme.of(context).colorScheme.routinesLight
-                  : Colors.white,
+                  ? bgColor != null
+                      ? bgColor
+                      : Theme.of(context).colorScheme.routinesLight
+                  : textColor,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
                   width: 0.5, color: Theme.of(context).colorScheme.exercise)),
@@ -75,6 +81,7 @@ class BodyPartWidget extends StatelessWidget {
                 '${file}.svg',
                 width: width * 0.6,
                 height: height * 0.6,
+                color: active ? textColor : Colors.black,
               ),
               SizedBox(
                 height: 5,
@@ -84,7 +91,7 @@ class BodyPartWidget extends StatelessWidget {
                   bodyPart.toString().split('.')[1],
                   style: TextStyle(
                       color: active
-                          ? Colors.white
+                          ? textColor
                           : Theme.of(context).colorScheme.exerciseLight),
                 )
             ],

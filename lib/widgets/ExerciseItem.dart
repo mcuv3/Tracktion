@@ -3,6 +3,7 @@ import 'package:tracktion/models/body-parts.dart';
 import 'package:tracktion/models/difficulties.dart';
 import 'package:tracktion/models/exercise.dart';
 import 'package:tracktion/screens/add-edit-exercise.dart';
+import 'package:tracktion/screens/exercise-workout.dart';
 import 'package:tracktion/util/enumToString.dart';
 import '../colors/custom_colors.dart';
 
@@ -35,7 +36,7 @@ class ExerciseItem extends StatelessWidget {
               child: ListTile(
           onTap: () {
             Navigator.of(context)
-                .pushNamed(AddEditExerciseScreen.routeName, arguments: exs);
+                .pushNamed(ExerciseWorkOut.routeName, arguments: exs);
           },
           visualDensity: VisualDensity.compact,
           contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 5),

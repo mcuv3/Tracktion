@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/models/body-parts.dart';
+import 'package:tracktion/screens/exercise-workout.dart';
 import 'package:tracktion/util/enumToString.dart';
 import 'package:tracktion/widgets/ErrorMessage.dart';
 import 'package:tracktion/widgets/ExerciseItem.dart';
@@ -100,7 +101,12 @@ class _SearchExerciseState extends State<SearchExercise> {
                           child: ListView.builder(
                             shrinkWrap: true,
                             reverse: true,
-                            itemBuilder: (ctx, i) => ExerciseItem(exs[i]),
+                            itemBuilder: (ctx, i) => GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context)
+                                      .pushNamed(ExerciseWorkOut.routeName);
+                                },
+                                child: ExerciseItem(exs[i])),
                             itemCount: exs.length,
                           ),
                         );
