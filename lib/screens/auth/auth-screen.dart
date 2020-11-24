@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tracktion/forms/auth-form.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/auth-button.dart';
-import '../colors/custom_colors.dart';
+import '../../colors/custom_colors.dart';
 import 'package:tracktion/vectors/home.dart';
 
 class AuthScreen extends StatelessWidget {

@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tracktion/bloc/auth/auth_cubit.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
-import 'package:tracktion/screens/add-edit-exercise.dart';
-import 'package:tracktion/screens/auth.dart';
-import 'package:tracktion/screens/exercise-workout.dart';
-import 'package:tracktion/screens/loading.dart';
-import 'package:tracktion/screens/main.dart';
-import 'screens/body-part.dart';
-import './colors/custom_colors.dart';
-import './screens/search-exercise.dart';
+import './screens/index.dart';
 
 void main() {
   //SharedPreferences.setMockInitialValues();
@@ -29,6 +21,7 @@ class MyApp extends StatelessWidget {
             )
           ],
           child: MaterialApp(
+            debugShowCheckedModeBanner: false,
             builder: (BuildContext context, Widget widget) {
               Widget error = Text('...rendering error...');
               if (widget is Scaffold || widget is Navigator)

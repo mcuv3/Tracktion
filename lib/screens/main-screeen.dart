@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/auth/auth_cubit.dart';
-import 'package:tracktion/screens/body-part.dart';
+import 'package:tracktion/screens/exercise/body-parts-screen.dart';
 import '../colors/custom_colors.dart';
 
 class MainScreen extends StatelessWidget {

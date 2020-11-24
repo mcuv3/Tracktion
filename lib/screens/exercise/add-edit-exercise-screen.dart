@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
@@ -10,7 +11,7 @@ import 'package:tracktion/util/difficulty.dart';
 import 'package:tracktion/util/enumToString.dart';
 import 'package:tracktion/widgets/body-part.dart';
 import 'package:tracktion/widgets/input.dart';
-import '../colors/custom_colors.dart';
+import '../../colors/custom_colors.dart';
 
 class AddEditExerciseScreen extends StatefulWidget {
   static const routeName = '/exercise/create';
@@ -20,37 +21,77 @@ class AddEditExerciseScreen extends StatefulWidget {
 }
 
 class _AddEditExerciseScreenState extends State<AddEditExerciseScreen> {
-  final Map<String, String> exerciseInputs = {};
-  List<Map<String, dynamic>> bodyParts = [];
+  Map<String, String> exerciseInputs = {};
+  List<Map<String, dynamic>> bodyParts = BodyPart.values.map((b) {
+    return {"body": b, "active": false};
+  }).toList();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController notesController = TextEditingController();
   final form = GlobalKey<FormState>();
-  List<BodyPart> bds = [];
   var difficulty = 'Difficulty';
+  var editMode = false;
+  Function cb;
+  Exercise exe;
   BuildContext _ctx;
+  var isInit = true;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    Exercise exs = ModalRoute.of(context).settings.arguments;
-    if (exs != null) {
-      bds = exs.bodyParts;
-      difficulty = enumToString(exs.difficulty);
-      exerciseInputs["name"] = exs.name;
+    if (isInit) {
+      isInit = false;
+      final props =
+          ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+      this.exe = props["exe"];
+      this.cb = props["updateCallBack"];
+      if (this.exe != null) {
+        this.editMode = true;
+        this.bodyParts = BodyPart.values.map((b) {
+          return {"body": b, "active": exe.bodyParts.any((e) => e == b)};
+        }).toList();
+        this.difficulty = enumToString(exe.difficulty);
+        this.nameController.text = exe.name;
+        this.notesController.text = exe.notes;
+      }
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    this.bodyParts = BodyPart.values.map((b) {
-      return {"body": b, "active": false};
-    }).toList();
   }
 
   validateInput(String val) {
     if (val == "") return 'This field is required';
     if (val.length < 5) return 'The value is too short';
     return null;
+  }
+
+  void _deleteHandler() {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              contentPadding: EdgeInsets.all(20),
+              content:
+                  Text("This exercise will delete from all your workouts."),
+              actions: <Widget>[
+                FlatButton(
+                  color: Theme.of(context).colorScheme.exercise,
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                FlatButton(
+                  color: Theme.of(context).colorScheme.routines,
+                  child: Text(
+                    'Delete me',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ));
   }
 
   void changeHandler(String val, String field) {
@@ -90,21 +131,25 @@ class _AddEditExerciseScreenState extends State<AddEditExerciseScreen> {
         return;
       }
 
-      final exe = Exercise(
-          id: 0,
+      exe = Exercise(
+          id: exe.id,
           bodyParts: parts,
           difficulty: dt,
           notes: exerciseInputs["notes"],
           name: exerciseInputs["name"]);
 
-      BlocProvider.of<ExerciseBloc>(context).add(CreateExe(exe));
+      if (editMode) {
+        BlocProvider.of<ExerciseBloc>(context).add(EditExe(exe));
+      } else {
+        BlocProvider.of<ExerciseBloc>(context).add(CreateExe(exe));
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final query = MediaQuery.of(context);
-
+    cb();
     return Scaffold(
         body: Stack(
           children: [
@@ -119,6 +164,17 @@ class _AddEditExerciseScreenState extends State<AddEditExerciseScreen> {
             CustomScrollView(
               slivers: <Widget>[
                 SliverAppBar(
+                  actions: [
+                    Padding(
+                        padding: EdgeInsets.all(10),
+                        child: IconButton(
+                          icon: Icon(
+                            Icons.delete_forever,
+                            size: 35,
+                          ),
+                          onPressed: _deleteHandler,
+                        ))
+                  ],
                   backgroundColor: Colors.transparent,
                   floating: true,
                   iconTheme: IconThemeData(
@@ -155,6 +211,7 @@ class _AddEditExerciseScreenState extends State<AddEditExerciseScreen> {
                       ),
                     ),
                     TracktionInput(
+                      controller: nameController,
                       hint: 'Exercise name',
                       change: (v) => changeHandler(v, 'name'),
                       validator: (val) {
@@ -199,6 +256,7 @@ class _AddEditExerciseScreenState extends State<AddEditExerciseScreen> {
                       height: 10,
                     ),
                     TracktionInput(
+                      controller: notesController,
                       hint: 'Notes ..',
                       maxlines: 5,
                       change: (v) => changeHandler(v, 'notes'),
@@ -212,18 +270,27 @@ class _AddEditExerciseScreenState extends State<AddEditExerciseScreen> {
         floatingActionButton: BlocListener<ExerciseBloc, ExerciseState>(
           listener: (ctx, state) {
             if (state is ExerciseCreatedSuccess) {
-              form.currentState.reset();
               FocusScope.of(context).unfocus();
-              setState(() {
-                difficulty = 'Difficulty';
-                bodyParts = bodyParts.map((e) {
-                  e['active'] = false;
-                  return e;
-                }).toList();
-              });
+              print(editMode);
+              if (!editMode) {
+                nameController.text = "";
+                notesController.text = "";
+
+                setState(() {
+                  difficulty = 'Difficulty';
+                  bodyParts = bodyParts.map((e) {
+                    e['active'] = false;
+                    return e;
+                  }).toList();
+                });
+              }
+
+              //TODO: callback if successfull
               final snackBar = SnackBar(
-                  content: Text('Successfully Created.'),
-                  backgroundColor: Theme.of(ctx).colorScheme.analysis);
+                  content: Text(editMode
+                      ? "Successfully Edited"
+                      : 'Successfully Created.'),
+                  backgroundColor: Theme.of(ctx).colorScheme.routines);
               Scaffold.of(ctx).showSnackBar(snackBar);
             }
             if (state is ExerciseFailure) {

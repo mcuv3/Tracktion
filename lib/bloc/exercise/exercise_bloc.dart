@@ -37,8 +37,16 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
   Stream<ExerciseState> _editExe(EditExe event) async* {
     yield ExercisesLoading();
     try {
-      // yield Exercises();
-    } catch (e) {}
+      final exe = event.exe;
+      final res =
+          await Ht.put('/api/exercise/v1/${exe.id}/', body: exe.toJson());
+      print(res.body);
+      yield ExerciseCreatedSuccess();
+    } catch (e) {
+      print(e);
+      yield ExerciseFailure(
+          message: "Cannot edit the exercise", statusCode: 400);
+    }
   }
 
   Stream<ExerciseState> _createExe(CreateExe event) async* {

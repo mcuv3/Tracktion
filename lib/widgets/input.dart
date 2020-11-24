@@ -6,10 +6,12 @@ class TracktionInput extends StatelessWidget {
   final int maxlines;
   final String Function(String) validator;
   final Function(String) change;
+  final TextEditingController controller;
 
   TracktionInput(
       {this.initialValue,
       this.hint,
+      this.controller,
       this.maxlines = 1,
       this.validator,
       @required this.change});
@@ -19,6 +21,7 @@ class TracktionInput extends StatelessWidget {
     return TextFormField(
         validator: validator,
         initialValue: initialValue,
+        controller: controller,
         maxLines: maxlines,
         onChanged: change,
         onFieldSubmitted: change,

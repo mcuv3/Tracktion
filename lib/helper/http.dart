@@ -20,7 +20,7 @@ class Ht {
   static Future<http.Response> patch(String path,
           {Map<String, dynamic> body}) =>
       http.patch(host + path, headers: headers, body: body);
-  static Future<http.Response> put(String path, {Map<String, dynamic> body}) =>
+  static Future<http.Response> put(String path, {dynamic body}) =>
       http.put(host + path, headers: headers, body: body);
   static Future<http.Response> delete(String path) =>
       http.delete(host + path, headers: headers);

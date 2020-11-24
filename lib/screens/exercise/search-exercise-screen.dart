@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/models/body-parts.dart';
-import 'package:tracktion/screens/exercise-workout.dart';
+import '../workout/exercise-workout-screen.dart';
 import 'package:tracktion/util/enumToString.dart';
 import 'package:tracktion/widgets/ErrorMessage.dart';
 import 'package:tracktion/widgets/ExerciseItem.dart';
 import 'package:tracktion/widgets/InputSearch.dart';
-import '../colors/custom_colors.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/exercise-search-shape.dart';
 import 'package:tracktion/widgets/body-part.dart';
-import '../colors/custom_colors.dart';
+import '../../colors/custom_colors.dart';
 
 class SearchExercise extends StatefulWidget {
   static const routeName = '/exercise-search';
@@ -39,10 +38,19 @@ class _SearchExerciseState extends State<SearchExercise> {
       final bd = ModalRoute.of(context).settings.arguments as BodyPart;
       final bodyPart = enumToString(bd).toUpperCase();
       BlocProvider.of<ExerciseBloc>(context).add(FetchExers(bodyPart));
-      super.didChangeDependencies();
     });
     super.initState();
   }
+
+  // @override
+  // void didChangeDependencies() {
+  //   final bd = ModalRoute.of(context).settings.arguments as BodyPart;
+  //   final bodyPart = enumToString(bd).toUpperCase();
+  //   BlocProvider.of<ExerciseBloc>(context).add(FetchExers(bodyPart));
+  //   super.didChangeDependencies();
+  // }
+
+  void updateExes() {}
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +111,11 @@ class _SearchExerciseState extends State<SearchExercise> {
                             reverse: true,
                             itemBuilder: (ctx, i) => GestureDetector(
                                 onTap: () {
+                                  print(exs[i]);
                                   Navigator.of(context)
-                                      .pushNamed(ExerciseWorkOut.routeName);
+                                      .pushNamed(ExerciseWorkOut.routeName,
+                                          arguments: exs[i])
+                                      .then((value) {});
                                 },
                                 child: ExerciseItem(exs[i])),
                             itemCount: exs.length,

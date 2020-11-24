@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tracktion/models/body-parts.dart';
-import 'package:tracktion/models/difficulties.dart';
 import 'package:tracktion/models/exercise.dart';
-import 'package:tracktion/screens/add-edit-exercise.dart';
-import 'package:tracktion/screens/exercise-workout.dart';
+import 'package:tracktion/screens/workout/exercise-workout-screen.dart';
 import 'package:tracktion/util/enumToString.dart';
 import '../colors/custom_colors.dart';
 

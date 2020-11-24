@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tracktion/models/body-parts.dart';
-import 'package:tracktion/screens/add-edit-exercise.dart';
-import 'package:tracktion/screens/search-exercise.dart';
+import './add-edit-exercise-screen.dart';
+import './search-exercise-screen.dart';
 import 'package:tracktion/widgets/body-part.dart';
-import '../colors/custom_colors.dart';
+import '../../colors/custom_colors.dart';
 
 class ExerciseScreen extends StatelessWidget {
   static const routeName = '/exercise';
