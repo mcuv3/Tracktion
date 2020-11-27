@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/auth/auth_cubit.dart';
 import 'package:tracktion/screens/exercise/body-parts-screen.dart';
+import 'package:tracktion/widgets/drawer.dart';
 import '../colors/custom_colors.dart';
 
 class MainScreen extends StatelessWidget {
+  static const routeName = "/home";
+
   Widget makeFeatureBox(
       String text, Color bg, String route, BuildContext context,
       [Color colorText = Colors.black]) {
@@ -29,7 +32,9 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: MainDrawer(),
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
         shadowColor: Colors.white,
         elevation: 0,
@@ -81,25 +86,25 @@ class MainScreen extends StatelessWidget {
                           makeFeatureBox(
                               'Excercise',
                               Theme.of(context).colorScheme.exercise,
-                              ExerciseScreen.routeName,
+                              BodyPartsScreen.routeName,
                               context,
                               Colors.white),
                           makeFeatureBox(
                               'Routines',
                               Theme.of(context).colorScheme.routines,
-                              ExerciseScreen.routeName,
+                              BodyPartsScreen.routeName,
                               context,
                               Colors.white),
                           makeFeatureBox(
                             'Workouts',
                             Theme.of(context).colorScheme.workouts,
-                            ExerciseScreen.routeName,
+                            BodyPartsScreen.routeName,
                             context,
                           ),
                           makeFeatureBox(
                               'Analysis',
                               Theme.of(context).colorScheme.analysis,
-                              ExerciseScreen.routeName,
+                              BodyPartsScreen.routeName,
                               context)
                         ],
                         crossAxisCount: 2,

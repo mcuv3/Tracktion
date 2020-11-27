@@ -13,14 +13,14 @@ import 'package:tracktion/widgets/body-part.dart';
 import 'package:tracktion/widgets/input.dart';
 import '../../colors/custom_colors.dart';
 
-class AddEditExerciseScreen extends StatefulWidget {
+class AddEditBodyPartsScreen extends StatefulWidget {
   static const routeName = '/exercise/create';
 
   @override
-  _AddEditExerciseScreenState createState() => _AddEditExerciseScreenState();
+  _AddEditBodyPartsScreenState createState() => _AddEditBodyPartsScreenState();
 }
 
-class _AddEditExerciseScreenState extends State<AddEditExerciseScreen> {
+class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
   Map<String, String> exerciseInputs = {};
   List<Map<String, dynamic>> bodyParts = BodyPart.values.map((b) {
     return {"body": b, "active": false};
@@ -30,7 +30,7 @@ class _AddEditExerciseScreenState extends State<AddEditExerciseScreen> {
   final form = GlobalKey<FormState>();
   var difficulty = 'Difficulty';
   var editMode = false;
-  Function cb;
+  void Function(Exercise) editExerciseSuccessfulCallBack;
   Exercise exe;
   BuildContext _ctx;
   var isInit = true;
@@ -43,7 +43,7 @@ class _AddEditExerciseScreenState extends State<AddEditExerciseScreen> {
       final props =
           ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
       this.exe = props["exe"];
-      this.cb = props["updateCallBack"];
+      this.editExerciseSuccessfulCallBack = props["updateCallBack"];
       if (this.exe != null) {
         this.editMode = true;
         this.bodyParts = BodyPart.values.map((b) {
@@ -149,7 +149,7 @@ class _AddEditExerciseScreenState extends State<AddEditExerciseScreen> {
   @override
   Widget build(BuildContext context) {
     final query = MediaQuery.of(context);
-    cb();
+
     return Scaffold(
         body: Stack(
           children: [
@@ -283,9 +283,12 @@ class _AddEditExerciseScreenState extends State<AddEditExerciseScreen> {
                     return e;
                   }).toList();
                 });
+              } else {
+                editExerciseSuccessfulCallBack(exe);
               }
 
               //TODO: callback if successfull
+
               final snackBar = SnackBar(
                   content: Text(editMode
                       ? "Successfully Edited"

@@ -3,6 +3,7 @@ import 'package:tracktion/models/body-parts.dart';
 import 'package:tracktion/models/exercise.dart';
 import 'package:tracktion/screens/index.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
+import 'package:tracktion/util/enumToString.dart';
 import 'package:tracktion/widgets/body-part.dart';
 import 'package:tracktion/widgets/reps-item.dart';
 import '../../colors/custom_colors.dart';
@@ -35,8 +36,14 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
     exs = ModalRoute.of(context).settings.arguments;
   }
 
-  void updateExes() {
-    print("THIS WORKS");
+  void editExerciseSuccessfulCallBack(Exercise exe) {
+    print(exe);
+    setState(() {
+      exs = exe;
+      bodyParts = exe.bodyParts.map((e) {
+        return {"active": true, "body": e};
+      }).toList();
+    });
   }
 
   @override
@@ -70,10 +77,10 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                     iconSize: 26,
                     onPressed: () {
                       Navigator.of(context).pushNamed(
-                          AddEditExerciseScreen.routeName,
+                          AddEditBodyPartsScreen.routeName,
                           arguments: {
                             "exe": exs,
-                            "updateCallBack": updateExes
+                            "updateCallBack": editExerciseSuccessfulCallBack
                           });
                     },
                   ),
@@ -93,32 +100,79 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                   child: Container(
                     width: double.infinity,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      // crossAxisAlignment: CrossAxisAlignment.end,
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white,
-                              border:
-                                  Border.all(color: Colors.white, width: 0.2),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.black,
-                                    blurRadius: 1,
-                                    spreadRadius: 0),
-                                BoxShadow(
-                                    color: Colors.black,
-                                    blurRadius: 1,
-                                    spreadRadius: 0)
-                              ]),
-                          padding: EdgeInsets.all(4),
-                          margin: EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
-                          child: Text(
-                            exs.name,
-                            style: Theme.of(context).textTheme.title,
-                            textAlign: TextAlign.start,
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                                border:
+                                    Border.all(color: Colors.white, width: 0.2),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black,
+                                      blurRadius: 1,
+                                      spreadRadius: 0),
+                                  BoxShadow(
+                                      color: Colors.black,
+                                      blurRadius: 1,
+                                      spreadRadius: 0)
+                                ]),
+                            padding: EdgeInsets.all(4),
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 0),
+                            child: Text(
+                              exs.name,
+                              style: Theme.of(context).textTheme.title,
+                              textAlign: TextAlign.start,
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.white,
+                                border:
+                                    Border.all(color: Colors.white, width: 0.2),
+                                boxShadow: [
+                                  BoxShadow(
+                                      color: Colors.black,
+                                      blurRadius: 1,
+                                      spreadRadius: 0),
+                                  BoxShadow(
+                                      color: Colors.black,
+                                      blurRadius: 1,
+                                      spreadRadius: 0)
+                                ]),
+                            padding: EdgeInsets.all(3),
+                            margin: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 5),
+                            child: RichText(
+                              text: TextSpan(
+                                children: <TextSpan>[
+                                  TextSpan(
+                                      text: 'Difficulty : ',
+                                      style: TextStyle(
+                                          fontFamily: "CarterOne",
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .exercise)),
+                                  TextSpan(
+                                      text: ' ${enumToString(exs.difficulty)}',
+                                      style: TextStyle(
+                                          fontFamily: "CarterOne",
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .routines)),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                         Container(

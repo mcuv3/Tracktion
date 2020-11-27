@@ -19,7 +19,7 @@ class Exercise {
 
   @override
   String toString() {
-    return this.name;
+    return "${this.name} BodyParts = ${this.bodyParts}";
   }
 
   String toJson() => json.encode({

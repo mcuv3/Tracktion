@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:tracktion/models/body-parts.dart';
+import 'package:tracktion/widgets/drawer.dart';
 import './add-edit-exercise-screen.dart';
 import './search-exercise-screen.dart';
 import 'package:tracktion/widgets/body-part.dart';
 import '../../colors/custom_colors.dart';
 
-class ExerciseScreen extends StatelessWidget {
+class BodyPartsScreen extends StatelessWidget {
   static const routeName = '/exercise';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        drawer: MainDrawer(),
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          iconTheme: IconThemeData(color: Colors.black),
+          // automaticallyImplyLeading: false,
           elevation: 0,
           shadowColor: Colors.white,
           backgroundColor: Colors.white,
@@ -51,7 +54,7 @@ class ExerciseScreen extends StatelessWidget {
           colorBrightness: Brightness.light,
           padding: EdgeInsets.all(8),
           onPressed: () {
-            Navigator.of(context).pushNamed(AddEditExerciseScreen.routeName);
+            Navigator.of(context).pushNamed(AddEditBodyPartsScreen.routeName);
           },
           icon: Icon(Icons.add),
           label: Text('Add Exercise'),
