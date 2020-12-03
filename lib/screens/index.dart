@@ -5,3 +5,4 @@ export './exercise/body-parts-screen.dart';
 export './exercise/search-exercise-screen.dart';
 export './workout/exercise-workout-screen.dart';
 export './main-screeen.dart';
+export './workout/workout-main-screen.dart';

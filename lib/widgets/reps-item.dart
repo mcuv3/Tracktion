@@ -2,17 +2,23 @@ import 'package:flutter/material.dart';
 import '../colors/custom_colors.dart';
 
 class RepItem extends StatelessWidget {
+  final bool isExpanded;
+
+  RepItem([this.isExpanded = false]);
+
   @override
   Widget build(BuildContext context) {
     final textStyle = TextStyle(fontSize: 18);
 
     return Container(
-      margin: EdgeInsets.only(bottom: 10),
+      margin: isExpanded ? EdgeInsets.only(bottom: 10) : null,
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.black, width: 1)),
+          borderRadius: isExpanded ? BorderRadius.circular(10) : null,
+          border: isExpanded
+              ? Border.all(color: Colors.black, width: 1)
+              : Border.all(color: Colors.black, width: 0.1)),
       child: IntrinsicHeight(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

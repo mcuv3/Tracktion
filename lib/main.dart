@@ -130,6 +130,7 @@ class _MyAppState extends State<MyApp> {
               AddEditBodyPartsScreen.routeName: (ctx) =>
                   AddEditBodyPartsScreen(),
               ExerciseWorkOut.routeName: (ctx) => ExerciseWorkOut(),
+              WorkOutScreen.routeName:(ctx)=>WorkOutScreen(),
             },
           ),
         ));

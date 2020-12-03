@@ -22,7 +22,7 @@ class MainDrawer extends StatelessWidget {
             title: Text("Home"),
             onTap: () {
               print("Home Clicked");
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => MainScreen()),
               );
@@ -33,9 +33,20 @@ class MainDrawer extends StatelessWidget {
             title: Text("Categories"),
             onTap: () {
               print("Categories Clicked");
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => BodyPartsScreen()),
+              );
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.dashboard),
+            title: Text("Workouts"),
+            onTap: () {
+              print("Categories Clicked");
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => WorkOutScreen()),
               );
             },
           ),
