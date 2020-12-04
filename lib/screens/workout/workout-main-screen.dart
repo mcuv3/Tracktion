@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tracktion/widgets/reps-item.dart';
 import '../../colors/custom_colors.dart';
-import 'package:tracktion/widgets/WorkOutSetItem.dart';
 import 'package:tracktion/widgets/drawer.dart';
 
 class WorkOutScreen extends StatelessWidget {
@@ -10,43 +9,70 @@ class WorkOutScreen extends StatelessWidget {
     {
       "name": "Deadlift",
       "series": [
-        {"reps": 10, "weight": 100, "rpe": 7},
-        {"reps": 10, "weight": 100, "rpe": 7},
-        {"reps": 10, "weight": 100, "rpe": 7},
+        {"reps": 10, "weight": 100.0, "rpe": 7},
+        {"reps": 10, "weight": 100.0, "rpe": 7},
+        {"reps": 10, "weight": 100.0, "rpe": 7},
       ]
     },
     {
       "name": "Deadlift",
       "series": [
-        {"reps": 10, "weight": 100, "rpe": 7},
-        {"reps": 10, "weight": 100, "rpe": 7},
-        {"reps": 10, "weight": 100, "rpe": 7},
+        {"reps": 10, "weight": 100.0, "rpe": 7},
+        {"reps": 10, "weight": 100.0, "rpe": 7},
+        {"reps": 10, "weight": 100.0, "rpe": 7},
       ]
     },
     {
       "name": "Deadlift",
       "series": [
-        {"reps": 10, "weight": 100, "rpe": 7},
-        {"reps": 10, "weight": 100, "rpe": 7},
-        {"reps": 10, "weight": 100, "rpe": 7},
+        {"reps": 10, "weight": 100.0, "rpe": 7},
+        {"reps": 10, "weight": 100.0, "rpe": 7},
+        {"reps": 10, "weight": 100.0, "rpe": 7},
       ]
     },
     {
       "name": "Deadlift",
       "series": [
-        {"reps": 10, "weight": 100, "rpe": 7},
-        {"reps": 10, "weight": 100, "rpe": 7},
-        {"reps": 10, "weight": 100, "rpe": 7},
+        {"reps": 10, "weight": 100.0, "rpe": 7},
+        {"reps": 10, "weight": 100.0, "rpe": 7},
+        {"reps": 10, "weight": 100.0, "rpe": 7},
       ]
     },
   ];
+
+  Widget buildHeader(BuildContext context, String title) {
+    return Container(
+      padding: EdgeInsets.all(4),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+        color: Theme.of(context).colorScheme.routines,
+      ),
+      child: Text(
+        title,
+        style: TextStyle(
+            fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final items = [];
     exes.forEach((e) {
       items.add({"kind": "title", "value": e["name"]});
-      items.add({"kind": "items", "value": e["series"]});
+      (e["series"] as List<dynamic>).forEach((rep) {
+        items.add({
+          "kind": "rep",
+          "values": {
+            "reps": rep["reps"],
+            "weight": rep["weight"],
+            "rpe": rep["rpe"]
+          }
+        });
+      });
+      // items.add({"kind": "items", "value": e["series"]});
       items.add({"kind": "space"});
     });
     return SafeArea(
@@ -68,28 +94,16 @@ class WorkOutScreen extends StatelessWidget {
                   shrinkWrap: true,
                   itemBuilder: (ctx, i) {
                     if (items[i]["kind"] == "title") {
-                      return Container(
-                        padding: EdgeInsets.all(4),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(10),
-                              topRight: Radius.circular(10)),
-                          color: Theme.of(context).colorScheme.routines,
-                        ),
-                        child: Text(
-                          "DeadLift",
-                          style: TextStyle(
-                              fontSize: 22,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
-                        ),
+                      return buildHeader(context, items[i]["value"]);
+                    }
+                    if (items[i]["kind"] == "rep") {
+                      final rep = items[i]["values"];
+                      return RepItem(
+                        reps: rep["reps"],
+                        weight: rep["weight"],
+                        rpe: rep["rpe"],
                       );
                     }
-                    if (items[i]["kind"] == "items") {
-                      return RepItem();
-                    }
-
                     return SizedBox(
                       height: 10,
                     );

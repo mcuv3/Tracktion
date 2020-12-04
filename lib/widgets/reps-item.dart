@@ -3,8 +3,15 @@ import '../colors/custom_colors.dart';
 
 class RepItem extends StatelessWidget {
   final bool isExpanded;
+  final int reps;
+  final double weight;
+  final int rpe;
 
-  RepItem([this.isExpanded = false]);
+  RepItem(
+      {@required this.reps,
+      @required this.weight,
+      @required this.rpe,
+      this.isExpanded = false});
 
   @override
   Widget build(BuildContext context) {
@@ -23,17 +30,17 @@ class RepItem extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("10 reps", style: textStyle),
+            Text("$reps rep(s)", style: textStyle),
             VerticalDivider(
               thickness: 2,
               color: Colors.red,
             ),
-            Text("100 kg", style: textStyle),
+            Text("$weight kg", style: textStyle),
             VerticalDivider(
               thickness: 2,
               color: Colors.red,
             ),
-            Text("RPE 7", style: textStyle),
+            Text("RPE $rpe", style: textStyle),
             Icon(Icons.comment, color: Colors.red)
           ],
         ),
