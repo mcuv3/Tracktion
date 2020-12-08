@@ -287,7 +287,6 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
                 editExerciseSuccessfulCallBack(exe);
               }
 
-              //TODO: callback if successfull
 
               final snackBar = SnackBar(
                   content: Text(editMode

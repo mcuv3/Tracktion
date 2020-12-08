@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/auth/auth_cubit.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
+import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import './screens/index.dart';
 import 'dart:async';
 import 'dart:io';
@@ -68,6 +69,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    // TODO: search for an orm , create table migrations;
     switch (result) {
       case ConnectivityResult.wifi:
       case ConnectivityResult.mobile:
@@ -90,6 +92,9 @@ class _MyAppState extends State<MyApp> {
           providers: [
             BlocProvider<ExerciseBloc>(
               create: (BuildContext context) => ExerciseBloc(),
+            ),
+            BlocProvider<WorkoutBloc>(
+              create: (context) => WorkoutBloc(),
             )
           ],
           child: MaterialApp(
@@ -130,7 +135,7 @@ class _MyAppState extends State<MyApp> {
               AddEditBodyPartsScreen.routeName: (ctx) =>
                   AddEditBodyPartsScreen(),
               ExerciseWorkOut.routeName: (ctx) => ExerciseWorkOut(),
-              WorkOutScreen.routeName:(ctx)=>WorkOutScreen(),
+              WorkOutScreen.routeName: (ctx) => WorkOutScreen(),
             },
           ),
         ));
