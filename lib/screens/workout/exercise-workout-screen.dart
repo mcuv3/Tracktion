@@ -28,8 +28,8 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
   void initState() {
     super.initState();
 
-    this.bodyParts = BodyPart.values.map((b) {
-      if (b == BodyPart.Quadriceps || b == BodyPart.Legs)
+    this.bodyParts = BodyPartEnum.values.map((b) {
+      if (b == BodyPartEnum.Quadriceps || b == BodyPartEnum.Legs)
         return {"body": b, "active": true};
     }).toList()
       ..removeWhere((element) => element == null);

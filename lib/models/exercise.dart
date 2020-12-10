@@ -8,7 +8,7 @@ class Exercise {
   final String name;
   final Difficulty difficulty;
   final String notes;
-  final List<BodyPart> bodyParts;
+  List<BodyPartEnum> bodyParts;
 
   Exercise(
       {@required this.id,
@@ -16,6 +16,10 @@ class Exercise {
       @required this.difficulty,
       @required this.bodyParts,
       this.notes});
+
+  set bodyPartss(List<BodyPartEnum> bds) {
+    this.bodyParts = bds;
+  }
 
   @override
   String toString() {

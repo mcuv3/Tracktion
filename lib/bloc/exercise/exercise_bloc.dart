@@ -3,14 +3,17 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:tracktion/helper/http.dart';
 import 'package:tracktion/models/body-parts.dart';
+import 'package:tracktion/models/database.dart';
 import 'package:tracktion/models/difficulties.dart';
-import 'package:tracktion/models/exercise.dart';
+import 'package:tracktion/models/exercise.dart' as exeModel;
 
 part 'exercise_event.dart';
 part 'exercise_state.dart';
 
 class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
-  ExerciseBloc() : super(ExercisesInitial());
+  final SQLDatabase db;
+
+  ExerciseBloc({@required this.db}) : super(ExercisesInitial());
 
   @override
   Stream<ExerciseState> mapEventToState(
@@ -53,8 +56,14 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     yield ExercisesLoading();
     try {
       final exe = event.exe;
-      final res = await Ht.post('/api/exercise/v1/', body: exe.toJson());
-      print(res.body);
+
+      final exeDb = Exercise(
+          difficulty: exe.difficulty, name: exe.name, notes: exe.notes);
+      final exeWithBd =
+          ExerciseWithBodyParts(bodyParts: exe.bodyParts, exe: exeDb);
+      await db.saveExercise(exeWithBd);
+      // final res = await Ht.post('/api/exercise/v1/', body: exe.toJson());
+      // print(res.body);
       yield ExerciseCreatedSuccess();
     } catch (e) {
       print(e);
@@ -69,12 +78,15 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       final bd = event.bodyPart;
       final res = await Ht.get("/api/exercise/v1/?body_part=$bd");
       final data = Ht.conv(res.body) as List<dynamic>;
-      final List<Exercise> exs = [];
+      final List<exeModel.Exercise> exs = [];
 
-      print(data);
+      // print(data);
+      final dataSql = await db.findByBodyPart(BodyPartEnum.Arms);
+
+     print(dataSql[0].bodyParts);
 
       data.forEach((e) {
-        exs.add(Exercise(
+        exs.add(exeModel.Exercise(
           id: e["id"],
           name: e['name'],
           difficulty: toDifficulty(e['difficulty']),

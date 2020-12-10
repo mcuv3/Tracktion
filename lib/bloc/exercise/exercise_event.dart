@@ -9,12 +9,12 @@ class FetchExers extends ExerciseEvent {
 }
 
 class CreateExe extends ExerciseEvent {
-  final Exercise exe;
+  final exeModel.Exercise exe;
   CreateExe(this.exe);
 }
 
 class EditExe extends ExerciseEvent {
-  final Exercise exe;
+  final exeModel.Exercise exe;
   EditExe(this.exe);
 }
 

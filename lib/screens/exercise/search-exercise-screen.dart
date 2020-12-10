@@ -35,7 +35,7 @@ class _SearchExerciseState extends State<SearchExercise> {
     // TODO: implement initState
 
     Future.delayed(Duration.zero).then((_) {
-      final bd = ModalRoute.of(context).settings.arguments as BodyPart;
+      final bd = ModalRoute.of(context).settings.arguments as BodyPartEnum;
       final bodyPart = enumToString(bd).toUpperCase();
       BlocProvider.of<ExerciseBloc>(context).add(FetchExers(bodyPart));
     });
@@ -55,7 +55,7 @@ class _SearchExerciseState extends State<SearchExercise> {
   @override
   Widget build(BuildContext context) {
     final query = MediaQuery.of(context);
-    final bodyPart = ModalRoute.of(context).settings.arguments as BodyPart;
+    final bodyPart = ModalRoute.of(context).settings.arguments as BodyPartEnum;
 
     return Scaffold(
       appBar: AppBar(

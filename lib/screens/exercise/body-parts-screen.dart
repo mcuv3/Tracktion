@@ -35,7 +35,7 @@ class BodyPartsScreen extends StatelessWidget {
                     runSpacing: 8, //horizontal spacing
                     alignment: WrapAlignment.center,
                     crossAxisAlignment: WrapCrossAlignment.center,
-                    children: BodyPart.values
+                    children: BodyPartEnum.values
                         .map((bdy) => GestureDetector(
                             onTap: () {
                               Navigator.of(context).pushNamed(

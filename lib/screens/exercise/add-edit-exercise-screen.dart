@@ -22,7 +22,7 @@ class AddEditBodyPartsScreen extends StatefulWidget {
 
 class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
   Map<String, String> exerciseInputs = {};
-  List<Map<String, dynamic>> bodyParts = BodyPart.values.map((b) {
+  List<Map<String, dynamic>> bodyParts = BodyPartEnum.values.map((b) {
     return {"body": b, "active": false};
   }).toList();
   TextEditingController nameController = TextEditingController();
@@ -42,11 +42,13 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
       isInit = false;
       final props =
           ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+      if (props == null) return;
+
       this.exe = props["exe"];
       this.editExerciseSuccessfulCallBack = props["updateCallBack"];
       if (this.exe != null) {
         this.editMode = true;
-        this.bodyParts = BodyPart.values.map((b) {
+        this.bodyParts = BodyPartEnum.values.map((b) {
           return {"body": b, "active": exe.bodyParts.any((e) => e == b)};
         }).toList();
         this.difficulty = enumToString(exe.difficulty);
@@ -101,7 +103,7 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
   }
 
   void submit(BuildContext ctx) {
-    List<BodyPart> parts = [];
+    List<BodyPartEnum> parts = [];
 
     if (form.currentState.validate()) {
       bodyParts.forEach((b) {
@@ -121,9 +123,12 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
         case "Pro":
           dt = Difficulty.Pro;
           break;
+        default:
+          dt = null;
+          break;
       }
 
-      if (parts.length == 0 || difficulty == "Difficulty") {
+      if (parts.length == 0 || dt == null) {
         final snackBar = SnackBar(
             content: Text('Body parts or difficulty missing.'),
             backgroundColor: Theme.of(ctx).colorScheme.routines);
@@ -132,7 +137,7 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
       }
 
       exe = Exercise(
-          id: exe.id,
+          id: exe == null ? null : exe.id,
           bodyParts: parts,
           difficulty: dt,
           notes: exerciseInputs["notes"],
@@ -286,7 +291,6 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
               } else {
                 editExerciseSuccessfulCallBack(exe);
               }
-
 
               final snackBar = SnackBar(
                   content: Text(editMode

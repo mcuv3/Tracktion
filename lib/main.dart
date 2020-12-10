@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/auth/auth_cubit.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
+import 'package:tracktion/models/database.dart';
 import './screens/index.dart';
 import 'dart:async';
 import 'dart:io';
@@ -33,11 +34,13 @@ class _MyAppState extends State<MyApp> {
   String _connectionStatus = 'Unknown';
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
+  SQLDatabase database;
 
   @override
   void initState() {
     super.initState();
     initConnectivity();
+    database = SQLDatabase();
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
@@ -91,7 +94,7 @@ class _MyAppState extends State<MyApp> {
         child: MultiBlocProvider(
           providers: [
             BlocProvider<ExerciseBloc>(
-              create: (BuildContext context) => ExerciseBloc(),
+              create: (BuildContext context) => ExerciseBloc(db: database),
             ),
             BlocProvider<WorkoutBloc>(
               create: (context) => WorkoutBloc(),

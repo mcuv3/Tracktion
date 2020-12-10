@@ -6,7 +6,7 @@ import '../colors/custom_colors.dart';
 class BodyPartWidget extends StatelessWidget {
   final double width;
   final double height;
-  final BodyPart bodyPart;
+  final BodyPartEnum bodyPart;
   final bool withTitle;
   final bool active;
   final Color textColor;
@@ -24,34 +24,34 @@ class BodyPartWidget extends StatelessWidget {
     var file = 'assets/vectors/';
 
     switch (bodyPart) {
-      case BodyPart.Abs:
+      case BodyPartEnum.Abs:
         file += 'abs';
         break;
-      case BodyPart.Back:
+      case BodyPartEnum.Back:
         file += 'back';
         break;
-      case BodyPart.GLUTEUS:
+      case BodyPartEnum.GLUTEUS:
         file += 'butt';
         break;
-      case BodyPart.Calfs:
+      case BodyPartEnum.Calfs:
         file += 'calfs';
         break;
-      case BodyPart.Chest:
+      case BodyPartEnum.Chest:
         file += 'chest';
         break;
-      case BodyPart.Hamstrings:
+      case BodyPartEnum.Hamstrings:
         file += 'hamstrings';
         break;
-      case BodyPart.Legs:
+      case BodyPartEnum.Legs:
         file += 'legs';
         break;
-      case BodyPart.Quadriceps:
+      case BodyPartEnum.Quadriceps:
         file += 'quads';
         break;
-      case BodyPart.Shoulders:
+      case BodyPartEnum.Shoulders:
         file += 'shoulders';
         break;
-      case BodyPart.Arms:
+      case BodyPartEnum.Arms:
         file += 'arms';
         break;
     }

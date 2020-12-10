@@ -15,10 +15,16 @@ dependencies:
   cupertino_icons: ^1.0.0
   shared_preferences: ^0.5.12+4
   connectivity: ^2.0.2
+  moor: ^3.4.0
+  path_provider: ^1.6.24
+  moor_flutter: ^3.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  moor_generator: ^3.4.0
+  build_runner: ^1.10.7
 
 flutter:
   uses-material-design: true

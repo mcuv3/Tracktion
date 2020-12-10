@@ -8,7 +8,7 @@ class ExercisesLoading extends ExerciseState {}
 class ExercisesInitial extends ExerciseState {}
 
 class Exercises extends ExerciseState {
-  final List<Exercise> exs;
+  final List<exeModel.Exercise> exs;
   Exercises(this.exs);
 }
 

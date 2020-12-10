@@ -1,4 +1,4 @@
-enum BodyPart {
+enum BodyPartEnum {
   Chest,
   Legs,
   Back,
@@ -23,70 +23,70 @@ enum BodyPart {
 //     (9, 'BACK'),
 // )
 
-List<BodyPart> toBodyPart(List<dynamic> bodyParts) => bodyParts.map((i) {
+List<BodyPartEnum> toBodyPart(List<dynamic> bodyParts) => bodyParts.map((i) {
       switch (i) {
         case 1:
-          return BodyPart.Chest;
+          return BodyPartEnum.Chest;
           break;
         case 2:
-          return BodyPart.Legs;
+          return BodyPartEnum.Legs;
           break;
         case 3:
-          return BodyPart.Arms;
+          return BodyPartEnum.Arms;
           break;
         case 4:
-          return BodyPart.Calfs;
+          return BodyPartEnum.Calfs;
           break;
         case 5:
-          return BodyPart.Hamstrings;
+          return BodyPartEnum.Hamstrings;
           break;
         case 6:
-          return BodyPart.Quadriceps;
+          return BodyPartEnum.Quadriceps;
           break;
         case 7:
-          return BodyPart.Shoulders;
+          return BodyPartEnum.Shoulders;
           break;
         case 8:
-          return BodyPart.GLUTEUS;
+          return BodyPartEnum.GLUTEUS;
           break;
         case 9:
-          return BodyPart.Back;
+          return BodyPartEnum.Back;
           break;
         case 10:
-          return BodyPart.Abs;
+          return BodyPartEnum.Abs;
           break;
       }
     }).toList();
 
-List<int> bodyPartToInt(List<BodyPart> bodyParts) => bodyParts.map((e) {
+List<int> bodyPartToInt(List<BodyPartEnum> bodyParts) => bodyParts.map((e) {
       switch (e) {
-        case BodyPart.Chest:
+        case BodyPartEnum.Chest:
           return 1;
           break;
-        case BodyPart.Legs:
+        case BodyPartEnum.Legs:
           return 2;
-        case BodyPart.Arms:
+        case BodyPartEnum.Arms:
           return 3;
           break;
-        case BodyPart.Calfs:
+        case BodyPartEnum.Calfs:
           return 4;
           break;
-        case BodyPart.Hamstrings:
+        case BodyPartEnum.Hamstrings:
           return 5;
           break;
-        case BodyPart.Quadriceps:
+        case BodyPartEnum.Quadriceps:
           return 6;
           break;
-        case BodyPart.Shoulders:
+        case BodyPartEnum.Shoulders:
           return 7;
           break;
-        case BodyPart.GLUTEUS:
+        case BodyPartEnum.GLUTEUS:
           return 8;
           break;
-        case BodyPart.Back:
+        case BodyPartEnum.Back:
           return 9;
           break;
-        case BodyPart.Abs:
+        case BodyPartEnum.Abs:
           return 10;
           break;
       }
