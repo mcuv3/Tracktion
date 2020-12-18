@@ -6,6 +6,8 @@ import 'package:tracktion/models/body-parts.dart';
 import 'package:tracktion/models/database.dart';
 import 'package:tracktion/models/difficulties.dart';
 import 'package:tracktion/models/exercise.dart' as exeModel;
+import '../../models/exercise.dart' as exeApp;
+import 'package:tracktion/util/enumToString.dart';
 
 part 'exercise_event.dart';
 part 'exercise_state.dart';
@@ -38,13 +40,25 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
   }
 
   Stream<ExerciseState> _editExe(EditExe event) async* {
+    final streamExes = (state as Exercises).exes;
     yield ExercisesLoading();
     try {
+      // final exe = event.exe;
+      // final res =
+      //     await Ht.put('/api/exercise/v1/${exe.id}/', body: exe.toJson());
+      // print(res.body);
+
       final exe = event.exe;
-      final res =
-          await Ht.put('/api/exercise/v1/${exe.id}/', body: exe.toJson());
-      print(res.body);
+      final exeDb = Exercise(
+          id: exe.id,
+          difficulty: exe.difficulty,
+          name: exe.name,
+          notes: exe.notes);
+      final exeWithBd =
+          ExerciseWithBodyParts(bodyParts: exe.bodyParts, exe: exeDb);
+      await db.saveExercise(exeWithBd);
       yield ExerciseCreatedSuccess();
+      yield Exercises(streamExes);
     } catch (e) {
       print(e);
       yield ExerciseFailure(
@@ -75,30 +89,27 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
   Stream<ExerciseState> _fetchExes(FetchExers event) async* {
     yield ExercisesLoading();
     try {
-      final bd = event.bodyPart;
-      final res = await Ht.get("/api/exercise/v1/?body_part=$bd");
-      final data = Ht.conv(res.body) as List<dynamic>;
-      final List<exeModel.Exercise> exs = [];
-
-      // print(data);
-      final dataSql = await db.findByBodyPart(BodyPartEnum.Arms);
-
-     print(dataSql[0].bodyParts);
-
-      data.forEach((e) {
-        exs.add(exeModel.Exercise(
-          id: e["id"],
-          name: e['name'],
-          difficulty: toDifficulty(e['difficulty']),
-          bodyParts: toBodyPart(e["body_part"]),
-          notes: e["notes"],
-        ));
-      });
-
-      yield Exercises(exs);
+      final dataSql = await db.findByBodyPart(event.bodyPart);
+      yield Exercises(dataSql);
     } catch (e) {
       print(e);
       yield ExerciseFailure(message: "Something went wrong", statusCode: 400);
     }
   }
 }
+
+// fetch exes
+// final bodyPartUperCased = enumToString(event.bodyPart).toUpperCase();
+// final res =
+//     await Ht.get("/api/exercise/v1/?body_part=$bodyPartUperCased");
+// final data = Ht.conv(res.body) as List<dynamic>;
+// final List<exeModel.Exercise> exs = [];
+// data.forEach((e) {
+//   exs.add(exeModel.Exercise(
+//     id: e["id"],
+//     name: e['name'],
+//     difficulty: toDifficulty(e['difficulty']),
+//     bodyParts: toBodyPart(e["body_part"]),
+//     notes: e["notes"],
+//   ));
+// });

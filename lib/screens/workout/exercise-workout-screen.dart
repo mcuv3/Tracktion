@@ -42,7 +42,6 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
   }
 
   void editExerciseSuccessfulCallBack(Exercise exe) {
-    print(exe);
     setState(() {
       exs = exe;
       bodyParts = exe.bodyParts.map((e) {

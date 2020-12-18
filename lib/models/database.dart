@@ -25,9 +25,7 @@ class SQLDatabase extends _$SQLDatabase {
   MigrationStrategy get migration => MigrationStrategy(
       onCreate: (Migrator m) async {
         await m.createAll();
-        // for (final bd in BodyPartEnum.values) {
-        //   await into(bodyParts).insert(BodyPart(bodyPartInt: bd));
-        // }
+
         return;
       },
       onUpgrade: (Migrator m, int from, int to) async {});
@@ -40,56 +38,56 @@ class SQLDatabase extends _$SQLDatabase {
       await (delete(exerciseBodyParts)
             ..where((entry) => entry.exerciseId.equals(exerciseId)))
           .go();
+
       for (final bodyPart in entry.bodyParts) {
         await into(exerciseBodyParts).insert(
-            ExerciseBodyPart(bodyPart: bodyPart, exerciseId: exerciseId));
+            ExerciseBodyPart(bodyPart: bodyPart, exerciseId: exerciseId),
+            mode: InsertMode.replace);
       }
     });
   }
 
-  Future<List<exeApp.Exercise>> findByBodyPart(BodyPartEnum bd) async {
-    List<TypedResult> query = await select(exercises).join([
+  Future<Stream<List<exeApp.Exercise>>> findByBodyPart(BodyPartEnum bd) async {
+    final query = select(exercises).join([
       leftOuterJoin(exerciseBodyParts,
           exerciseBodyParts.exerciseId.equalsExp(exercises.id)),
-    ]).get();
-
-    Map<String, List<BodyPartEnum>> mapBodyParts = {};
-    List<exeApp.Exercise> exes = [];
-
-    query.map((row) {
-      final exercise = row.readTable(exercises);
-      final exerciseId = row.readTable(exercises).id.toString();
-
-      var previousBodyParts = mapBodyParts[exerciseId];
-      if (previousBodyParts == null) {
-        exes.add(exeApp.Exercise(
-            id: exercise.id,
-            name: exercise.name,
-            bodyParts: [],
-            difficulty: exercise.difficulty,
-            notes: exercise.notes));
-        previousBodyParts = [];
-      }
-
-      mapBodyParts[exerciseId] = [
-        ...previousBodyParts,
-        row.readTable(exerciseBodyParts).bodyPart
-      ];
-      return exercise;
-    }).toList();
-
-    return exes.map((exe) {
-      exe.bodyPartss = mapBodyParts[exe.id.toString()];
-      return exe;
-    }).toList();
-
-    // return data;
-
-    // return data.where((d) => d.bodyPart.bodyPartInt == bd);
+    ]);
+    // ..groupBy([exercises.id]);
+    // ..where(exerciseBodyParts.bodyPart.equals(bd.index));
+    return query.watch().map((row) {
+      return row
+          .fold<List<exeApp.Exercise>>([], (exes, row) {
+            print(row.readTable(exerciseBodyParts));
+            final exercise = row.readTable(exercises);
+            final exerciseId = row.readTable(exercises).id;
+            final bodyPart = row.readTable(exerciseBodyParts).bodyPart;
+            final indexExe = exes.indexWhere((exe) => exe.id == exerciseId);
+            if (indexExe == -1) {
+              exes.add(exeApp.Exercise(
+                  id: exercise.id,
+                  name: exercise.name,
+                  bodyParts: [bodyPart],
+                  difficulty: exercise.difficulty,
+                  notes: exercise.notes));
+            } else {
+              exes[indexExe].bodyPartSet = [
+                ...exes[indexExe].bodyParts,
+                bodyPart
+              ];
+            }
+            return exes;
+          })
+          .toList()
+          .where((exe) {
+            // print(exe);
+            return exe.bodyParts.contains(bd);
+          })
+          .toList();
+    });
   }
 
   Future<List<Exercise>> getAllExercises() => select(exercises).get();
-  // Stream<List<Exercise>> watchAllExercises() => select(Exercises).watch();
+  Stream<List<Exercise>> watchAllExercises() => select(exercises).watch();
   Future insertExercise(Exercise exe) => into(exercises).insert(exe);
   Future updateExercise(Exercise exe) => update(exercises).replace(exe);
   Future deleteExercise(Exercise exe) => delete(exercises).delete(exe);

@@ -17,7 +17,7 @@ class Exercise {
       @required this.bodyParts,
       this.notes});
 
-  set bodyPartss(List<BodyPartEnum> bds) {
+  set bodyPartSet(List<BodyPartEnum> bds) {
     this.bodyParts = bds;
   }
 

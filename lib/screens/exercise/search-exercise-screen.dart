@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/models/body-parts.dart';
-import '../workout/exercise-workout-screen.dart';
-import 'package:tracktion/util/enumToString.dart';
+import 'package:tracktion/models/exercise.dart';
+import 'package:tracktion/screens/workout/exercise-workout-screen.dart';
+// import 'package:tracktion/models/database.dart';
 import 'package:tracktion/widgets/ErrorMessage.dart';
 import 'package:tracktion/widgets/ExerciseItem.dart';
 import 'package:tracktion/widgets/InputSearch.dart';
@@ -32,25 +33,12 @@ class _SearchExerciseState extends State<SearchExercise> {
 
   @override
   void initState() {
-    // TODO: implement initState
-
     Future.delayed(Duration.zero).then((_) {
       final bd = ModalRoute.of(context).settings.arguments as BodyPartEnum;
-      final bodyPart = enumToString(bd).toUpperCase();
-      BlocProvider.of<ExerciseBloc>(context).add(FetchExers(bodyPart));
+      BlocProvider.of<ExerciseBloc>(context).add(FetchExers(bd));
     });
     super.initState();
   }
-
-  // @override
-  // void didChangeDependencies() {
-  //   final bd = ModalRoute.of(context).settings.arguments as BodyPart;
-  //   final bodyPart = enumToString(bd).toUpperCase();
-  //   BlocProvider.of<ExerciseBloc>(context).add(FetchExers(bodyPart));
-  //   super.didChangeDependencies();
-  // }
-
-  void updateExes() {}
 
   @override
   Widget build(BuildContext context) {
@@ -98,28 +86,63 @@ class _SearchExerciseState extends State<SearchExercise> {
                       Widget main;
 
                       if (state is Exercises) {
-                        final exs = state.exs
-                            .where((ex) => ex.name
-                                .toLowerCase()
-                                .contains(search.toLowerCase()))
-                            .toList();
-                        return Container(
-                          height: query.size.height * 0.47,
-                          width: query.size.width * 0.9,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            reverse: true,
-                            itemBuilder: (ctx, i) => GestureDetector(
-                                onTap: () {
-                                  print(exs[i]);
-                                  Navigator.of(context)
-                                      .pushNamed(ExerciseWorkOut.routeName,
-                                          arguments: exs[i])
-                                      .then((value) {});
-                                },
-                                child: ExerciseItem(exs[i])),
-                            itemCount: exs.length,
-                          ),
+                        // final exs = state.exs;
+                        //     .where((ex) => ex.name
+                        //         .toLowerCase()
+                        //         .contains(search.toLowerCase()))
+                        //     .toList();
+                        // return Container(
+                        //   height: query.size.height * 0.47,
+                        //   width: query.size.width * 0.9,
+                        //   child: ListView.builder(
+                        //     shrinkWrap: true,
+                        //     reverse: true,
+                        //     itemBuilder: (ctx, i) => GestureDetector(
+                        //         onTap: () {
+                        //           print(exs[i]);
+                        //           Navigator.of(context)
+                        //               .pushNamed(ExerciseWorkOut.routeName,
+                        //                   arguments: exs[i])
+                        //               .then((value) {});
+                        //         },
+                        //         child: ExerciseItem(exs[i])),
+                        //     itemCount: exs.length,
+                        //   ),
+                        // );
+
+                        return StreamBuilder(
+                          builder: (context, exs) {
+                            if (exs.connectionState == ConnectionState.active) {
+                              List<Exercise> exes = exs.data;
+                              exes
+                                  .where((ex) => ex.name
+                                      .toLowerCase()
+                                      .contains(search.toLowerCase()))
+                                  .toList();
+
+                              return Container(
+                                height: query.size.height * 0.47,
+                                width: query.size.width * 0.9,
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  reverse: true,
+                                  itemBuilder: (ctx, i) => GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context)
+                                            .pushNamed(
+                                                ExerciseWorkOut.routeName,
+                                                arguments: exes[i])
+                                            .then((value) {});
+                                      },
+                                      child: ExerciseItem(exes[i])),
+                                  itemCount: exes.length,
+                                ),
+                              );
+                            }
+
+                            return Text('Loading');
+                          },
+                          stream: state.exes,
                         );
                       }
 
@@ -142,7 +165,7 @@ class _SearchExerciseState extends State<SearchExercise> {
                       }
 
                       return Container(
-                        height: query.size.height * 0.47,
+                        height: query.size.height * 0.46,
                         width: query.size.width * 0.9,
                         child: main,
                       );
@@ -150,7 +173,7 @@ class _SearchExerciseState extends State<SearchExercise> {
                   ),
                   Container(
                     width: 350,
-                    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+                    margin: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
                     child: InputSearch(
                         change: searchHandler,
                         controller: _controller,

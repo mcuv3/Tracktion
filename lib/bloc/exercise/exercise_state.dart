@@ -8,8 +8,10 @@ class ExercisesLoading extends ExerciseState {}
 class ExercisesInitial extends ExerciseState {}
 
 class Exercises extends ExerciseState {
-  final List<exeModel.Exercise> exs;
-  Exercises(this.exs);
+  // final List<exeModel.Exercise> exs;
+  // Exercises(this.exs);
+  final Stream<List<exeApp.Exercise>> exes;
+  Exercises(this.exes);
 }
 
 class ExerciseFailure extends ExerciseState {
@@ -17,6 +19,11 @@ class ExerciseFailure extends ExerciseState {
   final num statusCode;
 
   ExerciseFailure({this.message, this.statusCode});
+}
+
+class ExerciseStream extends ExerciseState {
+  final Stream<Exercise> exes;
+  ExerciseStream(this.exes);
 }
 
 class ExerciseCreatedSuccess extends ExerciseState {}

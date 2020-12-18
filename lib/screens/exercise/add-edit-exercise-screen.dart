@@ -140,10 +140,10 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
           id: exe == null ? null : exe.id,
           bodyParts: parts,
           difficulty: dt,
-          notes: exerciseInputs["notes"],
-          name: exerciseInputs["name"]);
+          notes: notesController.text,
+          name: nameController.text);
 
-      if (editMode) {
+      if (editMode && exe.id != null) {
         BlocProvider.of<ExerciseBloc>(context).add(EditExe(exe));
       } else {
         BlocProvider.of<ExerciseBloc>(context).add(CreateExe(exe));
@@ -276,7 +276,6 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
           listener: (ctx, state) {
             if (state is ExerciseCreatedSuccess) {
               FocusScope.of(context).unfocus();
-              print(editMode);
               if (!editMode) {
                 nameController.text = "";
                 notesController.text = "";

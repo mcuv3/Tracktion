@@ -4,7 +4,7 @@ part of 'exercise_bloc.dart';
 abstract class ExerciseEvent {}
 
 class FetchExers extends ExerciseEvent {
-  final String bodyPart;
+  final BodyPartEnum bodyPart;
   FetchExers(this.bodyPart);
 }
 
