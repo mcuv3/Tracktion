@@ -14,7 +14,7 @@ class TracktionInput extends StatelessWidget {
       this.controller,
       this.maxlines = 1,
       this.validator,
-      @required this.change});
+       this.change});
 
   @override
   Widget build(BuildContext context) {

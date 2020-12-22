@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tracktion/models/body-parts.dart';
-import 'package:tracktion/models/exercise.dart';
-import 'package:tracktion/models/rep.dart';
+import 'package:tracktion/models/app/body-parts.dart';
+import 'package:tracktion/models/app/exercise.dart';
+import 'package:tracktion/models/app/rep.dart';
 import 'package:tracktion/screens/index.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/util/enumToString.dart';

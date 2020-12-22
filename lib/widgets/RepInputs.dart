@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tracktion/models/rep.dart';
+import 'package:tracktion/models/app/rep.dart';
 import '../colors/custom_colors.dart';
 
 Future<Rep> repInputs(BuildContext context, Rep rep) {

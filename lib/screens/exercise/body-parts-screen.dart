@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tracktion/models/body-parts.dart';
+import 'package:tracktion/models/app/body-parts.dart';
 import 'package:tracktion/widgets/drawer.dart';
 import './add-edit-exercise-screen.dart';
 import './search-exercise-screen.dart';

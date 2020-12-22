@@ -1,13 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:tracktion/helper/http.dart';
-import 'package:tracktion/models/body-parts.dart';
-import 'package:tracktion/models/database.dart';
-import 'package:tracktion/models/difficulties.dart';
-import 'package:tracktion/models/exercise.dart' as exeModel;
-import '../../models/exercise.dart' as exeApp;
-import 'package:tracktion/util/enumToString.dart';
+import 'package:tracktion/models/app/body-parts.dart';
+import 'package:tracktion/models/db/database.dart';
+import 'package:tracktion/models/app/exercise.dart' as exeModel;
+import '../../models/app/exercise.dart' as exeApp;
 
 part 'exercise_event.dart';
 part 'exercise_state.dart';
@@ -33,21 +31,32 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
   }
 
   Stream<ExerciseState> _deleteExe(DeleteExe event) async* {
+    final exes = (state as Exercises).exes;
     yield ExercisesLoading();
     try {
-      // yield Exercises();
-    } catch (e) {}
+      final exe = event.exe;
+      final exeEntity = Exercise(
+          id: exe.id,
+          difficulty: exe.difficulty,
+          name: exe.name,
+          notes: exe.notes);
+
+      await db.deleteExercise(exeEntity);
+
+      yield ExerciseDeleteSuccess();
+      yield Exercises(exes);
+    } catch (e) {
+      print(e);
+      yield ExerciseFailure(
+          message: "Cannot delete de exercise.", statusCode: 400);
+      yield Exercises(exes);
+    }
   }
 
   Stream<ExerciseState> _editExe(EditExe event) async* {
     final streamExes = (state as Exercises).exes;
     yield ExercisesLoading();
     try {
-      // final exe = event.exe;
-      // final res =
-      //     await Ht.put('/api/exercise/v1/${exe.id}/', body: exe.toJson());
-      // print(res.body);
-
       final exe = event.exe;
       final exeDb = Exercise(
           id: exe.id,
@@ -71,13 +80,14 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     try {
       final exe = event.exe;
 
+      await db.insertMigration(MigrationsCompanion.insert(
+          verb: "post", endPoint: '/api/exercise/v1/', payload: exe.toJson()));
+
       final exeDb = Exercise(
           difficulty: exe.difficulty, name: exe.name, notes: exe.notes);
       final exeWithBd =
           ExerciseWithBodyParts(bodyParts: exe.bodyParts, exe: exeDb);
       await db.saveExercise(exeWithBd);
-      // final res = await Ht.post('/api/exercise/v1/', body: exe.toJson());
-      // print(res.body);
       yield ExerciseCreatedSuccess();
     } catch (e) {
       print(e);
@@ -89,6 +99,9 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
   Stream<ExerciseState> _fetchExes(FetchExers event) async* {
     yield ExercisesLoading();
     try {
+      final migrations = await db.getAllMigrations();
+      print(migrations);
+
       final dataSql = await db.findByBodyPart(event.bodyPart);
       yield Exercises(dataSql);
     } catch (e) {

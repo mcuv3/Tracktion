@@ -17,7 +17,6 @@ class Exercise extends DataClass implements Insertable<Exercise> {
       @required this.name,
       @required this.notes,
       @required this.difficulty});
-
   factory Exercise.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -492,6 +491,290 @@ class $ExerciseBodyPartsTable extends ExerciseBodyParts
       const EnumIndexConverter<BodyPartEnum>(BodyPartEnum.values);
 }
 
+class Migration extends DataClass implements Insertable<Migration> {
+  final int id;
+  final String endPoint;
+  final String payload;
+  final String verb;
+  Migration(
+      {@required this.id,
+      @required this.endPoint,
+      @required this.payload,
+      @required this.verb});
+  factory Migration.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
+    return Migration(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      endPoint: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}end_point']),
+      payload:
+          stringType.mapFromDatabaseResponse(data['${effectivePrefix}payload']),
+      verb: stringType.mapFromDatabaseResponse(data['${effectivePrefix}verb']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || endPoint != null) {
+      map['end_point'] = Variable<String>(endPoint);
+    }
+    if (!nullToAbsent || payload != null) {
+      map['payload'] = Variable<String>(payload);
+    }
+    if (!nullToAbsent || verb != null) {
+      map['verb'] = Variable<String>(verb);
+    }
+    return map;
+  }
+
+  MigrationsCompanion toCompanion(bool nullToAbsent) {
+    return MigrationsCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      endPoint: endPoint == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endPoint),
+      payload: payload == null && nullToAbsent
+          ? const Value.absent()
+          : Value(payload),
+      verb: verb == null && nullToAbsent ? const Value.absent() : Value(verb),
+    );
+  }
+
+  factory Migration.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return Migration(
+      id: serializer.fromJson<int>(json['id']),
+      endPoint: serializer.fromJson<String>(json['endPoint']),
+      payload: serializer.fromJson<String>(json['payload']),
+      verb: serializer.fromJson<String>(json['verb']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'endPoint': serializer.toJson<String>(endPoint),
+      'payload': serializer.toJson<String>(payload),
+      'verb': serializer.toJson<String>(verb),
+    };
+  }
+
+  Migration copyWith({int id, String endPoint, String payload, String verb}) =>
+      Migration(
+        id: id ?? this.id,
+        endPoint: endPoint ?? this.endPoint,
+        payload: payload ?? this.payload,
+        verb: verb ?? this.verb,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Migration(')
+          ..write('id: $id, ')
+          ..write('endPoint: $endPoint, ')
+          ..write('payload: $payload, ')
+          ..write('verb: $verb')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(endPoint.hashCode, $mrjc(payload.hashCode, verb.hashCode))));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is Migration &&
+          other.id == this.id &&
+          other.endPoint == this.endPoint &&
+          other.payload == this.payload &&
+          other.verb == this.verb);
+}
+
+class MigrationsCompanion extends UpdateCompanion<Migration> {
+  final Value<int> id;
+  final Value<String> endPoint;
+  final Value<String> payload;
+  final Value<String> verb;
+  const MigrationsCompanion({
+    this.id = const Value.absent(),
+    this.endPoint = const Value.absent(),
+    this.payload = const Value.absent(),
+    this.verb = const Value.absent(),
+  });
+  MigrationsCompanion.insert({
+    this.id = const Value.absent(),
+    @required String endPoint,
+    @required String payload,
+    @required String verb,
+  })  : endPoint = Value(endPoint),
+        payload = Value(payload),
+        verb = Value(verb);
+  static Insertable<Migration> custom({
+    Expression<int> id,
+    Expression<String> endPoint,
+    Expression<String> payload,
+    Expression<String> verb,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (endPoint != null) 'end_point': endPoint,
+      if (payload != null) 'payload': payload,
+      if (verb != null) 'verb': verb,
+    });
+  }
+
+  MigrationsCompanion copyWith(
+      {Value<int> id,
+      Value<String> endPoint,
+      Value<String> payload,
+      Value<String> verb}) {
+    return MigrationsCompanion(
+      id: id ?? this.id,
+      endPoint: endPoint ?? this.endPoint,
+      payload: payload ?? this.payload,
+      verb: verb ?? this.verb,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (endPoint.present) {
+      map['end_point'] = Variable<String>(endPoint.value);
+    }
+    if (payload.present) {
+      map['payload'] = Variable<String>(payload.value);
+    }
+    if (verb.present) {
+      map['verb'] = Variable<String>(verb.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MigrationsCompanion(')
+          ..write('id: $id, ')
+          ..write('endPoint: $endPoint, ')
+          ..write('payload: $payload, ')
+          ..write('verb: $verb')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $MigrationsTable extends Migrations
+    with TableInfo<$MigrationsTable, Migration> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $MigrationsTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedIntColumn _id;
+  @override
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _endPointMeta = const VerificationMeta('endPoint');
+  GeneratedTextColumn _endPoint;
+  @override
+  GeneratedTextColumn get endPoint => _endPoint ??= _constructEndPoint();
+  GeneratedTextColumn _constructEndPoint() {
+    return GeneratedTextColumn(
+      'end_point',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _payloadMeta = const VerificationMeta('payload');
+  GeneratedTextColumn _payload;
+  @override
+  GeneratedTextColumn get payload => _payload ??= _constructPayload();
+  GeneratedTextColumn _constructPayload() {
+    return GeneratedTextColumn(
+      'payload',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _verbMeta = const VerificationMeta('verb');
+  GeneratedTextColumn _verb;
+  @override
+  GeneratedTextColumn get verb => _verb ??= _constructVerb();
+  GeneratedTextColumn _constructVerb() {
+    return GeneratedTextColumn(
+      'verb',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, endPoint, payload, verb];
+  @override
+  $MigrationsTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'migrations';
+  @override
+  final String actualTableName = 'migrations';
+  @override
+  VerificationContext validateIntegrity(Insertable<Migration> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+    }
+    if (data.containsKey('end_point')) {
+      context.handle(_endPointMeta,
+          endPoint.isAcceptableOrUnknown(data['end_point'], _endPointMeta));
+    } else if (isInserting) {
+      context.missing(_endPointMeta);
+    }
+    if (data.containsKey('payload')) {
+      context.handle(_payloadMeta,
+          payload.isAcceptableOrUnknown(data['payload'], _payloadMeta));
+    } else if (isInserting) {
+      context.missing(_payloadMeta);
+    }
+    if (data.containsKey('verb')) {
+      context.handle(
+          _verbMeta, verb.isAcceptableOrUnknown(data['verb'], _verbMeta));
+    } else if (isInserting) {
+      context.missing(_verbMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Migration map(Map<String, dynamic> data, {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return Migration.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $MigrationsTable createAlias(String alias) {
+    return $MigrationsTable(_db, alias);
+  }
+}
+
 abstract class _$SQLDatabase extends GeneratedDatabase {
   _$SQLDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   $ExercisesTable _exercises;
@@ -499,9 +782,11 @@ abstract class _$SQLDatabase extends GeneratedDatabase {
   $ExerciseBodyPartsTable _exerciseBodyParts;
   $ExerciseBodyPartsTable get exerciseBodyParts =>
       _exerciseBodyParts ??= $ExerciseBodyPartsTable(this);
+  $MigrationsTable _migrations;
+  $MigrationsTable get migrations => _migrations ??= $MigrationsTable(this);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [exercises, exerciseBodyParts];
+      [exercises, exerciseBodyParts, migrations];
 }

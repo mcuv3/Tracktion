@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:tracktion/models/difficulties.dart';
+import 'package:tracktion/models/app/difficulties.dart';
 import 'enumToString.dart';
 
-void showDifficulties({Function cb, BuildContext context}) {
+void bottomSheetOptions(
+    {Function cb, BuildContext context, List<dynamic> options}) {
   showModalBottomSheet<void>(
     context: context,
     builder: (BuildContext context) {
@@ -10,7 +11,7 @@ void showDifficulties({Function cb, BuildContext context}) {
         padding: EdgeInsets.all(8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: Difficulty.values
+          children: options
               .map((i) => GestureDetector(
                   onTap: () {
                     Navigator.of(context).pop();

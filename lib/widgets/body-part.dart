@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:tracktion/models/body-parts.dart';
+import 'package:tracktion/models/app/body-parts.dart';
 import '../colors/custom_colors.dart';
 
 class BodyPartWidget extends StatelessWidget {

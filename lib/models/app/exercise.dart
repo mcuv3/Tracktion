@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import './body-parts.dart';
-import './difficulties.dart';
+import 'body-parts.dart';
+import 'difficulties.dart';
 
 class Exercise {
   final int id;

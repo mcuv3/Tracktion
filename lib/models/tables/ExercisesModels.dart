@@ -1,9 +1,15 @@
 import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
-import 'package:tracktion/models/body-parts.dart';
-import 'package:tracktion/models/difficulties.dart';
+import 'package:tracktion/models/app/body-parts.dart';
+import 'package:tracktion/models/app/difficulties.dart';
 
-// @DataClassName(name)
+class Migrations extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get endPoint => text()();
+  TextColumn get payload => text()();
+  TextColumn get verb => text()();
+}
+
 class Exercises extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text().withLength(min: 1, max: 50)();
@@ -15,7 +21,3 @@ class ExerciseBodyParts extends Table {
   IntColumn get exerciseId => integer()();
   IntColumn get bodyPart => intEnum<BodyPartEnum>()();
 }
-
-// class BodyParts extends Table {
-//   IntColumn get id => integer().autoIncrement()();
-// }

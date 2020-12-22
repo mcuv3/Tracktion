@@ -1,13 +1,14 @@
 import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
-import 'package:tracktion/models/body-parts.dart';
-import 'package:tracktion/models/difficulties.dart';
-import './exercise/ExercisesModels.dart';
-import './exercise.dart' as exeApp;
+import 'package:tracktion/models/app/body-parts.dart';
+import 'package:tracktion/models/app/difficulties.dart';
+
+import '../app/exercise.dart' as exeApp;
+import '../tables/ExercisesModels.dart';
 
 part 'database.g.dart';
 
-@UseMoor(tables: [Exercises, ExerciseBodyParts])
+@UseMoor(tables: [Exercises, ExerciseBodyParts, Migrations])
 class SQLDatabase extends _$SQLDatabase {
   // we tell the database where to store the data with this constructor
   SQLDatabase()
@@ -19,7 +20,7 @@ class SQLDatabase extends _$SQLDatabase {
   // you should bump this number whenever you change or add a table definition. Migrations
   // are covered later in this readme.
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -52,8 +53,6 @@ class SQLDatabase extends _$SQLDatabase {
       leftOuterJoin(exerciseBodyParts,
           exerciseBodyParts.exerciseId.equalsExp(exercises.id)),
     ]);
-    // ..groupBy([exercises.id]);
-    // ..where(exerciseBodyParts.bodyPart.equals(bd.index));
     return query.watch().map((row) {
       return row
           .fold<List<exeApp.Exercise>>([], (exes, row) {
@@ -86,11 +85,24 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
+  Future<void> deleteExercise(Exercise exe) async {
+    await (delete(exerciseBodyParts)..where((t) => t.exerciseId.equals(exe.id)))
+        .go();
+    await delete(exercises).delete(exe);
+  }
+
   Future<List<Exercise>> getAllExercises() => select(exercises).get();
+  Future<List<Migration>> getAllMigrations() => select(migrations).get();
+
   Stream<List<Exercise>> watchAllExercises() => select(exercises).watch();
   Future insertExercise(Exercise exe) => into(exercises).insert(exe);
+  Future insertMigration(MigrationsCompanion migration) =>
+      into(migrations).insert(migration);
+
+  Future deleteMigration(Migration migration) =>
+      delete(migrations).delete(migration);
   Future updateExercise(Exercise exe) => update(exercises).replace(exe);
-  Future deleteExercise(Exercise exe) => delete(exercises).delete(exe);
+  // Future deleteExercise(Exercise exe) => delete(exercises).delete(exe);
 }
 
 class ExerciseWithBodyParts {
@@ -98,12 +110,3 @@ class ExerciseWithBodyParts {
   final List<BodyPartEnum> bodyParts;
   ExerciseWithBodyParts({this.exe, this.bodyParts});
 }
-
-// class ExerciseFull {
-//   final Exercise exe;
-//   final List<> bodyPart;
-
-//   set bodyParts(BodyParts){}
-
-//   ExerciseFull(this.exe, this.bodyPart);
-// }

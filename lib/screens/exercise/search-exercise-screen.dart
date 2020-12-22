@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
-import 'package:tracktion/models/body-parts.dart';
-import 'package:tracktion/models/exercise.dart';
+import 'package:tracktion/models/app/body-parts.dart';
+import 'package:tracktion/models/app/exercise.dart';
 import 'package:tracktion/screens/workout/exercise-workout-screen.dart';
 // import 'package:tracktion/models/database.dart';
 import 'package:tracktion/widgets/ErrorMessage.dart';
@@ -86,30 +86,6 @@ class _SearchExerciseState extends State<SearchExercise> {
                       Widget main;
 
                       if (state is Exercises) {
-                        // final exs = state.exs;
-                        //     .where((ex) => ex.name
-                        //         .toLowerCase()
-                        //         .contains(search.toLowerCase()))
-                        //     .toList();
-                        // return Container(
-                        //   height: query.size.height * 0.47,
-                        //   width: query.size.width * 0.9,
-                        //   child: ListView.builder(
-                        //     shrinkWrap: true,
-                        //     reverse: true,
-                        //     itemBuilder: (ctx, i) => GestureDetector(
-                        //         onTap: () {
-                        //           print(exs[i]);
-                        //           Navigator.of(context)
-                        //               .pushNamed(ExerciseWorkOut.routeName,
-                        //                   arguments: exs[i])
-                        //               .then((value) {});
-                        //         },
-                        //         child: ExerciseItem(exs[i])),
-                        //     itemCount: exs.length,
-                        //   ),
-                        // );
-
                         return StreamBuilder(
                           builder: (context, exs) {
                             if (exs.connectionState == ConnectionState.active) {

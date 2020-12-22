@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/auth/auth_cubit.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
-import 'package:tracktion/models/database.dart';
+import 'package:tracktion/models/db/database.dart';
+import 'package:tracktion/models/server/ServerMigrator.dart';
 import './screens/index.dart';
 import 'dart:async';
 import 'dart:io';
@@ -21,7 +22,6 @@ void _enablePlatformOverrideForDesktop() {
 
 void main() {
   _enablePlatformOverrideForDesktop();
-  //SharedPreferences.setMockInitialValues();
   runApp(MyApp());
 }
 
@@ -31,10 +31,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _connectionStatus = 'Unknown';
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
   SQLDatabase database;
+  bool isAuth = false;
 
   @override
   void initState() {
@@ -72,23 +72,20 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    // TODO: search for an orm , create table migrations;
+    if (!isAuth) return;
+
     switch (result) {
       case ConnectivityResult.wifi:
       case ConnectivityResult.mobile:
-      case ConnectivityResult.none:
-        setState(() => _connectionStatus = result.toString());
+        ServerMigrator(db: database).migrate();
         break;
       default:
-        setState(() => _connectionStatus = 'Failed to get connectivity.');
-        break;
+        return;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    print(_connectionStatus);
-
     return BlocProvider(
         create: (BuildContext context) => AuthCubit()..checkCredentials(),
         child: MultiBlocProvider(
@@ -126,11 +123,25 @@ class _MyAppState extends State<MyApp> {
                     ),
                   ),
                 )),
-            home: BlocBuilder<AuthCubit, AuthState>(builder: (ctx, state) {
-              if (state is AuthSuccess) return MainScreen();
-              if (state is AuthFailed) return AuthScreen();
-              return LoadingScreen();
-            }),
+            home: BlocConsumer<AuthCubit, AuthState>(
+              builder: (ctx, state) {
+                if (state is AuthSuccess) return MainScreen();
+                if (state is AuthFailed) return AuthScreen();
+                return LoadingScreen();
+              },
+              listener: (ctx, state) {
+                if (state is AuthSuccess) {
+                  setState(() {
+                    isAuth = true;
+                  });
+                }
+                if (state is AuthFailed) {
+                  setState(() {
+                    isAuth = false;
+                  });
+                }
+              },
+            ),
             routes: {
               MainScreen.routeName: (ctx) => MainScreen(),
               BodyPartsScreen.routeName: (ctx) => BodyPartsScreen(),
