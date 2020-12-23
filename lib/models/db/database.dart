@@ -2,13 +2,22 @@ import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tracktion/models/app/body-parts.dart';
 import 'package:tracktion/models/app/difficulties.dart';
+import 'package:tracktion/models/tables/WorkOut.dart';
 
 import '../app/exercise.dart' as exeApp;
-import '../tables/ExercisesModels.dart';
+import '../app/index.dart' as modelsApp;
+import '../tables/Exercise.dart';
 
 part 'database.g.dart';
 
-@UseMoor(tables: [Exercises, ExerciseBodyParts, Migrations])
+@UseMoor(tables: [
+  Exercises,
+  ExerciseBodyParts,
+  Migrations,
+  SetWorkouts,
+  Workouts,
+  Reps
+])
 class SQLDatabase extends _$SQLDatabase {
   // we tell the database where to store the data with this constructor
   SQLDatabase()
@@ -20,7 +29,7 @@ class SQLDatabase extends _$SQLDatabase {
   // you should bump this number whenever you change or add a table definition. Migrations
   // are covered later in this readme.
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 1;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -48,6 +57,41 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
+  Future<void> deleteSet(SetWorkout setWorkout) {
+    return transaction(() async {
+      await (delete(reps)..where((e) => e.setId.equals(setWorkout.id))).go();
+      await delete(setWorkouts).delete(setWorkout);
+    });
+  }
+
+  Future<void> saveSet(ExerciseSet exerciseSet) {
+    return transaction(() async {
+      final exeId = exerciseSet.exeId;
+      final workoutId = exerciseSet.workoutId;
+      final repsSet = exerciseSet.reps;
+      final setId = await into(setWorkouts).insert(
+          SetWorkoutsCompanion.insert(workOutId: workoutId, exerciseId: exeId),
+          mode: InsertMode.replace);
+      await (delete(reps)..where((entry) => entry.setId.equals(setId))).go();
+      for (final rep in repsSet) {
+        await into(reps).insert(
+            RepsCompanion.insert(
+                reps: rep.reps, weight: rep.weight, rpe: rep.rpe, setId: setId),
+            mode: InsertMode.replace);
+      }
+    });
+  }
+
+  Future<List<TypedResult>> findSetsByDate(DateTime targetDate) {
+    final query = select(setWorkouts).join([
+      innerJoin(workouts, workouts.date.equals(targetDate)),
+      innerJoin(exercises, exercises.id.equalsExp(setWorkouts.exerciseId)),
+      innerJoin(reps, reps.setId.equalsExp(reps.setId)),
+    ]);
+
+    return query.get();
+  }
+
   Future<Stream<List<exeApp.Exercise>>> findByBodyPart(BodyPartEnum bd) async {
     final query = select(exercises).join([
       leftOuterJoin(exerciseBodyParts,
@@ -56,7 +100,6 @@ class SQLDatabase extends _$SQLDatabase {
     return query.watch().map((row) {
       return row
           .fold<List<exeApp.Exercise>>([], (exes, row) {
-            print(row.readTable(exerciseBodyParts));
             final exercise = row.readTable(exercises);
             final exerciseId = row.readTable(exercises).id;
             final bodyPart = row.readTable(exerciseBodyParts).bodyPart;
@@ -77,13 +120,26 @@ class SQLDatabase extends _$SQLDatabase {
             return exes;
           })
           .toList()
-          .where((exe) {
-            // print(exe);
-            return exe.bodyParts.contains(bd);
-          })
+          .where((exe) => exe.bodyParts.contains(bd))
           .toList();
     });
   }
+
+  Future<Workout> findOrCreateWorkout(DateTime date) async {
+    return transaction(() async {
+      final wk =
+          await (select(workouts)..where((e) => e.date.equals(date))).get();
+
+      if (wk.length > 0) return wk[0];
+
+      final workout = WorkoutsCompanion.insert(date: date);
+      final workoutId = await into(workouts).insert(workout);
+
+      return Workout(id: workoutId, date: date);
+    });
+  }
+
+  // COMPLEX DELETES
 
   Future<void> deleteExercise(Exercise exe) async {
     await (delete(exerciseBodyParts)..where((t) => t.exerciseId.equals(exe.id)))
@@ -91,22 +147,43 @@ class SQLDatabase extends _$SQLDatabase {
     await delete(exercises).delete(exe);
   }
 
+  Future<void> deleteWorkout(int workoutId) {
+    return transaction(() async {
+      final sts = await (select(setWorkouts)
+            ..where((e) => e.workOutId.equals(workoutId)))
+          .get();
+      for (final st in sts) {
+        await (delete(reps)..where((e) => e.setId.equals(st.id))).go();
+      }
+      await (delete(workouts)..where((e) => e.id.equals(workoutId))).go();
+    });
+  }
+
+  // Basics Querys
+
   Future<List<Exercise>> getAllExercises() => select(exercises).get();
   Future<List<Migration>> getAllMigrations() => select(migrations).get();
-
   Stream<List<Exercise>> watchAllExercises() => select(exercises).watch();
-  Future insertExercise(Exercise exe) => into(exercises).insert(exe);
   Future insertMigration(MigrationsCompanion migration) =>
       into(migrations).insert(migration);
-
   Future deleteMigration(Migration migration) =>
       delete(migrations).delete(migration);
-  Future updateExercise(Exercise exe) => update(exercises).replace(exe);
-  // Future deleteExercise(Exercise exe) => delete(exercises).delete(exe);
+  Future saveRep(Rep rep) => into(reps).insert(rep, mode: InsertMode.replace);
+  Future deleteRep(Rep rep) => delete(reps).delete(rep);
+
+  Future<int> saveWorkOut(WorkoutsCompanion wk) =>
+      into(workouts).insert(wk, mode: InsertMode.replace);
 }
 
 class ExerciseWithBodyParts {
   final Exercise exe;
   final List<BodyPartEnum> bodyParts;
   ExerciseWithBodyParts({this.exe, this.bodyParts});
+}
+
+class ExerciseSet {
+  final int exeId;
+  final int workoutId;
+  final List<Rep> reps;
+  ExerciseSet({this.exeId, this.reps, this.workoutId});
 }

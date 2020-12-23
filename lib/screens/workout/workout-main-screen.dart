@@ -3,9 +3,12 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/screens/data/dummy.dart';
+import 'package:tracktion/widgets/DatePicker.dart';
 import 'package:tracktion/widgets/reps-item.dart';
 import '../../colors/custom_colors.dart';
 import 'package:tracktion/widgets/drawer.dart';
+
+import '../index.dart';
 
 class WorkOutScreen extends StatefulWidget {
   static const routeName = "/workout";
@@ -56,18 +59,23 @@ class _WorkOutScreenState extends State<WorkOutScreen>
   }
 
   Widget buildHeader(BuildContext context, String title) {
-    return Container(
-      padding: EdgeInsets.all(4),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-        color: Theme.of(context).colorScheme.routines,
-      ),
-      child: Text(
-        title,
-        style: TextStyle(
-            fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pushNamed(ExerciseWorkOut.routeName);
+      },
+      child: Container(
+        padding: EdgeInsets.all(4),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+          color: Theme.of(context).colorScheme.routines,
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+              fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }
@@ -76,7 +84,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
   Widget build(BuildContext context) {
     final items = [];
     dummy_workouts[0].forEach((e) {
-      items.add({"kind": "title", "value": e["name"]});
+      items.add({"kind": "title", "value": e["name"],});
       (e["series"] as List<dynamic>).forEach((rep) {
         items.add({
           "kind": "rep",
@@ -155,60 +163,6 @@ class _WorkOutScreenState extends State<WorkOutScreen>
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class DatePicker extends StatelessWidget {
-  const DatePicker(
-      {Key key, @required this.changeDate, @required this.currentDate})
-      : super(key: key);
-
-  final void Function(bool) changeDate;
-  final DateTime currentDate;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: Offset(0, 3), // changes position of shadow
-            ),
-          ],
-          color: Colors.white,
-          border: Border.all(width: 0.2, color: Colors.black),
-          borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(10),
-              bottomRight: Radius.circular(12))),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          IconButton(
-              icon: Icon(
-                Icons.chevron_left,
-                size: 32,
-                color: Theme.of(context).colorScheme.analysis,
-              ),
-              onPressed: () {
-                changeDate(false);
-              }),
-          Text('${currentDate.day}-${currentDate.month}-${currentDate.year}'),
-          IconButton(
-              icon: Icon(
-                Icons.chevron_right,
-                size: 32,
-                color: Theme.of(context).colorScheme.analysis,
-              ),
-              onPressed: () {
-                changeDate(true);
-              }),
-        ],
       ),
     );
   }

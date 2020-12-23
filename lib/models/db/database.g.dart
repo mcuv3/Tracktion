@@ -375,10 +375,9 @@ class ExerciseBodyPartsCompanion extends UpdateCompanion<ExerciseBodyPart> {
     this.bodyPart = const Value.absent(),
   });
   ExerciseBodyPartsCompanion.insert({
-    @required int exerciseId,
+    this.exerciseId = const Value.absent(),
     @required BodyPartEnum bodyPart,
-  })  : exerciseId = Value(exerciseId),
-        bodyPart = Value(bodyPart);
+  }) : bodyPart = Value(bodyPart);
   static Insertable<ExerciseBodyPart> custom({
     Expression<int> exerciseId,
     Expression<int> bodyPart,
@@ -430,11 +429,8 @@ class $ExerciseBodyPartsTable extends ExerciseBodyParts
   @override
   GeneratedIntColumn get exerciseId => _exerciseId ??= _constructExerciseId();
   GeneratedIntColumn _constructExerciseId() {
-    return GeneratedIntColumn(
-      'exercise_id',
-      $tableName,
-      false,
-    );
+    return GeneratedIntColumn('exercise_id', $tableName, false,
+        $customConstraints: 'NOT NULL REFERENCES exercises (id)');
   }
 
   final VerificationMeta _bodyPartMeta = const VerificationMeta('bodyPart');
@@ -467,15 +463,13 @@ class $ExerciseBodyPartsTable extends ExerciseBodyParts
           _exerciseIdMeta,
           exerciseId.isAcceptableOrUnknown(
               data['exercise_id'], _exerciseIdMeta));
-    } else if (isInserting) {
-      context.missing(_exerciseIdMeta);
     }
     context.handle(_bodyPartMeta, const VerificationResult.success());
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  Set<GeneratedColumn> get $primaryKey => {exerciseId};
   @override
   ExerciseBodyPart map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
@@ -775,6 +769,788 @@ class $MigrationsTable extends Migrations
   }
 }
 
+class SetWorkout extends DataClass implements Insertable<SetWorkout> {
+  final int id;
+  final int workOutId;
+  final int exerciseId;
+  SetWorkout(
+      {@required this.id, @required this.workOutId, @required this.exerciseId});
+  factory SetWorkout.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    return SetWorkout(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      workOutId: intType
+          .mapFromDatabaseResponse(data['${effectivePrefix}work_out_id']),
+      exerciseId: intType
+          .mapFromDatabaseResponse(data['${effectivePrefix}exercise_id']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || workOutId != null) {
+      map['work_out_id'] = Variable<int>(workOutId);
+    }
+    if (!nullToAbsent || exerciseId != null) {
+      map['exercise_id'] = Variable<int>(exerciseId);
+    }
+    return map;
+  }
+
+  SetWorkoutsCompanion toCompanion(bool nullToAbsent) {
+    return SetWorkoutsCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      workOutId: workOutId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(workOutId),
+      exerciseId: exerciseId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(exerciseId),
+    );
+  }
+
+  factory SetWorkout.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return SetWorkout(
+      id: serializer.fromJson<int>(json['id']),
+      workOutId: serializer.fromJson<int>(json['workOutId']),
+      exerciseId: serializer.fromJson<int>(json['exerciseId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'workOutId': serializer.toJson<int>(workOutId),
+      'exerciseId': serializer.toJson<int>(exerciseId),
+    };
+  }
+
+  SetWorkout copyWith({int id, int workOutId, int exerciseId}) => SetWorkout(
+        id: id ?? this.id,
+        workOutId: workOutId ?? this.workOutId,
+        exerciseId: exerciseId ?? this.exerciseId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('SetWorkout(')
+          ..write('id: $id, ')
+          ..write('workOutId: $workOutId, ')
+          ..write('exerciseId: $exerciseId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      $mrjf($mrjc(id.hashCode, $mrjc(workOutId.hashCode, exerciseId.hashCode)));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is SetWorkout &&
+          other.id == this.id &&
+          other.workOutId == this.workOutId &&
+          other.exerciseId == this.exerciseId);
+}
+
+class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
+  final Value<int> id;
+  final Value<int> workOutId;
+  final Value<int> exerciseId;
+  const SetWorkoutsCompanion({
+    this.id = const Value.absent(),
+    this.workOutId = const Value.absent(),
+    this.exerciseId = const Value.absent(),
+  });
+  SetWorkoutsCompanion.insert({
+    this.id = const Value.absent(),
+    @required int workOutId,
+    @required int exerciseId,
+  })  : workOutId = Value(workOutId),
+        exerciseId = Value(exerciseId);
+  static Insertable<SetWorkout> custom({
+    Expression<int> id,
+    Expression<int> workOutId,
+    Expression<int> exerciseId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (workOutId != null) 'work_out_id': workOutId,
+      if (exerciseId != null) 'exercise_id': exerciseId,
+    });
+  }
+
+  SetWorkoutsCompanion copyWith(
+      {Value<int> id, Value<int> workOutId, Value<int> exerciseId}) {
+    return SetWorkoutsCompanion(
+      id: id ?? this.id,
+      workOutId: workOutId ?? this.workOutId,
+      exerciseId: exerciseId ?? this.exerciseId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (workOutId.present) {
+      map['work_out_id'] = Variable<int>(workOutId.value);
+    }
+    if (exerciseId.present) {
+      map['exercise_id'] = Variable<int>(exerciseId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SetWorkoutsCompanion(')
+          ..write('id: $id, ')
+          ..write('workOutId: $workOutId, ')
+          ..write('exerciseId: $exerciseId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SetWorkoutsTable extends SetWorkouts
+    with TableInfo<$SetWorkoutsTable, SetWorkout> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $SetWorkoutsTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedIntColumn _id;
+  @override
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _workOutIdMeta = const VerificationMeta('workOutId');
+  GeneratedIntColumn _workOutId;
+  @override
+  GeneratedIntColumn get workOutId => _workOutId ??= _constructWorkOutId();
+  GeneratedIntColumn _constructWorkOutId() {
+    return GeneratedIntColumn('work_out_id', $tableName, false,
+        $customConstraints: 'NOT NULL REFERENCES workouts (id)');
+  }
+
+  final VerificationMeta _exerciseIdMeta = const VerificationMeta('exerciseId');
+  GeneratedIntColumn _exerciseId;
+  @override
+  GeneratedIntColumn get exerciseId => _exerciseId ??= _constructExerciseId();
+  GeneratedIntColumn _constructExerciseId() {
+    return GeneratedIntColumn('exercise_id', $tableName, false,
+        $customConstraints: 'NOT NULL REFERENCES exercises(id)');
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, workOutId, exerciseId];
+  @override
+  $SetWorkoutsTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'set_workouts';
+  @override
+  final String actualTableName = 'set_workouts';
+  @override
+  VerificationContext validateIntegrity(Insertable<SetWorkout> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+    }
+    if (data.containsKey('work_out_id')) {
+      context.handle(_workOutIdMeta,
+          workOutId.isAcceptableOrUnknown(data['work_out_id'], _workOutIdMeta));
+    } else if (isInserting) {
+      context.missing(_workOutIdMeta);
+    }
+    if (data.containsKey('exercise_id')) {
+      context.handle(
+          _exerciseIdMeta,
+          exerciseId.isAcceptableOrUnknown(
+              data['exercise_id'], _exerciseIdMeta));
+    } else if (isInserting) {
+      context.missing(_exerciseIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SetWorkout map(Map<String, dynamic> data, {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return SetWorkout.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $SetWorkoutsTable createAlias(String alias) {
+    return $SetWorkoutsTable(_db, alias);
+  }
+}
+
+class Workout extends DataClass implements Insertable<Workout> {
+  final int id;
+  final DateTime date;
+  Workout({@required this.id, @required this.date});
+  factory Workout.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final dateTimeType = db.typeSystem.forDartType<DateTime>();
+    return Workout(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      date:
+          dateTimeType.mapFromDatabaseResponse(data['${effectivePrefix}date']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || date != null) {
+      map['date'] = Variable<DateTime>(date);
+    }
+    return map;
+  }
+
+  WorkoutsCompanion toCompanion(bool nullToAbsent) {
+    return WorkoutsCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      date: date == null && nullToAbsent ? const Value.absent() : Value(date),
+    );
+  }
+
+  factory Workout.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return Workout(
+      id: serializer.fromJson<int>(json['id']),
+      date: serializer.fromJson<DateTime>(json['date']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'date': serializer.toJson<DateTime>(date),
+    };
+  }
+
+  Workout copyWith({int id, DateTime date}) => Workout(
+        id: id ?? this.id,
+        date: date ?? this.date,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Workout(')
+          ..write('id: $id, ')
+          ..write('date: $date')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(id.hashCode, date.hashCode));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is Workout && other.id == this.id && other.date == this.date);
+}
+
+class WorkoutsCompanion extends UpdateCompanion<Workout> {
+  final Value<int> id;
+  final Value<DateTime> date;
+  const WorkoutsCompanion({
+    this.id = const Value.absent(),
+    this.date = const Value.absent(),
+  });
+  WorkoutsCompanion.insert({
+    this.id = const Value.absent(),
+    @required DateTime date,
+  }) : date = Value(date);
+  static Insertable<Workout> custom({
+    Expression<int> id,
+    Expression<DateTime> date,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (date != null) 'date': date,
+    });
+  }
+
+  WorkoutsCompanion copyWith({Value<int> id, Value<DateTime> date}) {
+    return WorkoutsCompanion(
+      id: id ?? this.id,
+      date: date ?? this.date,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WorkoutsCompanion(')
+          ..write('id: $id, ')
+          ..write('date: $date')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $WorkoutsTable extends Workouts with TableInfo<$WorkoutsTable, Workout> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $WorkoutsTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedIntColumn _id;
+  @override
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _dateMeta = const VerificationMeta('date');
+  GeneratedDateTimeColumn _date;
+  @override
+  GeneratedDateTimeColumn get date => _date ??= _constructDate();
+  GeneratedDateTimeColumn _constructDate() {
+    return GeneratedDateTimeColumn(
+      'date',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, date];
+  @override
+  $WorkoutsTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'workouts';
+  @override
+  final String actualTableName = 'workouts';
+  @override
+  VerificationContext validateIntegrity(Insertable<Workout> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+          _dateMeta, date.isAcceptableOrUnknown(data['date'], _dateMeta));
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Workout map(Map<String, dynamic> data, {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return Workout.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $WorkoutsTable createAlias(String alias) {
+    return $WorkoutsTable(_db, alias);
+  }
+}
+
+class Rep extends DataClass implements Insertable<Rep> {
+  final int id;
+  final double weight;
+  final int reps;
+  final int rpe;
+  final String note;
+  final int setId;
+  Rep(
+      {@required this.id,
+      @required this.weight,
+      @required this.reps,
+      @required this.rpe,
+      this.note,
+      @required this.setId});
+  factory Rep.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final doubleType = db.typeSystem.forDartType<double>();
+    final stringType = db.typeSystem.forDartType<String>();
+    return Rep(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      weight:
+          doubleType.mapFromDatabaseResponse(data['${effectivePrefix}weight']),
+      reps: intType.mapFromDatabaseResponse(data['${effectivePrefix}reps']),
+      rpe: intType.mapFromDatabaseResponse(data['${effectivePrefix}rpe']),
+      note: stringType.mapFromDatabaseResponse(data['${effectivePrefix}note']),
+      setId: intType.mapFromDatabaseResponse(data['${effectivePrefix}set_id']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || weight != null) {
+      map['weight'] = Variable<double>(weight);
+    }
+    if (!nullToAbsent || reps != null) {
+      map['reps'] = Variable<int>(reps);
+    }
+    if (!nullToAbsent || rpe != null) {
+      map['rpe'] = Variable<int>(rpe);
+    }
+    if (!nullToAbsent || note != null) {
+      map['note'] = Variable<String>(note);
+    }
+    if (!nullToAbsent || setId != null) {
+      map['set_id'] = Variable<int>(setId);
+    }
+    return map;
+  }
+
+  RepsCompanion toCompanion(bool nullToAbsent) {
+    return RepsCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      weight:
+          weight == null && nullToAbsent ? const Value.absent() : Value(weight),
+      reps: reps == null && nullToAbsent ? const Value.absent() : Value(reps),
+      rpe: rpe == null && nullToAbsent ? const Value.absent() : Value(rpe),
+      note: note == null && nullToAbsent ? const Value.absent() : Value(note),
+      setId:
+          setId == null && nullToAbsent ? const Value.absent() : Value(setId),
+    );
+  }
+
+  factory Rep.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return Rep(
+      id: serializer.fromJson<int>(json['id']),
+      weight: serializer.fromJson<double>(json['weight']),
+      reps: serializer.fromJson<int>(json['reps']),
+      rpe: serializer.fromJson<int>(json['rpe']),
+      note: serializer.fromJson<String>(json['note']),
+      setId: serializer.fromJson<int>(json['setId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'weight': serializer.toJson<double>(weight),
+      'reps': serializer.toJson<int>(reps),
+      'rpe': serializer.toJson<int>(rpe),
+      'note': serializer.toJson<String>(note),
+      'setId': serializer.toJson<int>(setId),
+    };
+  }
+
+  Rep copyWith(
+          {int id, double weight, int reps, int rpe, String note, int setId}) =>
+      Rep(
+        id: id ?? this.id,
+        weight: weight ?? this.weight,
+        reps: reps ?? this.reps,
+        rpe: rpe ?? this.rpe,
+        note: note ?? this.note,
+        setId: setId ?? this.setId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Rep(')
+          ..write('id: $id, ')
+          ..write('weight: $weight, ')
+          ..write('reps: $reps, ')
+          ..write('rpe: $rpe, ')
+          ..write('note: $note, ')
+          ..write('setId: $setId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(
+          weight.hashCode,
+          $mrjc(reps.hashCode,
+              $mrjc(rpe.hashCode, $mrjc(note.hashCode, setId.hashCode))))));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is Rep &&
+          other.id == this.id &&
+          other.weight == this.weight &&
+          other.reps == this.reps &&
+          other.rpe == this.rpe &&
+          other.note == this.note &&
+          other.setId == this.setId);
+}
+
+class RepsCompanion extends UpdateCompanion<Rep> {
+  final Value<int> id;
+  final Value<double> weight;
+  final Value<int> reps;
+  final Value<int> rpe;
+  final Value<String> note;
+  final Value<int> setId;
+  const RepsCompanion({
+    this.id = const Value.absent(),
+    this.weight = const Value.absent(),
+    this.reps = const Value.absent(),
+    this.rpe = const Value.absent(),
+    this.note = const Value.absent(),
+    this.setId = const Value.absent(),
+  });
+  RepsCompanion.insert({
+    this.id = const Value.absent(),
+    @required double weight,
+    @required int reps,
+    @required int rpe,
+    this.note = const Value.absent(),
+    @required int setId,
+  })  : weight = Value(weight),
+        reps = Value(reps),
+        rpe = Value(rpe),
+        setId = Value(setId);
+  static Insertable<Rep> custom({
+    Expression<int> id,
+    Expression<double> weight,
+    Expression<int> reps,
+    Expression<int> rpe,
+    Expression<String> note,
+    Expression<int> setId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (weight != null) 'weight': weight,
+      if (reps != null) 'reps': reps,
+      if (rpe != null) 'rpe': rpe,
+      if (note != null) 'note': note,
+      if (setId != null) 'set_id': setId,
+    });
+  }
+
+  RepsCompanion copyWith(
+      {Value<int> id,
+      Value<double> weight,
+      Value<int> reps,
+      Value<int> rpe,
+      Value<String> note,
+      Value<int> setId}) {
+    return RepsCompanion(
+      id: id ?? this.id,
+      weight: weight ?? this.weight,
+      reps: reps ?? this.reps,
+      rpe: rpe ?? this.rpe,
+      note: note ?? this.note,
+      setId: setId ?? this.setId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (weight.present) {
+      map['weight'] = Variable<double>(weight.value);
+    }
+    if (reps.present) {
+      map['reps'] = Variable<int>(reps.value);
+    }
+    if (rpe.present) {
+      map['rpe'] = Variable<int>(rpe.value);
+    }
+    if (note.present) {
+      map['note'] = Variable<String>(note.value);
+    }
+    if (setId.present) {
+      map['set_id'] = Variable<int>(setId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RepsCompanion(')
+          ..write('id: $id, ')
+          ..write('weight: $weight, ')
+          ..write('reps: $reps, ')
+          ..write('rpe: $rpe, ')
+          ..write('note: $note, ')
+          ..write('setId: $setId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $RepsTable extends Reps with TableInfo<$RepsTable, Rep> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $RepsTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedIntColumn _id;
+  @override
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _weightMeta = const VerificationMeta('weight');
+  GeneratedRealColumn _weight;
+  @override
+  GeneratedRealColumn get weight => _weight ??= _constructWeight();
+  GeneratedRealColumn _constructWeight() {
+    return GeneratedRealColumn(
+      'weight',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _repsMeta = const VerificationMeta('reps');
+  GeneratedIntColumn _reps;
+  @override
+  GeneratedIntColumn get reps => _reps ??= _constructReps();
+  GeneratedIntColumn _constructReps() {
+    return GeneratedIntColumn(
+      'reps',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _rpeMeta = const VerificationMeta('rpe');
+  GeneratedIntColumn _rpe;
+  @override
+  GeneratedIntColumn get rpe => _rpe ??= _constructRpe();
+  GeneratedIntColumn _constructRpe() {
+    return GeneratedIntColumn(
+      'rpe',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _noteMeta = const VerificationMeta('note');
+  GeneratedTextColumn _note;
+  @override
+  GeneratedTextColumn get note => _note ??= _constructNote();
+  GeneratedTextColumn _constructNote() {
+    return GeneratedTextColumn(
+      'note',
+      $tableName,
+      true,
+    );
+  }
+
+  final VerificationMeta _setIdMeta = const VerificationMeta('setId');
+  GeneratedIntColumn _setId;
+  @override
+  GeneratedIntColumn get setId => _setId ??= _constructSetId();
+  GeneratedIntColumn _constructSetId() {
+    return GeneratedIntColumn('set_id', $tableName, false,
+        $customConstraints: 'NOT NULL REFERENCES sets (id)');
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, weight, reps, rpe, note, setId];
+  @override
+  $RepsTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'reps';
+  @override
+  final String actualTableName = 'reps';
+  @override
+  VerificationContext validateIntegrity(Insertable<Rep> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+    }
+    if (data.containsKey('weight')) {
+      context.handle(_weightMeta,
+          weight.isAcceptableOrUnknown(data['weight'], _weightMeta));
+    } else if (isInserting) {
+      context.missing(_weightMeta);
+    }
+    if (data.containsKey('reps')) {
+      context.handle(
+          _repsMeta, reps.isAcceptableOrUnknown(data['reps'], _repsMeta));
+    } else if (isInserting) {
+      context.missing(_repsMeta);
+    }
+    if (data.containsKey('rpe')) {
+      context.handle(
+          _rpeMeta, rpe.isAcceptableOrUnknown(data['rpe'], _rpeMeta));
+    } else if (isInserting) {
+      context.missing(_rpeMeta);
+    }
+    if (data.containsKey('note')) {
+      context.handle(
+          _noteMeta, note.isAcceptableOrUnknown(data['note'], _noteMeta));
+    }
+    if (data.containsKey('set_id')) {
+      context.handle(
+          _setIdMeta, setId.isAcceptableOrUnknown(data['set_id'], _setIdMeta));
+    } else if (isInserting) {
+      context.missing(_setIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Rep map(Map<String, dynamic> data, {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return Rep.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $RepsTable createAlias(String alias) {
+    return $RepsTable(_db, alias);
+  }
+}
+
 abstract class _$SQLDatabase extends GeneratedDatabase {
   _$SQLDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   $ExercisesTable _exercises;
@@ -784,9 +1560,15 @@ abstract class _$SQLDatabase extends GeneratedDatabase {
       _exerciseBodyParts ??= $ExerciseBodyPartsTable(this);
   $MigrationsTable _migrations;
   $MigrationsTable get migrations => _migrations ??= $MigrationsTable(this);
+  $SetWorkoutsTable _setWorkouts;
+  $SetWorkoutsTable get setWorkouts => _setWorkouts ??= $SetWorkoutsTable(this);
+  $WorkoutsTable _workouts;
+  $WorkoutsTable get workouts => _workouts ??= $WorkoutsTable(this);
+  $RepsTable _reps;
+  $RepsTable get reps => _reps ??= $RepsTable(this);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [exercises, exerciseBodyParts, migrations];
+      [exercises, exerciseBodyParts, migrations, setWorkouts, workouts, reps];
 }

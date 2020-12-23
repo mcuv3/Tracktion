@@ -99,8 +99,9 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
   Stream<ExerciseState> _fetchExes(FetchExers event) async* {
     yield ExercisesLoading();
     try {
-      final migrations = await db.getAllMigrations();
-      print(migrations);
+      final sets = await db.findSetsByDate(DateTime.now());
+
+      print(sets);
 
       final dataSql = await db.findByBodyPart(event.bodyPart);
       yield Exercises(dataSql);

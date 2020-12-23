@@ -7,7 +7,13 @@ class WorkoutInitial extends WorkoutState {}
 
 class WorkoutLoading extends WorkoutState {}
 
-class WorkoutFailed extends WorkoutState {
+class WorkoutSets extends WorkoutState {
+  final Stream<List<Set>> sets;
+  final DateTime date;
+  WorkoutSets({this.sets, this.date});
+}
+
+class WorkoutTransactionFailed extends WorkoutState {
   final String message;
-  WorkoutFailed(this.message);
+  WorkoutTransactionFailed(this.message);
 }
