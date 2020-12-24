@@ -10,7 +10,7 @@ part 'workout_state.dart';
 
 class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   final SQLDatabase db;
-  WorkoutBloc({this.db}) : super(WorkoutInitial());
+  WorkoutBloc({@required this.db}) : super(WorkoutInitial());
 
   @override
   Stream<WorkoutState> mapEventToState(
@@ -35,7 +35,9 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     yield WorkoutLoading();
     try {
       final date = event.date;
-      await Future.delayed(Duration(seconds: 3));
+      final sets = await this.db.findSetsByDate(date);
+      print(sets);
+
       yield WorkoutInitial();
     } catch (e) {
       yield WorkoutTransactionFailed("Cannot fetch this workout");

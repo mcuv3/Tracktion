@@ -5,11 +5,17 @@ class Rep {
   final int reps;
   final double weight;
   final int rpe;
+  String notes;
   Rep(
       {@required this.id,
       @required this.reps,
       @required this.weight,
-      @required this.rpe});
+      @required this.rpe,
+      this.notes = ""});
+
+  set updateNote(String note) {
+    this.notes = note;
+  }
 
   @override
   String toString() {

@@ -7,6 +7,7 @@ class TracktionInput extends StatelessWidget {
   final String Function(String) validator;
   final Function(String) change;
   final TextEditingController controller;
+  final int maxLength;
 
   TracktionInput(
       {this.initialValue,
@@ -14,7 +15,8 @@ class TracktionInput extends StatelessWidget {
       this.controller,
       this.maxlines = 1,
       this.validator,
-       this.change});
+      this.change,
+      this.maxLength});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,7 @@ class TracktionInput extends StatelessWidget {
         onChanged: change,
         onFieldSubmitted: change,
         onSaved: change,
+        maxLength: maxLength,
         decoration: InputDecoration(
             errorStyle: TextStyle(color: Colors.black),
             fillColor: Colors.white,

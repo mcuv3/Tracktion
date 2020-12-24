@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tracktion/models/app/rep.dart';
-import '../colors/custom_colors.dart';
+import '../../colors/custom_colors.dart';
 
-Future<Rep> repInputs(BuildContext context, Rep rep) {
+Future<Rep> repInputsModal(BuildContext context, Rep rep) {
   var values = {
     "reps": rep.reps,
     "weight": rep.weight,
@@ -112,13 +112,14 @@ class _RepInputState extends State<RepInput> {
       finalValue = widget.isFloat ? 0.0 : 0;
     } else {
       if (increment == null)
-        finalValue = val.toString();
+        finalValue = val;
       else if (val + increment >= 0)
         finalValue = val + increment;
       else
         finalValue = widget.isFloat ? 0.0 : 0;
-
-      finalValue = isRpe() && !isValidRpe(finalValue) ? 10 : finalValue;
+      if (isRpe()) {
+        finalValue = !isValidRpe(finalValue) ? 10 : finalValue;
+      }
     }
 
     setState(() {
@@ -156,8 +157,7 @@ class _RepInputState extends State<RepInput> {
         child: TextFormField(
           textAlign: TextAlign.center,
           controller: controller,
-          // initialValue: widget.values[widget.inputName].toString(),
-          onChanged: (val) {
+          onFieldSubmitted: (val) {
             changeValueHandler(value: val);
           },
           showCursor: false,

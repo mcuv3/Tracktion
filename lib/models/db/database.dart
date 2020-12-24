@@ -82,14 +82,24 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
-  Future<List<TypedResult>> findSetsByDate(DateTime targetDate) {
+  Stream<List<List<TypedResult>>> findSetsByDate(DateTime targetDate) {
     final query = select(setWorkouts).join([
       innerJoin(workouts, workouts.date.equals(targetDate)),
       innerJoin(exercises, exercises.id.equalsExp(setWorkouts.exerciseId)),
       innerJoin(reps, reps.setId.equalsExp(reps.setId)),
     ]);
 
-    return query.get();
+    return query.watch().map((row) {
+      return row.map((tuple) {
+        final exe = tuple.readTable(exercises);
+        final wk = tuple.readTable(workouts);
+        final rep = tuple.readTable(reps);
+        print(exe);
+        print(wk);
+        print(rep);
+        return row;
+      }).toList();
+    });
   }
 
   Future<Stream<List<exeApp.Exercise>>> findByBodyPart(BodyPartEnum bd) async {

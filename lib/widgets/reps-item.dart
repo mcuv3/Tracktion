@@ -6,11 +6,13 @@ class RepItem extends StatelessWidget {
   final int reps;
   final double weight;
   final int rpe;
+  final Function onPressComment;
 
   RepItem(
       {@required this.reps,
       @required this.weight,
       @required this.rpe,
+      @required this.onPressComment,
       this.isExpanded = false});
 
   @override
@@ -41,7 +43,15 @@ class RepItem extends StatelessWidget {
               color: Colors.red,
             ),
             Text("RPE $rpe", style: textStyle),
-            Icon(Icons.comment, color: Colors.red)
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              icon: Icon(
+                Icons.comment,
+              ),
+              onPressed: onPressComment,
+              color: Colors.red,
+              padding: EdgeInsets.all(0),
+            )
           ],
         ),
       ),

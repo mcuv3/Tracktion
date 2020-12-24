@@ -6,7 +6,8 @@ import 'package:tracktion/models/app/rep.dart';
 import 'package:tracktion/screens/index.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/util/enumToString.dart';
-import 'package:tracktion/widgets/RepInputs.dart';
+import 'package:tracktion/widgets/modals/NoteInput.dart';
+import 'package:tracktion/widgets/modals/RepInputs.dart';
 import 'package:tracktion/widgets/body-part.dart';
 import 'package:tracktion/widgets/reps-item.dart';
 import '../../colors/custom_colors.dart';
@@ -66,14 +67,15 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
     });
   }
 
-  void removeRepeHandler(int id) {
-    setState(() {
-      sets.removeWhere((set) => set.id == id);
+  void changeCommentHandler(Rep rep) {
+    // rep.updateNote = 'something';
+    noteRepModal(context: context, rep: rep).then((updatedRep) {
+      if (updatedRep != null) print(updatedRep.notes);
     });
   }
 
   void editRepHandler(Rep rep, int indexRep) {
-    repInputs(context, rep).then((repUpadated) {
+    repInputsModal(context, rep).then((repUpadated) {
       setState(() {
         sets[indexRep] = repUpadated;
       });
@@ -180,6 +182,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                             weight: sets[i].weight,
                             rpe: sets[i].rpe,
                             isExpanded: true,
+                            onPressComment: () => changeCommentHandler(sets[i]),
                           ),
                         ),
                       ),

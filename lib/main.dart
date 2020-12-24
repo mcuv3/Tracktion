@@ -94,7 +94,7 @@ class _MyAppState extends State<MyApp> {
               create: (BuildContext context) => ExerciseBloc(db: database),
             ),
             BlocProvider<WorkoutBloc>(
-              create: (context) => WorkoutBloc(),
+              create: (context) => WorkoutBloc(db: database),
             )
           ],
           child: MaterialApp(

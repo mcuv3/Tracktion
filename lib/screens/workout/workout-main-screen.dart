@@ -33,6 +33,13 @@ class _WorkOutScreenState extends State<WorkOutScreen>
     )..addListener(_updateSelectedPage);
   }
 
+  @override
+  void didChangeDependencies() {
+    BlocProvider.of<WorkoutBloc>(context).add(FetchWorkout(DateTime.now()));
+
+    super.didChangeDependencies();
+  }
+
   void _updateSelectedPage() {
     final closestPage = _pageController.page.round();
     final isClosestPageSelected =
@@ -45,6 +52,8 @@ class _WorkOutScreenState extends State<WorkOutScreen>
       // TODO: update the date here as well
     }
   }
+
+  void viewCommentHandler() {}
 
   void changeDateHandler(bool isRight) {
     final newPage = _selectedPage + (isRight ? 1 : -1);
@@ -84,7 +93,10 @@ class _WorkOutScreenState extends State<WorkOutScreen>
   Widget build(BuildContext context) {
     final items = [];
     dummy_workouts[0].forEach((e) {
-      items.add({"kind": "title", "value": e["name"],});
+      items.add({
+        "kind": "title",
+        "value": e["name"],
+      });
       (e["series"] as List<dynamic>).forEach((rep) {
         items.add({
           "kind": "rep",
@@ -106,6 +118,11 @@ class _WorkOutScreenState extends State<WorkOutScreen>
             IconButton(icon: Icon(Icons.settings), onPressed: () {}),
             IconButton(icon: Icon(Icons.info), onPressed: () {}),
             IconButton(icon: Icon(Icons.timer), onPressed: () {}),
+            IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  Navigator.of(context).pushNamed(BodyPartsScreen.routeName);
+                })
           ],
         ),
         drawer: MainDrawer(),
@@ -124,6 +141,10 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                       return Center(
                         child: CircularProgressIndicator(),
                       );
+                    }
+
+                    if (state is WorkoutSets) {
+                      print(state);
                     }
 
                     return Container(
@@ -147,6 +168,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                                         reps: rep["reps"],
                                         weight: rep["weight"],
                                         rpe: rep["rpe"],
+                                        onPressComment: viewCommentHandler,
                                       );
                                     }
                                     return SizedBox(
