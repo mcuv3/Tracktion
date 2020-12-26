@@ -1,8 +1,7 @@
-import 'package:tracktion/models/db/database.dart';
+import './index.dart';
 
-class Set {
-  final Workout workout;
+class SetWorkout {
   final Exercise exercise;
   final List<Rep> reps;
-  Set({ this.workout, this.exercise, this.reps});
+  SetWorkout({this.exercise, this.reps});
 }

@@ -7,7 +7,8 @@ class Rep {
   final int rpe;
   String notes;
   Rep(
-      {@required this.id,
+      {Key key,
+      @required this.id,
       @required this.reps,
       @required this.weight,
       @required this.rpe,

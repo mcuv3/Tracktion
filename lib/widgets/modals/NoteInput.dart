@@ -3,7 +3,7 @@ import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/widgets/input.dart';
 
 Future<Rep> noteRepModal({BuildContext context, Rep rep}) async {
-  var note = '';
+  var note = rep.notes;
 
   await showDialog(
     context: context,

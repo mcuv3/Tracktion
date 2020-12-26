@@ -63,6 +63,7 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
           difficulty: exe.difficulty,
           name: exe.name,
           notes: exe.notes);
+
       final exeWithBd =
           ExerciseWithBodyParts(bodyParts: exe.bodyParts, exe: exeDb);
       await db.saveExercise(exeWithBd);

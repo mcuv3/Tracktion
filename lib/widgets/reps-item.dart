@@ -6,10 +6,12 @@ class RepItem extends StatelessWidget {
   final int reps;
   final double weight;
   final int rpe;
+  final bool hasComment;
   final Function onPressComment;
 
   RepItem(
-      {@required this.reps,
+      {@required this.hasComment,
+      @required this.reps,
       @required this.weight,
       @required this.rpe,
       @required this.onPressComment,
@@ -46,7 +48,7 @@ class RepItem extends StatelessWidget {
             IconButton(
               visualDensity: VisualDensity.compact,
               icon: Icon(
-                Icons.comment,
+                hasComment ? Icons.comment : Icons.insert_comment_outlined,
               ),
               onPressed: onPressComment,
               color: Colors.red,

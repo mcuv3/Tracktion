@@ -30,18 +30,15 @@ class ExerciseItem extends StatelessWidget {
       padding: const EdgeInsets.all(4),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),
-              child: ListTile(
-          onTap: () {
-            Navigator.of(context)
-                .pushNamed(ExerciseWorkOut.routeName, arguments: exs);
-          },
+        child: ListTile(
           visualDensity: VisualDensity.compact,
           contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 5),
           tileColor: Colors.white,
           title: Text(
             'Difficulty: ${enumToString(exs.difficulty)} }',
             textAlign: TextAlign.end,
-            style: TextStyle(color: Theme.of(context).colorScheme.exerciseLight),
+            style:
+                TextStyle(color: Theme.of(context).colorScheme.exerciseLight),
           ),
           leading: Text(
             exs.name,
@@ -54,7 +51,8 @@ class ExerciseItem extends StatelessWidget {
           subtitle: Text(
             _bodyParts,
             textAlign: TextAlign.end,
-            style: TextStyle(color: Theme.of(context).colorScheme.routinesLight),
+            style:
+                TextStyle(color: Theme.of(context).colorScheme.routinesLight),
           ),
         ),
       ),

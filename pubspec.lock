@@ -251,6 +251,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "6.1.1"
+  flutter_cupertino_date_picker:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "38630701b92a4fd0b753f9ab38b3581a5645a629"
+      url: "https://github.com/daveleenew/flutter-cupertino-date-picker.git"
+    source: git
+    version: "1.0.26+2"
   flutter_staggered_grid_view:
     dependency: "direct main"
     description:

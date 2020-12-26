@@ -104,11 +104,9 @@ class _SearchExerciseState extends State<SearchExercise> {
                                   reverse: true,
                                   itemBuilder: (ctx, i) => GestureDetector(
                                       onTap: () {
-                                        Navigator.of(context)
-                                            .pushNamed(
-                                                ExerciseWorkOut.routeName,
-                                                arguments: exes[i])
-                                            .then((value) {});
+                                        Navigator.of(context).pushNamed(
+                                            ExerciseWorkOut.routeName,
+                                            arguments: {"exercise": exes[i]});
                                       },
                                       child: ExerciseItem(exes[i])),
                                   itemCount: exes.length,

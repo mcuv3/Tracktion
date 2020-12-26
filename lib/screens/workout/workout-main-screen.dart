@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
+import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/screens/data/dummy.dart';
 import 'package:tracktion/widgets/DatePicker.dart';
 import 'package:tracktion/widgets/reps-item.dart';
@@ -22,6 +23,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
   PageController _pageController;
   int _selectedPage = 0;
   DateTime currentDate;
+  var init = false;
 
   @override
   void initState() {
@@ -35,7 +37,10 @@ class _WorkOutScreenState extends State<WorkOutScreen>
 
   @override
   void didChangeDependencies() {
+    // if (!init) {
     BlocProvider.of<WorkoutBloc>(context).add(FetchWorkout(DateTime.now()));
+    // init = true;
+    // }
 
     super.didChangeDependencies();
   }
@@ -70,7 +75,15 @@ class _WorkOutScreenState extends State<WorkOutScreen>
   Widget buildHeader(BuildContext context, String title) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).pushNamed(ExerciseWorkOut.routeName);
+        Navigator.of(context).pushNamed(ExerciseWorkOut.routeName, arguments: {
+          "exercise": Exercise(
+              id: 21,
+              name: "Test",
+              notes: "",
+              bodyParts: [BodyPartEnum.Abs],
+              difficulty: Difficulty.Normal),
+          "reps": [Rep(id: 12, reps: 12, weight: 12.4, rpe: 8)]
+        });
       },
       child: Container(
         padding: EdgeInsets.all(4),
@@ -103,7 +116,8 @@ class _WorkOutScreenState extends State<WorkOutScreen>
           "values": {
             "reps": rep["reps"],
             "weight": rep["weight"],
-            "rpe": rep["rpe"]
+            "rpe": rep["rpe"],
+            "notes": ""
           }
         });
       });
@@ -144,7 +158,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                     }
 
                     if (state is WorkoutSets) {
-                      print(state);
+                      // print(state.sets);
                     }
 
                     return Container(
@@ -165,6 +179,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                                     if (items[i]["kind"] == "rep") {
                                       final rep = items[i]["values"];
                                       return RepItem(
+                                        hasComment: rep["notes"] != "",
                                         reps: rep["reps"],
                                         weight: rep["weight"],
                                         rpe: rep["rpe"],

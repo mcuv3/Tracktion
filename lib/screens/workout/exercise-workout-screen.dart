@@ -1,17 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/app/body-parts.dart';
 import 'package:tracktion/models/app/exercise.dart';
+import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/app/rep.dart';
 import 'package:tracktion/screens/index.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
-import 'package:tracktion/util/enumToString.dart';
+import 'package:tracktion/shapes/add-exercise.dart';
+import 'package:tracktion/widgets/StackAppBar.dart';
+import 'package:tracktion/widgets/body-part.dart';
 import 'package:tracktion/widgets/modals/NoteInput.dart';
 import 'package:tracktion/widgets/modals/RepInputs.dart';
-import 'package:tracktion/widgets/body-part.dart';
 import 'package:tracktion/widgets/reps-item.dart';
+import 'package:tracktion/widgets/ui/Difficulty.dart';
+import 'package:tracktion/widgets/ui/ExerciseWkTitle.dart';
+import 'package:tracktion/widgets/ui/TracktionButton.dart';
+
 import '../../colors/custom_colors.dart';
-import 'package:tracktion/shapes/add-exercise.dart';
 
 class ExerciseWorkOut extends StatefulWidget {
   static const routeName = '/add-exercise-workout';
@@ -23,23 +32,32 @@ class ExerciseWorkOut extends StatefulWidget {
 class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
   List<dynamic> bodyParts = [];
   Exercise exs;
-  List<Rep> sets = [];
+  List<Rep> reps = [];
+  var date = DateTime.now();
+  var init = false;
 
   @override
   void initState() {
-    super.initState();
-
     this.bodyParts = BodyPartEnum.values.map((b) {
       if (b == BodyPartEnum.Quadriceps || b == BodyPartEnum.Legs)
         return {"body": b, "active": true};
     }).toList()
       ..removeWhere((element) => element == null);
+    super.initState();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    exs = ModalRoute.of(context).settings.arguments;
+    if (!init) {
+      var initalState =
+          ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+      if (initalState["reps"] != null) {
+        reps = initalState["reps"];
+      }
+      exs = initalState["exercise"];
+      init = true;
+    }
   }
 
   void editExerciseSuccessfulCallBack(Exercise exe) {
@@ -51,53 +69,105 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
     });
   }
 
-  void addRepeHandler() {
-    var reps = 0;
+  void addRepHandler() {
+    var intialReps = 0;
     var rpe = 0;
     var weight = 0.0;
 
-    if (sets.length > 0) {
-      reps = sets[sets.length - 1].reps;
-      weight = sets[sets.length - 1].weight;
-      rpe = sets[sets.length - 1].rpe;
+    if (reps.length > 0) {
+      intialReps = reps[reps.length - 1].reps;
+      weight = reps[reps.length - 1].weight;
+      rpe = reps[reps.length - 1].rpe;
     }
-    final rep = Rep(id: sets.length, reps: reps, rpe: rpe, weight: weight);
+    final rep =
+        Rep(id: reps.length, reps: intialReps, rpe: rpe, weight: weight);
     setState(() {
-      sets.add(rep);
+      reps.add(rep);
     });
   }
 
-  void changeCommentHandler(Rep rep) {
-    // rep.updateNote = 'something';
-    noteRepModal(context: context, rep: rep).then((updatedRep) {
-      if (updatedRep != null) print(updatedRep.notes);
+  void changeCommentHandler(Rep rep, int i) async {
+    var isNew = rep.notes == "";
+    var updatedRep = await noteRepModal(context: context, rep: rep);
+    setState(() {
+      if (updatedRep == null && !isNew) {
+        reps[i] = Rep(
+            id: rep.id,
+            notes: "",
+            reps: rep.reps,
+            rpe: rep.rpe,
+            weight: rep.weight);
+      } else if (updatedRep != null) {
+        reps[i] = updatedRep;
+      }
     });
   }
 
   void editRepHandler(Rep rep, int indexRep) {
     repInputsModal(context, rep).then((repUpadated) {
       setState(() {
-        sets[indexRep] = repUpadated;
+        reps[indexRep] = repUpadated;
       });
     });
   }
 
   void removeRepHandler(int index) {
     setState(() {
-      sets.removeAt(index);
+      reps.removeAt(index);
     });
+  }
+
+  Future<bool> onPopHandler() async {
+    var shouldSave = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+              content: Text("Do you want to save your changes?"),
+              actions: [
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                    child: Text(
+                      "Discard",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.routines),
+                    )),
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    child: Text(
+                      "Save",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.analysis),
+                    )),
+              ],
+            ));
+
+    if (shouldSave) {
+      final set = SetWorkout(exercise: exs, reps: reps);
+      BlocProvider.of<WorkoutBloc>(context).add(SaveSet(set: set, date: date));
+    }
+    return true;
+  }
+
+  @override
+  void dispose() async {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final query = MediaQuery.of(context);
-    return SafeArea(
-      child: Scaffold(
+    return WillPopScope(
+      onWillPop: onPopHandler,
+      child: SafeArea(
+        child: Scaffold(
           body: Stack(children: [
             AbstractShape(
               width: double.infinity,
               height: query.size.height,
-              shape: ShapeAddExerciseUp(Theme.of(context).colorScheme.analysis),
+              shape: ShapeAddExerciseUp(Theme.of(context).colorScheme.routines),
             ),
             AbstractShape(
               width: double.infinity,
@@ -105,33 +175,49 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
               shape:
                   ShapeAddExerciseDown(Theme.of(context).colorScheme.analysis),
             ),
-            CustomScrollView(
-              slivers: <Widget>[
-                SliverAppBar(
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.info),
-                      iconSize: 26,
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      iconSize: 26,
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(
-                            AddEditBodyPartsScreen.routeName,
-                            arguments: {
-                              "exe": exs,
-                              "updateCallBack": editExerciseSuccessfulCallBack
-                            });
-                      },
-                    ),
-                  ],
-                  backgroundColor: Colors.transparent,
-                  floating: true,
-                  iconTheme: IconThemeData(
-                    color: Colors.black,
-                  ),
+            StackAppBar(
+              actions: [
+                GestureDetector(
+                  onTap: () {
+                    DatePicker.showDatePicker(context,
+                        initialDateTime: DateTime.now(),
+                        onConfirm: (date, ints) {
+                      setState(() {
+                        date = date;
+                      });
+                    },
+                        pickerTheme: DateTimePickerTheme(
+                            itemTextStyle: TextStyle(fontFamily: "CarterOne")));
+                  },
+                  child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 5, vertical: 12),
+                      height: 10,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black, width: 2),
+                          borderRadius: BorderRadius.circular(10)),
+                      padding: EdgeInsets.all(5),
+                      child: Text(
+                        DateFormat('dd/MM/yyyy').format(date),
+                        style: TextStyle(color: Colors.black),
+                      )),
+                ),
+                IconButton(
+                  icon: Icon(Icons.info),
+                  iconSize: 26,
+                  onPressed: () {},
+                ),
+                IconButton(
+                  icon: Icon(Icons.edit),
+                  iconSize: 26,
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(
+                        AddEditBodyPartsScreen.routeName,
+                        arguments: {
+                          "exe": exs,
+                          "updateCallBack": editExerciseSuccessfulCallBack
+                        });
+                  },
                 ),
               ],
             ),
@@ -145,7 +231,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                         // crossAxisAlignment: CrossAxisAlignment.end,
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          ExerciseTitle(exs: exs),
+                          ExerciseWorkoutTitle(exs: exs),
                           DifficultyWidget(exs: exs),
                           Container(
                             height: 120,
@@ -169,20 +255,20 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                   child: Container(
                     margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                     child: ListView.builder(
-                      itemCount: sets.length,
+                      itemCount: reps.length,
                       itemBuilder: (ctx, i) => Dismissible(
-                        key: Key(sets[i].id.toString()),
-                        onDismissed: (direction) {
-                          removeRepHandler(i);
-                        },
+                        key: Key(reps[i].id.toString()),
+                        onDismissed: (_) => removeRepHandler(i),
                         child: GestureDetector(
-                          onTap: () => editRepHandler(sets[i], i),
+                          onTap: () => editRepHandler(reps[i], i),
                           child: RepItem(
-                            reps: sets[i].reps,
-                            weight: sets[i].weight,
-                            rpe: sets[i].rpe,
+                            hasComment: reps[i].notes != "",
+                            reps: reps[i].reps,
+                            weight: reps[i].weight,
+                            rpe: reps[i].rpe,
                             isExpanded: true,
-                            onPressComment: () => changeCommentHandler(sets[i]),
+                            onPressComment: () =>
+                                changeCommentHandler(reps[i], i),
                           ),
                         ),
                       ),
@@ -192,96 +278,9 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
               ],
             )
           ]),
-          floatingActionButton: FloatingActionButton(
-            elevation: 6,
-            backgroundColor: Theme.of(context).colorScheme.routines,
-            onPressed: addRepeHandler,
-            child: Icon(
-              Icons.add,
-              size: 24,
-              color: Colors.white,
-            ),
-          )),
-    );
-  }
-}
-
-class ExerciseTitle extends StatelessWidget {
-  const ExerciseTitle({
-    Key key,
-    @required this.exs,
-  }) : super(key: key);
-
-  final Exercise exs;
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.white,
-            border: Border.all(color: Colors.white, width: 0.2),
-            boxShadow: [
-              BoxShadow(color: Colors.black, blurRadius: 1, spreadRadius: 0),
-              BoxShadow(color: Colors.black, blurRadius: 1, spreadRadius: 0)
-            ]),
-        padding: EdgeInsets.all(4),
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-        child: Text(
-          exs.name,
-          style: Theme.of(context).textTheme.title,
-          textAlign: TextAlign.start,
+          floatingActionButton: TracktionButton(onPress: addRepHandler),
         ),
       ),
     );
   }
 }
-
-class DifficultyWidget extends StatelessWidget {
-  const DifficultyWidget({
-    Key key,
-    @required this.exs,
-  }) : super(key: key);
-
-  final Exercise exs;
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.white,
-            border: Border.all(color: Colors.white, width: 0.2),
-            boxShadow: [
-              BoxShadow(color: Colors.black, blurRadius: 1, spreadRadius: 0),
-              BoxShadow(color: Colors.black, blurRadius: 1, spreadRadius: 0)
-            ]),
-        padding: EdgeInsets.all(3),
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-        child: RichText(
-          text: TextSpan(
-            children: <TextSpan>[
-              TextSpan(
-                  text: 'Difficulty : ',
-                  style: TextStyle(
-                      fontFamily: "CarterOne",
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.exercise)),
-              TextSpan(
-                  text: ' ${enumToString(exs.difficulty)}',
-                  style: TextStyle(
-                      fontFamily: "CarterOne",
-                      color: Theme.of(context).colorScheme.routines)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// TODO: scketch the screen for adding sets,reps,rpe to a workout

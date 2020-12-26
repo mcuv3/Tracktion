@@ -375,9 +375,10 @@ class ExerciseBodyPartsCompanion extends UpdateCompanion<ExerciseBodyPart> {
     this.bodyPart = const Value.absent(),
   });
   ExerciseBodyPartsCompanion.insert({
-    this.exerciseId = const Value.absent(),
+    @required int exerciseId,
     @required BodyPartEnum bodyPart,
-  }) : bodyPart = Value(bodyPart);
+  })  : exerciseId = Value(exerciseId),
+        bodyPart = Value(bodyPart);
   static Insertable<ExerciseBodyPart> custom({
     Expression<int> exerciseId,
     Expression<int> bodyPart,
@@ -463,13 +464,15 @@ class $ExerciseBodyPartsTable extends ExerciseBodyParts
           _exerciseIdMeta,
           exerciseId.isAcceptableOrUnknown(
               data['exercise_id'], _exerciseIdMeta));
+    } else if (isInserting) {
+      context.missing(_exerciseIdMeta);
     }
     context.handle(_bodyPartMeta, const VerificationResult.success());
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {exerciseId};
+  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
   ExerciseBodyPart map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
@@ -1199,7 +1202,7 @@ class Rep extends DataClass implements Insertable<Rep> {
       @required this.weight,
       @required this.reps,
       @required this.rpe,
-      this.note,
+      @required this.note,
       @required this.setId});
   factory Rep.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
@@ -1474,11 +1477,8 @@ class $RepsTable extends Reps with TableInfo<$RepsTable, Rep> {
   @override
   GeneratedTextColumn get note => _note ??= _constructNote();
   GeneratedTextColumn _constructNote() {
-    return GeneratedTextColumn(
-      'note',
-      $tableName,
-      true,
-    );
+    return GeneratedTextColumn('note', $tableName, false,
+        defaultValue: const Constant(""));
   }
 
   final VerificationMeta _setIdMeta = const VerificationMeta('setId');

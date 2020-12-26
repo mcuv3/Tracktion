@@ -21,7 +21,4 @@ class ExerciseBodyParts extends Table {
   IntColumn get exerciseId =>
       integer().customConstraint("NOT NULL REFERENCES exercises (id)")();
   IntColumn get bodyPart => intEnum<BodyPartEnum>()();
-
-  @override
-  Set<Column> get primaryKey => {exerciseId};
 }

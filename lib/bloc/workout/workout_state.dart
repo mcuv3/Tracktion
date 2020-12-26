@@ -8,7 +8,7 @@ class WorkoutInitial extends WorkoutState {}
 class WorkoutLoading extends WorkoutState {}
 
 class WorkoutSets extends WorkoutState {
-  final Stream<List<Set>> sets;
+  final dynamic sets;
   final DateTime date;
   WorkoutSets({this.sets, this.date});
 }

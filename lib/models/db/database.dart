@@ -50,6 +50,7 @@ class SQLDatabase extends _$SQLDatabase {
           .go();
 
       for (final bodyPart in entry.bodyParts) {
+        print(bodyPart);
         await into(exerciseBodyParts).insert(
             ExerciseBodyPart(bodyPart: bodyPart, exerciseId: exerciseId),
             mode: InsertMode.replace);
@@ -82,24 +83,27 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
-  Stream<List<List<TypedResult>>> findSetsByDate(DateTime targetDate) {
+  Future<List<TypedResult>> findSetsByDate(DateTime targetDate) {
     final query = select(setWorkouts).join([
-      innerJoin(workouts, workouts.date.equals(targetDate)),
+      // innerJoin(workouts, workouts.date.equals(targetDate)),
       innerJoin(exercises, exercises.id.equalsExp(setWorkouts.exerciseId)),
       innerJoin(reps, reps.setId.equalsExp(reps.setId)),
     ]);
 
-    return query.watch().map((row) {
-      return row.map((tuple) {
-        final exe = tuple.readTable(exercises);
-        final wk = tuple.readTable(workouts);
-        final rep = tuple.readTable(reps);
-        print(exe);
-        print(wk);
-        print(rep);
-        return row;
-      }).toList();
-    });
+    return query.get();
+    // .map((row) {
+    //   print(row);
+    //   return row;
+    // return row.map((tuple) {
+    //   final exe = tuple.readTable(exercises);
+    //   final wk = tuple.readTable(workouts);
+    //   final rep = tuple.readTable(reps);
+    //   print(exe);
+    //   print(wk);
+    //   print(rep);
+    //   return row;
+    // }).toList();
+    // });
   }
 
   Future<Stream<List<exeApp.Exercise>>> findByBodyPart(BodyPartEnum bd) async {
@@ -194,6 +198,6 @@ class ExerciseWithBodyParts {
 class ExerciseSet {
   final int exeId;
   final int workoutId;
-  final List<Rep> reps;
+  final List<modelsApp.Rep> reps;
   ExerciseSet({this.exeId, this.reps, this.workoutId});
 }
