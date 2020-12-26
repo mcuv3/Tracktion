@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:tracktion/util/toDayDate.dart';
 import '../../models/db/database.dart';
 import '../../models/app/index.dart' as modelsApp;
 
@@ -35,9 +36,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   Stream<WorkoutState> _fetchWorkout(FetchWorkout event) async* {
     yield WorkoutLoading();
     try {
-      final date = event.date;
-      final sets = await this.db.findSetsByDate(date);
-      print(sets);
+      final date = toDayDate(event.date);
+      final sets = this.db.findSetsByDate(date);
       yield WorkoutSets(sets: sets, date: date);
     } catch (e) {
       yield WorkoutTransactionFailed("Cannot fetch this workout");

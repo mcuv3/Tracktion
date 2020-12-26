@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:union/union.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
@@ -104,26 +105,6 @@ class _WorkOutScreenState extends State<WorkOutScreen>
 
   @override
   Widget build(BuildContext context) {
-    final items = [];
-    dummy_workouts[0].forEach((e) {
-      items.add({
-        "kind": "title",
-        "value": e["name"],
-      });
-      (e["series"] as List<dynamic>).forEach((rep) {
-        items.add({
-          "kind": "rep",
-          "values": {
-            "reps": rep["reps"],
-            "weight": rep["weight"],
-            "rpe": rep["rpe"],
-            "notes": ""
-          }
-        });
-      });
-      // items.add({"kind": "items", "value": e["series"]});
-      items.add({"kind": "space"});
-    });
     final size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
@@ -158,41 +139,53 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                     }
 
                     if (state is WorkoutSets) {
-                      // print(state.sets);
+                      return StreamBuilder(
+                        builder: (context, sts) {
+                          if (sts.connectionState == ConnectionState.active) {
+                            List<SetWorkout> sets = sts.data;
+                            final List<Union3<Exercise, Rep, String>> items =
+                                [];
+                            sets.forEach((set) {
+                              items.add(set.exercise.asFirst());
+                              set.reps
+                                  .forEach((rep) => items.add(rep.asSecond()));
+                              items.add("".asThird());
+                            });
+
+                            return Container(
+                              width: size.width,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemBuilder: (ctx, i) {
+                                  Widget item;
+                                  items[i].switchCase(
+                                      (exe) =>
+                                          item = buildHeader(context, exe.name),
+                                      (rep) => item = RepItem(
+                                            hasComment: rep.notes != "",
+                                            reps: rep.reps,
+                                            weight: rep.weight,
+                                            rpe: rep.rpe,
+                                            onPressComment: viewCommentHandler,
+                                          ),
+                                      (_) => item = SizedBox(
+                                            height: 10,
+                                          ));
+                                  return item;
+                                },
+                                itemCount: items.length,
+                              ),
+                            );
+                          }
+
+                          return Text('Loading');
+                        },
+                        stream: state.sets,
+                      );
                     }
 
-                    return Container(
-                      width: double.infinity,
-                      child: PageView.builder(
-                          controller: _pageController,
-                          itemCount: dummy_workouts.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, workout) => Container(
-                                width: size.width,
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  itemBuilder: (ctx, i) {
-                                    if (items[i]["kind"] == "title") {
-                                      return buildHeader(
-                                          context, items[i]["value"]);
-                                    }
-                                    if (items[i]["kind"] == "rep") {
-                                      final rep = items[i]["values"];
-                                      return RepItem(
-                                        hasComment: rep["notes"] != "",
-                                        reps: rep["reps"],
-                                        weight: rep["weight"],
-                                        rpe: rep["rpe"],
-                                        onPressComment: viewCommentHandler,
-                                      );
-                                    }
-                                    return SizedBox(
-                                      height: 10,
-                                    );
-                                  },
-                                  itemCount: items.length,
-                                ),
-                              )),
+                    return Center(
+                      child: CircularProgressIndicator(),
                     );
                   },
                 ),

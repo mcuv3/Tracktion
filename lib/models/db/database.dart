@@ -83,27 +83,38 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
-  Future<List<TypedResult>> findSetsByDate(DateTime targetDate) {
+  Stream<List<modelsApp.SetWorkout>> findSetsByDate(DateTime targetDate) {
     final query = select(setWorkouts).join([
-      // innerJoin(workouts, workouts.date.equals(targetDate)),
+      innerJoin(workouts, workouts.id.equalsExp(setWorkouts.workOutId)),
       innerJoin(exercises, exercises.id.equalsExp(setWorkouts.exerciseId)),
-      innerJoin(reps, reps.setId.equalsExp(reps.setId)),
-    ]);
+      innerJoin(reps, reps.setId.equalsExp(setWorkouts.id)),
+    ])
+      ..where(workouts.date.equals(targetDate));
 
-    return query.get();
-    // .map((row) {
-    //   print(row);
-    //   return row;
-    // return row.map((tuple) {
-    //   final exe = tuple.readTable(exercises);
-    //   final wk = tuple.readTable(workouts);
-    //   final rep = tuple.readTable(reps);
-    //   print(exe);
-    //   print(wk);
-    //   print(rep);
-    //   return row;
-    // }).toList();
-    // });
+    return query.watch().map((row) {
+      return row.fold<List<modelsApp.SetWorkout>>([], (sets, st) {
+        final setWk = st.readTable(setWorkouts);
+        final rep = st.readTable(reps);
+        final indexSet = sets.indexWhere((st) => st.id == setWk.id);
+        final repetition = modelsApp.Rep(
+            id: rep.id, weight: rep.weight, reps: rep.reps, rpe: rep.rpe);
+
+        if (indexSet == -1) {
+          final exe = st.readTable(exercises);
+          final exercise = modelsApp.Exercise(
+              id: exe.id,
+              name: exe.name,
+              difficulty: exe.difficulty,
+              notes: exe.notes,
+              bodyParts: []);
+          sets.add(modelsApp.SetWorkout(
+              id: setWk.id, exercise: exercise, reps: [repetition]));
+        } else {
+          sets[indexSet].reps = [...sets[indexSet].reps, repetition];
+        }
+        return sets;
+      });
+    });
   }
 
   Future<Stream<List<exeApp.Exercise>>> findByBodyPart(BodyPartEnum bd) async {
@@ -141,15 +152,18 @@ class SQLDatabase extends _$SQLDatabase {
 
   Future<Workout> findOrCreateWorkout(DateTime date) async {
     return transaction(() async {
-      final wk =
-          await (select(workouts)..where((e) => e.date.equals(date))).get();
+      final shortDate = DateTime(date.year, date.month, date.day);
+
+      final wk = await (select(workouts)
+            ..where((e) => e.date.equals(shortDate)))
+          .get();
 
       if (wk.length > 0) return wk[0];
 
-      final workout = WorkoutsCompanion.insert(date: date);
+      final workout = WorkoutsCompanion.insert(date: shortDate);
       final workoutId = await into(workouts).insert(workout);
 
-      return Workout(id: workoutId, date: date);
+      return Workout(id: workoutId, date: shortDate);
     });
   }
 
@@ -176,6 +190,7 @@ class SQLDatabase extends _$SQLDatabase {
   // Basics Querys
 
   Future<List<Exercise>> getAllExercises() => select(exercises).get();
+  Future<List<Workout>> getAllWorkouts() => select(workouts).get();
   Future<List<Migration>> getAllMigrations() => select(migrations).get();
   Stream<List<Exercise>> watchAllExercises() => select(exercises).watch();
   Future insertMigration(MigrationsCompanion migration) =>

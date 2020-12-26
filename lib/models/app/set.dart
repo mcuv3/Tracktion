@@ -1,7 +1,10 @@
+import 'package:flutter/foundation.dart';
+
 import './index.dart';
 
 class SetWorkout {
+  final int id;
   final Exercise exercise;
-  final List<Rep> reps;
-  SetWorkout({this.exercise, this.reps});
+   List<Rep> reps;
+  SetWorkout({@required this.id,@required this.exercise,@required this.reps});
 }
