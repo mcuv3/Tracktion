@@ -5,6 +5,7 @@ class Rep {
   final int reps;
   final double weight;
   final int rpe;
+  int _setId;
   String notes;
   Rep(
       {Key key,
@@ -13,6 +14,9 @@ class Rep {
       @required this.weight,
       @required this.rpe,
       this.notes = ""});
+
+  int get setId => this._setId;
+  set setId(int id) => this._setId = id;
 
   set updateNote(String note) {
     this.notes = note;

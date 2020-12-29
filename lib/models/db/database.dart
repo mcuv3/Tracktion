@@ -71,14 +71,39 @@ class SQLDatabase extends _$SQLDatabase {
       final workoutId = exerciseSet.workoutId;
       final repsSet = exerciseSet.reps;
       final setId = await into(setWorkouts).insert(
-          SetWorkoutsCompanion.insert(workOutId: workoutId, exerciseId: exeId),
+          SetWorkout(
+              id: exerciseSet.id, workOutId: workoutId, exerciseId: exeId),
           mode: InsertMode.replace);
       await (delete(reps)..where((entry) => entry.setId.equals(setId))).go();
       for (final rep in repsSet) {
         await into(reps).insert(
             RepsCompanion.insert(
-                reps: rep.reps, weight: rep.weight, rpe: rep.rpe, setId: setId),
+                note: Value(rep.notes),
+                reps: rep.reps,
+                weight: rep.weight,
+                rpe: rep.rpe,
+                setId: setId),
             mode: InsertMode.replace);
+      }
+    });
+  }
+
+  Stream<modelsApp.Exercise> findExerciseStream(int exerciseId) {
+    final query = select(exercises).join([
+      leftOuterJoin(exerciseBodyParts,
+          exerciseBodyParts.exerciseId.equalsExp(exercises.id)),
+    ])
+      ..where(exercises.id.equals(exerciseId));
+
+    return query.watch().map((row) {
+      try {
+        return row.fold<List<exeApp.Exercise>>([], (exes, row) {
+          final exercise = row.readTable(exercises);
+          final bodyPart = row.readTable(exerciseBodyParts).bodyPart;
+          return mergeTableExercise(exercise, bodyPart, exes);
+        }).first;
+      } catch (e) {
+        return null;
       }
     });
   }
@@ -126,28 +151,31 @@ class SQLDatabase extends _$SQLDatabase {
       return row
           .fold<List<exeApp.Exercise>>([], (exes, row) {
             final exercise = row.readTable(exercises);
-            final exerciseId = row.readTable(exercises).id;
             final bodyPart = row.readTable(exerciseBodyParts).bodyPart;
-            final indexExe = exes.indexWhere((exe) => exe.id == exerciseId);
-            if (indexExe == -1) {
-              exes.add(exeApp.Exercise(
-                  id: exercise.id,
-                  name: exercise.name,
-                  bodyParts: [bodyPart],
-                  difficulty: exercise.difficulty,
-                  notes: exercise.notes));
-            } else {
-              exes[indexExe].bodyPartSet = [
-                ...exes[indexExe].bodyParts,
-                bodyPart
-              ];
-            }
-            return exes;
+            return mergeTableExercise(exercise, bodyPart, exes);
           })
           .toList()
           .where((exe) => exe.bodyParts.contains(bd))
           .toList();
     });
+  }
+
+  List<exeApp.Exercise> mergeTableExercise(
+      Exercise exercise, BodyPartEnum bodyPart, List<exeApp.Exercise> exs) {
+    final exes = [...exs];
+
+    final indexExe = exes.indexWhere((exe) => exe.id == exercise.id);
+    if (indexExe == -1) {
+      exes.add(exeApp.Exercise(
+          id: exercise.id,
+          name: exercise.name,
+          bodyParts: [bodyPart],
+          difficulty: exercise.difficulty,
+          notes: exercise.notes));
+    } else {
+      exes[indexExe].bodyPartSet = [...exes[indexExe].bodyParts, bodyPart];
+    }
+    return exes;
   }
 
   Future<Workout> findOrCreateWorkout(DateTime date) async {
@@ -211,8 +239,13 @@ class ExerciseWithBodyParts {
 }
 
 class ExerciseSet {
+  final int id;
   final int exeId;
   final int workoutId;
   final List<modelsApp.Rep> reps;
-  ExerciseSet({this.exeId, this.reps, this.workoutId});
+  ExerciseSet(
+      {@required this.id,
+      @required this.exeId,
+      @required this.reps,
+      @required this.workoutId});
 }

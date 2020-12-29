@@ -4,13 +4,14 @@ import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/models/app/body-parts.dart';
 import 'package:tracktion/models/app/exercise.dart';
 import 'package:tracktion/screens/workout/exercise-workout-screen.dart';
+import 'package:tracktion/shapes/AbstractShape.dart';
+import 'package:tracktion/shapes/exercise-search-shape.dart';
 // import 'package:tracktion/models/database.dart';
 import 'package:tracktion/widgets/ErrorMessage.dart';
 import 'package:tracktion/widgets/ExerciseItem.dart';
 import 'package:tracktion/widgets/InputSearch.dart';
-import 'package:tracktion/shapes/AbstractShape.dart';
-import 'package:tracktion/shapes/exercise-search-shape.dart';
 import 'package:tracktion/widgets/body-part.dart';
+
 import '../../colors/custom_colors.dart';
 
 class SearchExercise extends StatefulWidget {
@@ -23,7 +24,6 @@ class SearchExercise extends StatefulWidget {
 class _SearchExerciseState extends State<SearchExercise> {
   final _controller = TextEditingController();
   var search = '';
-  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
 
   void searchHandler(String val) {
     setState(() {

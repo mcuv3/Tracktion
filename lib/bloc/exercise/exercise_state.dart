@@ -18,12 +18,12 @@ class ExerciseFailure extends ExerciseState {
   final String message;
   final num statusCode;
 
-  ExerciseFailure({@required this.message,@required this.statusCode});
+  ExerciseFailure({@required this.message, @required this.statusCode});
 }
 
 class ExerciseStream extends ExerciseState {
-  final Stream<Exercise> exes;
-  ExerciseStream(this.exes);
+  final Stream<exeApp.Exercise> exe;
+  ExerciseStream(this.exe);
 }
 
 class ExerciseDeleteSuccess extends ExerciseState {}

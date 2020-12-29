@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:union/union.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/screens/data/dummy.dart';
 import 'package:tracktion/widgets/DatePicker.dart';
-import 'package:tracktion/widgets/reps-item.dart';
-import '../../colors/custom_colors.dart';
 import 'package:tracktion/widgets/drawer.dart';
+import 'package:tracktion/widgets/reps-item.dart';
+import 'package:union/union.dart';
 
+import '../../colors/custom_colors.dart';
 import '../index.dart';
 
 class WorkOutScreen extends StatefulWidget {
@@ -73,32 +73,30 @@ class _WorkOutScreenState extends State<WorkOutScreen>
     // BlocProvider.of<WorkoutBloc>(context).add(FetchWorkout(DateTime.now()));
   }
 
+  void showSetDetails({@required int setId, @required List<SetWorkout> sets}) {
+    final exerciseWorkout =
+        sets.firstWhere((e) => e.id == setId, orElse: () => null);
+    if (exerciseWorkout == null) return;
+    Navigator.of(context).pushNamed(ExerciseWorkOut.routeName, arguments: {
+      "exercise": exerciseWorkout.exercise,
+      "reps": exerciseWorkout.reps,
+      "setId": exerciseWorkout.id
+    });
+  }
+
   Widget buildHeader(BuildContext context, String title) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).pushNamed(ExerciseWorkOut.routeName, arguments: {
-          "exercise": Exercise(
-              id: 21,
-              name: "Test",
-              notes: "",
-              bodyParts: [BodyPartEnum.Abs],
-              difficulty: Difficulty.Normal),
-          "reps": [Rep(id: 12, reps: 12, weight: 12.4, rpe: 8)]
-        });
-      },
-      child: Container(
-        padding: EdgeInsets.all(4),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-          color: Theme.of(context).colorScheme.routines,
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-              fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
-        ),
+    return Container(
+      padding: EdgeInsets.all(4),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+        color: Theme.of(context).colorScheme.routines,
+      ),
+      child: Text(
+        title,
+        style: TextStyle(
+            fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -146,9 +144,12 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                             final List<Union3<Exercise, Rep, String>> items =
                                 [];
                             sets.forEach((set) {
+                              set.exercise.setId = set.id;
                               items.add(set.exercise.asFirst());
-                              set.reps
-                                  .forEach((rep) => items.add(rep.asSecond()));
+                              set.reps.forEach((rep) {
+                                rep.setId = set.id;
+                                return items.add(rep.asSecond());
+                              });
                               items.add("".asThird());
                             });
 
@@ -158,15 +159,24 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                                 shrinkWrap: true,
                                 itemBuilder: (ctx, i) {
                                   Widget item;
+
                                   items[i].switchCase(
-                                      (exe) =>
-                                          item = buildHeader(context, exe.name),
-                                      (rep) => item = RepItem(
-                                            hasComment: rep.notes != "",
-                                            reps: rep.reps,
-                                            weight: rep.weight,
-                                            rpe: rep.rpe,
-                                            onPressComment: viewCommentHandler,
+                                      (exe) => item = GestureDetector(
+                                          onTap: () => showSetDetails(
+                                              setId: exe.setId, sets: sets),
+                                          child:
+                                              buildHeader(context, exe.name)),
+                                      (rep) => item = GestureDetector(
+                                            onTap: () => showSetDetails(
+                                                setId: rep.setId, sets: sets),
+                                            child: RepItem(
+                                              hasComment: rep.notes != "",
+                                              reps: rep.reps,
+                                              weight: rep.weight,
+                                              rpe: rep.rpe,
+                                              onPressComment:
+                                                  viewCommentHandler,
+                                            ),
                                           ),
                                       (_) => item = SizedBox(
                                             height: 10,

@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
+
+import 'package:flutter/material.dart';
+
 import 'body-parts.dart';
 import 'difficulties.dart';
 
@@ -8,7 +10,9 @@ class Exercise {
   final String name;
   final Difficulty difficulty;
   final String notes;
+
   List<BodyPartEnum> bodyParts;
+  int _setId;
 
   Exercise(
       {@required this.id,
@@ -20,6 +24,9 @@ class Exercise {
   set bodyPartSet(List<BodyPartEnum> bds) {
     this.bodyParts = bds;
   }
+
+  int get setId => this._setId;
+  set setId(int id) => this._setId = id;
 
   @override
   String toString() {

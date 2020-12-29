@@ -4,8 +4,9 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tracktion/util/toDayDate.dart';
-import '../../models/db/database.dart';
+
 import '../../models/app/index.dart' as modelsApp;
+import '../../models/db/database.dart';
 
 part 'workout_event.dart';
 part 'workout_state.dart';
@@ -73,7 +74,10 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       final set = event.set;
       final reps = set.reps;
       final exerciseSet = ExerciseSet(
-          exeId: set.exercise.id, workoutId: workout.id, reps: reps);
+          id: set.id,
+          exeId: set.exercise.id,
+          workoutId: workout.id,
+          reps: reps);
       await this.db.saveSet(exerciseSet);
     } catch (e) {
       print(e);

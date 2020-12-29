@@ -7,7 +7,6 @@ import 'package:tracktion/models/app/difficulties.dart';
 import 'package:tracktion/models/app/exercise.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/create-exercise.dart';
-import 'package:tracktion/util/bottomSheetOptions.dart';
 import 'package:tracktion/util/difficultyToEnum.dart';
 import 'package:tracktion/util/enumToString.dart';
 import 'package:tracktion/util/showMessage.dart';
@@ -16,6 +15,7 @@ import 'package:tracktion/widgets/Select.dart';
 import 'package:tracktion/widgets/StackAppBar.dart';
 import 'package:tracktion/widgets/body-part.dart';
 import 'package:tracktion/widgets/input.dart';
+
 import '../../colors/custom_colors.dart';
 import '../index.dart';
 
@@ -35,7 +35,6 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
   final form = GlobalKey<FormState>();
   var difficulty = 'Difficulty';
   var editMode = false;
-  void Function(Exercise) editExerciseSuccessfulCallBack;
   Exercise exe;
   var isInit = true;
 
@@ -48,7 +47,6 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
           ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
       if (props == null) return;
       this.exe = props["exe"];
-      this.editExerciseSuccessfulCallBack = props["updateCallBack"];
       if (this.exe != null) {
         this.editMode = true;
         this.bodyParts = BodyPartEnum.values.map((b) {
@@ -102,8 +100,7 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
           return e;
         }).toList();
       });
-    } else
-      editExerciseSuccessfulCallBack(exe);
+    }
     showSuccessMessage(
         context: ctx,
         message: editMode ? "Successfully Edited" : 'Successfully Created.');

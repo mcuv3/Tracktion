@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
-import 'package:tracktion/models/app/body-parts.dart';
 import 'package:tracktion/models/app/exercise.dart';
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/app/rep.dart';
@@ -30,43 +30,30 @@ class ExerciseWorkOut extends StatefulWidget {
 }
 
 class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
-  List<dynamic> bodyParts = [];
+  // List<dynamic> bodyParts = [];
   Exercise exs;
   List<Rep> reps = [];
+  int setId;
   var date = DateTime.now();
   var init = false;
 
   @override
-  void initState() {
-    this.bodyParts = BodyPartEnum.values.map((b) {
-      if (b == BodyPartEnum.Quadriceps || b == BodyPartEnum.Legs)
-        return {"body": b, "active": true};
-    }).toList()
-      ..removeWhere((element) => element == null);
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
+  void didChangeDependencies() async {
     super.didChangeDependencies();
     if (!init) {
-      var initalState =
+      var initialState =
           ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
-      if (initalState["reps"] != null) {
-        reps = initalState["reps"];
+      if (initialState["reps"] != null) {
+        reps = initialState["reps"];
       }
-      exs = initalState["exercise"];
+      setId = initialState["setId"];
+
+      exs = initialState["exercise"] as Exercise;
+      if (exs != null)
+        BlocProvider.of<ExerciseBloc>(context).add(StreamExercise(exs.id));
+
       init = true;
     }
-  }
-
-  void editExerciseSuccessfulCallBack(Exercise exe) {
-    setState(() {
-      exs = exe;
-      bodyParts = exe.bodyParts.map((e) {
-        return {"active": true, "body": e};
-      }).toList();
-    });
   }
 
   void addRepHandler() {
@@ -145,7 +132,8 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
             ));
 
     if (shouldSave) {
-      final set = SetWorkout(exercise: exs, reps: reps);
+      // TODO: check if this works with the initial case.
+      final set = SetWorkout(id: setId, exercise: exs, reps: reps);
       BlocProvider.of<WorkoutBloc>(context).add(SaveSet(set: set, date: date));
     }
     return true;
@@ -213,10 +201,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                   onPressed: () {
                     Navigator.of(context).pushNamed(
                         AddEditBodyPartsScreen.routeName,
-                        arguments: {
-                          "exe": exs,
-                          "updateCallBack": editExerciseSuccessfulCallBack
-                        });
+                        arguments: {"exe": exs});
                   },
                 ),
               ],
@@ -225,30 +210,10 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
               children: [
                 Expanded(
                     flex: 2,
-                    child: Container(
-                      width: double.infinity,
-                      child: Column(
-                        // crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          ExerciseWorkoutTitle(exs: exs),
-                          DifficultyWidget(exs: exs),
-                          Container(
-                            height: 120,
-                            alignment: Alignment.center,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, i) => BodyPartWidget(
-                                exs.bodyParts[i],
-                                active: true,
-                                bgColor: Colors.black,
-                              ),
-                              itemCount: exs.bodyParts.length,
-                            ),
-                          ),
-                        ],
-                      ),
+                    child: ExerciseStreamWidget(
+                      onLoadExercise: (exe) {
+                        exs = exe;
+                      },
                     )),
                 Expanded(
                   flex: 3,
@@ -281,6 +246,63 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
           floatingActionButton: TracktionButton(onPress: addRepHandler),
         ),
       ),
+    );
+  }
+}
+
+class ExerciseStreamWidget extends StatelessWidget {
+  final Function(Exercise) onLoadExercise;
+  const ExerciseStreamWidget({Key key, this.onLoadExercise}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      child:
+          BlocBuilder<ExerciseBloc, ExerciseState>(builder: (context, state) {
+        // TODO: implemente another bloc for exercise streaming
+        // or create a cubit, this is only one state and
+        // dispose the stream, only works for a single page for the moment
+        // can be reutilized for other screens that need real time exercise detials.
+        if (state is ExerciseStream) {
+          return StreamBuilder(
+            stream: state.exe,
+            builder: (context, stream) {
+              Exercise exs = stream.data;
+              if (onLoadExercise != null) onLoadExercise(exs);
+              if (stream.connectionState == ConnectionState.active) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ExerciseWorkoutTitle(exs: exs),
+                    DifficultyWidget(exs: exs),
+                    Container(
+                      height: 120,
+                      alignment: Alignment.center,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, i) => BodyPartWidget(
+                          exs.bodyParts[i],
+                          active: true,
+                          bgColor: Colors.black,
+                        ),
+                        itemCount: exs.bodyParts.length,
+                      ),
+                    ),
+                  ],
+                );
+              }
+
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            },
+          );
+        }
+
+        return Text("");
+      }),
     );
   }
 }
