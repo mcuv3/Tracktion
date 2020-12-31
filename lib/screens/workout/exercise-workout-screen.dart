@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
+import 'package:tracktion/bloc/exercise-stream/exercisestream_cubit.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/app/exercise.dart';
 import 'package:tracktion/models/app/index.dart';
@@ -12,12 +12,10 @@ import 'package:tracktion/screens/index.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/add-exercise.dart';
 import 'package:tracktion/widgets/StackAppBar.dart';
-import 'package:tracktion/widgets/body-part.dart';
 import 'package:tracktion/widgets/modals/NoteInput.dart';
 import 'package:tracktion/widgets/modals/RepInputs.dart';
 import 'package:tracktion/widgets/reps-item.dart';
-import 'package:tracktion/widgets/ui/Difficulty.dart';
-import 'package:tracktion/widgets/ui/ExerciseWkTitle.dart';
+import 'package:tracktion/widgets/streams/ExerciseStream.dart';
 import 'package:tracktion/widgets/ui/TracktionButton.dart';
 
 import '../../colors/custom_colors.dart';
@@ -30,7 +28,6 @@ class ExerciseWorkOut extends StatefulWidget {
 }
 
 class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
-  // List<dynamic> bodyParts = [];
   Exercise exs;
   List<Rep> reps = [];
   int setId;
@@ -47,11 +44,9 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
         reps = initialState["reps"];
       }
       setId = initialState["setId"];
-
       exs = initialState["exercise"] as Exercise;
       if (exs != null)
-        BlocProvider.of<ExerciseBloc>(context).add(StreamExercise(exs.id));
-
+        BlocProvider.of<ExerciseStreamCubit>(context).streamExercise(exs.id);
       init = true;
     }
   }
@@ -132,7 +127,6 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
             ));
 
     if (shouldSave) {
-      // TODO: check if this works with the initial case.
       final set = SetWorkout(id: setId, exercise: exs, reps: reps);
       BlocProvider.of<WorkoutBloc>(context).add(SaveSet(set: set, date: date));
     }
@@ -165,30 +159,38 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
             ),
             StackAppBar(
               actions: [
-                GestureDetector(
-                  onTap: () {
-                    DatePicker.showDatePicker(context,
-                        initialDateTime: DateTime.now(),
-                        onConfirm: (date, ints) {
-                      setState(() {
-                        date = date;
-                      });
-                    },
-                        pickerTheme: DateTimePickerTheme(
-                            itemTextStyle: TextStyle(fontFamily: "CarterOne")));
+                BlocBuilder<WorkoutBloc, WorkoutState>(
+                  builder: (context, state) {
+                    if (state is WorkoutSets) {
+                      date = state.date;
+                    }
+                    return GestureDetector(
+                      onTap: () {
+                        DatePicker.showDatePicker(context,
+                            initialDateTime: date, onConfirm: (date, ints) {
+                          setState(() {
+                            date = date;
+                          });
+                        },
+                            pickerTheme: DateTimePickerTheme(
+                                itemTextStyle:
+                                    TextStyle(fontFamily: "CarterOne")));
+                      },
+                      child: Container(
+                          margin:
+                              EdgeInsets.symmetric(horizontal: 5, vertical: 12),
+                          height: 10,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black, width: 2),
+                              borderRadius: BorderRadius.circular(10)),
+                          padding: EdgeInsets.all(5),
+                          child: Text(
+                            DateFormat('dd/MM/yyyy').format(date),
+                            style: TextStyle(color: Colors.black),
+                          )),
+                    );
                   },
-                  child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 5, vertical: 12),
-                      height: 10,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 2),
-                          borderRadius: BorderRadius.circular(10)),
-                      padding: EdgeInsets.all(5),
-                      child: Text(
-                        DateFormat('dd/MM/yyyy').format(date),
-                        style: TextStyle(color: Colors.black),
-                      )),
                 ),
                 IconButton(
                   icon: Icon(Icons.info),
@@ -246,63 +248,6 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
           floatingActionButton: TracktionButton(onPress: addRepHandler),
         ),
       ),
-    );
-  }
-}
-
-class ExerciseStreamWidget extends StatelessWidget {
-  final Function(Exercise) onLoadExercise;
-  const ExerciseStreamWidget({Key key, this.onLoadExercise}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      child:
-          BlocBuilder<ExerciseBloc, ExerciseState>(builder: (context, state) {
-        // TODO: implemente another bloc for exercise streaming
-        // or create a cubit, this is only one state and
-        // dispose the stream, only works for a single page for the moment
-        // can be reutilized for other screens that need real time exercise detials.
-        if (state is ExerciseStream) {
-          return StreamBuilder(
-            stream: state.exe,
-            builder: (context, stream) {
-              Exercise exs = stream.data;
-              if (onLoadExercise != null) onLoadExercise(exs);
-              if (stream.connectionState == ConnectionState.active) {
-                return Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ExerciseWorkoutTitle(exs: exs),
-                    DifficultyWidget(exs: exs),
-                    Container(
-                      height: 120,
-                      alignment: Alignment.center,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, i) => BodyPartWidget(
-                          exs.bodyParts[i],
-                          active: true,
-                          bgColor: Colors.black,
-                        ),
-                        itemCount: exs.bodyParts.length,
-                      ),
-                    ),
-                  ],
-                );
-              }
-
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            },
-          );
-        }
-
-        return Text("");
-      }),
     );
   }
 }

@@ -1,11 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tracktion/bloc/auth/auth_cubit.dart';
-import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
-import 'package:tracktion/bloc/workout/workout_bloc.dart';
-import 'package:tracktion/models/db/database.dart';
-import 'package:tracktion/models/server/ServerMigrator.dart';
-import './screens/index.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -13,6 +5,16 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tracktion/bloc/auth/auth_cubit.dart';
+import 'package:tracktion/bloc/common/Workout.dart';
+import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
+import 'package:tracktion/bloc/workout/workout_bloc.dart';
+import 'package:tracktion/models/db/database.dart';
+import 'package:tracktion/models/server/ServerMigrator.dart';
+
+import './screens/index.dart';
+import 'bloc/exercise-stream/exercisestream_cubit.dart';
 
 void _enablePlatformOverrideForDesktop() {
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
@@ -34,6 +36,7 @@ class _MyAppState extends State<MyApp> {
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
   SQLDatabase database;
+  Common common;
   bool isAuth = false;
 
   @override
@@ -41,6 +44,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     initConnectivity();
     database = SQLDatabase();
+    common = Common(currentDate: DateTime.now());
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
@@ -91,11 +95,15 @@ class _MyAppState extends State<MyApp> {
         child: MultiBlocProvider(
           providers: [
             BlocProvider<ExerciseBloc>(
-              create: (BuildContext context) => ExerciseBloc(db: database),
+              create: (BuildContext context) =>
+                  ExerciseBloc(db: database, common: common),
             ),
             BlocProvider<WorkoutBloc>(
-              create: (context) => WorkoutBloc(db: database),
-            )
+              create: (context) => WorkoutBloc(db: database, common: common),
+            ),
+            BlocProvider(
+                create: (BuildContext context) =>
+                    ExerciseStreamCubit(db: database))
           ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,

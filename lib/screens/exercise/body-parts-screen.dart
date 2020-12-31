@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:tracktion/models/app/body-parts.dart';
-import 'package:tracktion/widgets/drawer.dart';
+import 'package:tracktion/widgets/Drawer.dart';
+import 'package:tracktion/widgets/body-part.dart';
+
 import './add-edit-exercise-screen.dart';
 import './search-exercise-screen.dart';
-import 'package:tracktion/widgets/body-part.dart';
 import '../../colors/custom_colors.dart';
 
 class BodyPartsScreen extends StatelessWidget {

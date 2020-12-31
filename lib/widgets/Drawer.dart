@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tracktion/screens/index.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -6,19 +7,21 @@ class MainDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       elevation: 3,
-      semanticLabel: "sd",
       child: ListView(
         padding: EdgeInsets.all(0),
         children: <Widget>[
           UserAccountsDrawerHeader(
-            accountEmail: Text("kalpesh.khandla@bosc.in"),
-            accountName: Text("Kalpesh Khandla"),
+            arrowColor: Colors.black,
+            accountEmail: Text("mcuve@outlook.com"),
+            accountName: Text("Mauricio Antonio"),
+            decoration: BoxDecoration(color: Colors.black),
             currentAccountPicture: CircleAvatar(
-              child: Text("KK"),
+              backgroundColor: Colors.white,
+              child: Text("Avatar"),
             ),
           ),
           ListTile(
-            leading: Icon(Icons.home),
+            leading: FaIcon(FontAwesomeIcons.home),
             title: Text("Home"),
             onTap: () {
               print("Home Clicked");
@@ -29,8 +32,8 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.dashboard),
-            title: Text("Categories"),
+            leading: FaIcon(FontAwesomeIcons.running),
+            title: Text("Exercises"),
             onTap: () {
               print("Categories Clicked");
               Navigator.pushReplacement(
@@ -40,8 +43,22 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.dashboard),
+            leading: FaIcon(
+              FontAwesomeIcons.dumbbell,
+              size: 20,
+            ),
             title: Text("Workouts"),
+            onTap: () {
+              print("Categories Clicked");
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => WorkOutScreen()),
+              );
+            },
+          ),
+          ListTile(
+            leading: FaIcon(FontAwesomeIcons.userAlt),
+            title: Text("Profile"),
             onTap: () {
               print("Categories Clicked");
               Navigator.pushReplacement(

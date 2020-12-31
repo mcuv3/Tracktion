@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:tracktion/models/app/exercise.dart';
-import 'package:tracktion/screens/workout/exercise-workout-screen.dart';
 import 'package:tracktion/util/enumToString.dart';
+
 import '../colors/custom_colors.dart';
 
 class ExerciseItem extends StatelessWidget {
   final Exercise exs;
 
-  ExerciseItem(@required this.exs);
+  ExerciseItem(this.exs);
 
   @override
   Widget build(BuildContext context) {

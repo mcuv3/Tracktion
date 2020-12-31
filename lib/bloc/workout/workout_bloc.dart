@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:tracktion/bloc/common/Workout.dart';
 import 'package:tracktion/util/toDayDate.dart';
 
 import '../../models/app/index.dart' as modelsApp;
@@ -13,7 +14,9 @@ part 'workout_state.dart';
 
 class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   final SQLDatabase db;
-  WorkoutBloc({@required this.db}) : super(WorkoutInitial());
+  final Common common;
+  WorkoutBloc({@required this.db, @required this.common})
+      : super(WorkoutInitial());
 
   @override
   Stream<WorkoutState> mapEventToState(
@@ -35,10 +38,17 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   }
 
   Stream<WorkoutState> _fetchWorkout(FetchWorkout event) async* {
+    DateTime date = toDayDate(DateTime.now());
+    if (event.date == null && state is WorkoutSets) {
+      date = (state as WorkoutSets).date;
+    } else if(event.date !=null)
+      date = toDayDate(event.date);
     yield WorkoutLoading();
     try {
-      final date = toDayDate(event.date);
+      // var date = toDayDate(event.date);
+
       final sets = this.db.findSetsByDate(date);
+      // common.updateDate = date;
       yield WorkoutSets(sets: sets, date: date);
     } catch (e) {
       yield WorkoutTransactionFailed("Cannot fetch this workout");
@@ -74,10 +84,11 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       final set = event.set;
       final reps = set.reps;
       final exerciseSet = ExerciseSet(
-          id: set.id,
-          exeId: set.exercise.id,
-          workoutId: workout.id,
-          reps: reps);
+        id: set.id,
+        exeId: set.exercise.id,
+        workoutId: workout.id,
+        reps: reps,
+      );
       await this.db.saveSet(exerciseSet);
     } catch (e) {
       print(e);

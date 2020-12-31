@@ -5,7 +5,7 @@ abstract class WorkoutEvent {}
 
 class FetchWorkout extends WorkoutEvent {
   final DateTime date;
-  FetchWorkout(this.date);
+  FetchWorkout({this.date});
 }
 
 class DeleteWorkout extends WorkoutEvent {
