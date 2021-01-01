@@ -25,8 +25,6 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
   ) async* {
     if (event is FetchExers) {
       yield* _fetchExes(event);
-    } else if (event is StreamExercise) {
-      yield* _streamExercise(event);
     } else if (event is CreateExe) {
       yield* _createExe(event);
     } else if (event is EditExe) {
@@ -106,27 +104,11 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
   Stream<ExerciseState> _fetchExes(FetchExers event) async* {
     yield ExercisesLoading();
     try {
-      final sets = await db.findSetsByDate(DateTime.now());
-
-      print(sets);
-
       final dataSql = await db.findByBodyPart(event.bodyPart);
       yield Exercises(dataSql);
     } catch (e) {
       print(e);
       yield ExerciseFailure(message: "Something went wrong", statusCode: 400);
-    }
-  }
-
-  Stream<ExerciseState> _streamExercise(StreamExercise event) async* {
-    yield ExercisesLoading();
-    try {
-      final exe = this.db.findExerciseStream(event.exerciseId);
-      yield ExerciseStream(exe);
-    } catch (e) {
-      print(e);
-      yield ExerciseFailure(
-          message: "Cannot find the exercise", statusCode: 400);
     }
   }
 }

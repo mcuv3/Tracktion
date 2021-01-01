@@ -33,6 +33,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
   int setId;
   var date = DateTime.now();
   var init = false;
+  var fromWorkout = false;
 
   @override
   void didChangeDependencies() async {
@@ -43,7 +44,9 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
       if (initialState["reps"] != null) {
         reps = initialState["reps"];
       }
+
       setId = initialState["setId"];
+      if (initialState["fromWorkout"] != null) fromWorkout = true;
       exs = initialState["exercise"] as Exercise;
       if (exs != null)
         BlocProvider.of<ExerciseStreamCubit>(context).streamExercise(exs.id);
@@ -100,6 +103,8 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
   }
 
   Future<bool> onPopHandler() async {
+    if (fromWorkout) return true;
+
     var shouldSave = await showDialog(
         context: context,
         builder: (context) => AlertDialog(

@@ -78,7 +78,7 @@ class SQLDatabase extends _$SQLDatabase {
       for (final rep in repsSet) {
         await into(reps).insert(
             RepsCompanion.insert(
-                note: Value(rep.notes),
+                note: rep.notes == null ? "" : rep.notes,
                 reps: rep.reps,
                 weight: rep.weight,
                 rpe: rep.rpe,
@@ -122,7 +122,11 @@ class SQLDatabase extends _$SQLDatabase {
         final rep = st.readTable(reps);
         final indexSet = sets.indexWhere((st) => st.id == setWk.id);
         final repetition = modelsApp.Rep(
-            id: rep.id, weight: rep.weight, reps: rep.reps, rpe: rep.rpe);
+            id: rep.id,
+            weight: rep.weight,
+            reps: rep.reps,
+            rpe: rep.rpe,
+            notes: rep.note);
 
         if (indexSet == -1) {
           final exe = st.readTable(exercises);

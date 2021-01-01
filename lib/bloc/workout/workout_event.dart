@@ -25,8 +25,9 @@ class DeleteSet extends WorkoutEvent {
 }
 
 class SaveRep extends WorkoutEvent {
-  final Rep rep;
-  SaveRep(this.rep);
+  final modelsApp.Rep rep;
+
+  SaveRep({this.rep});
 }
 
 class DeleteRep extends WorkoutEvent {

@@ -21,11 +21,6 @@ class ExerciseFailure extends ExerciseState {
   ExerciseFailure({@required this.message, @required this.statusCode});
 }
 
-class ExerciseStream extends ExerciseState {
-  final Stream<exeApp.Exercise> exe;
-  ExerciseStream(this.exe);
-}
-
 class ExerciseDeleteSuccess extends ExerciseState {}
 
 class ExerciseCreatedSuccess extends ExerciseState {}

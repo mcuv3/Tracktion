@@ -22,8 +22,3 @@ class DeleteExe extends ExerciseEvent {
   final exeModel.Exercise exe;
   DeleteExe(this.exe);
 }
-
-class StreamExercise extends ExerciseEvent {
-  final int exerciseId;
-  StreamExercise(this.exerciseId);
-}

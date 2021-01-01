@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tracktion/models/app/rep.dart';
+
 import '../../colors/custom_colors.dart';
 
 Future<Rep> repInputsModal(BuildContext context, Rep rep) {
@@ -52,7 +53,9 @@ Future<Rep> repInputsModal(BuildContext context, Rep rep) {
       id: rep.id,
       reps: values["reps"],
       weight: values["weight"],
-      rpe: values["rpe"]));
+      rpe: values["rpe"],
+      notes: rep.notes,
+      setId: rep.setId));
 }
 
 class TitleRepInput extends StatelessWidget {

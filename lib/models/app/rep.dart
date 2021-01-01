@@ -5,7 +5,7 @@ class Rep {
   final int reps;
   final double weight;
   final int rpe;
-  int _setId;
+  int setId;
   String notes;
   Rep(
       {Key key,
@@ -13,10 +13,10 @@ class Rep {
       @required this.reps,
       @required this.weight,
       @required this.rpe,
-      this.notes = ""});
+      this.notes = "",
+      this.setId});
 
-  int get setId => this._setId;
-  set setId(int id) => this._setId = id;
+  set updateSetId(int id) => this.setId = id;
 
   set updateNote(String note) {
     this.notes = note;
@@ -24,6 +24,6 @@ class Rep {
 
   @override
   String toString() {
-    return "Rep:(id:${this.id},reps:${this.reps},weight:${this.weight},rpe:${this.rpe})";
+    return "Rep:(id:${this.id},reps:${this.reps},weight:${this.weight},rpe:${this.rpe},notes:${this.notes})";
   }
 }

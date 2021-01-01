@@ -36,7 +36,8 @@ Future<Rep> noteRepModal({BuildContext context, Rep rep}) async {
       reps: rep.reps,
       weight: rep.weight,
       notes: note,
-      rpe: rep.rpe);
+      rpe: rep.rpe,
+      setId: rep.setId);
 }
 
 class NoteModalContent extends StatefulWidget {

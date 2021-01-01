@@ -1344,11 +1344,12 @@ class RepsCompanion extends UpdateCompanion<Rep> {
     @required double weight,
     @required int reps,
     @required int rpe,
-    this.note = const Value.absent(),
+    @required String note,
     @required int setId,
   })  : weight = Value(weight),
         reps = Value(reps),
         rpe = Value(rpe),
+        note = Value(note),
         setId = Value(setId);
   static Insertable<Rep> custom({
     Expression<int> id,
@@ -1477,8 +1478,11 @@ class $RepsTable extends Reps with TableInfo<$RepsTable, Rep> {
   @override
   GeneratedTextColumn get note => _note ??= _constructNote();
   GeneratedTextColumn _constructNote() {
-    return GeneratedTextColumn('note', $tableName, false,
-        defaultValue: const Constant(""));
+    return GeneratedTextColumn(
+      'note',
+      $tableName,
+      false,
+    );
   }
 
   final VerificationMeta _setIdMeta = const VerificationMeta('setId');
@@ -1527,6 +1531,8 @@ class $RepsTable extends Reps with TableInfo<$RepsTable, Rep> {
     if (data.containsKey('note')) {
       context.handle(
           _noteMeta, note.isAcceptableOrUnknown(data['note'], _noteMeta));
+    } else if (isInserting) {
+      context.missing(_noteMeta);
     }
     if (data.containsKey('set_id')) {
       context.handle(

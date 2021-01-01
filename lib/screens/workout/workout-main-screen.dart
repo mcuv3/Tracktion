@@ -6,7 +6,9 @@ import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/widgets/DatePicker.dart';
 import 'package:tracktion/widgets/Drawer.dart';
+import 'package:tracktion/widgets/modals/NoteInput.dart';
 import 'package:tracktion/widgets/reps-item.dart';
+import 'package:tracktion/widgets/ui/IconDropDown.dart';
 import 'package:union/union.dart';
 
 import '../../colors/custom_colors.dart';
@@ -31,7 +33,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
   void initState() {
     currentDate = DateTime.now();
     _pageController =
-        AnimationController(duration: Duration(milliseconds: 300), vsync: this)
+        AnimationController(duration: Duration(milliseconds: 200), vsync: this)
           ..addListener(() => setState(() {}));
     animation = Tween(begin: 0.0, end: 500.0).animate(_pageController);
     super.initState();
@@ -40,7 +42,23 @@ class _WorkOutScreenState extends State<WorkOutScreen>
     });
   }
 
-  void viewCommentHandler() {}
+  void viewCommentHandler(Rep rep) async {
+    var isNew = rep.notes == "";
+    var updatedRep = await noteRepModal(context: context, rep: rep);
+
+    if (updatedRep == null && !isNew) {
+      updatedRep = Rep(
+          id: rep.id,
+          notes: "",
+          reps: rep.reps,
+          rpe: rep.rpe,
+          weight: rep.weight,
+          setId: rep.setId);
+    }
+
+    if (updatedRep != null && updatedRep.notes != rep.notes)
+      BlocProvider.of<WorkoutBloc>(context).add(SaveRep(rep: updatedRep));
+  }
 
   void changeDateHandler(bool isRight) {
     isRight ? _pageController.forward() : _pageController.reverse();
@@ -59,7 +77,8 @@ class _WorkOutScreenState extends State<WorkOutScreen>
     Navigator.of(context).pushNamed(ExerciseWorkOut.routeName, arguments: {
       "exercise": exerciseWorkout.exercise,
       "reps": exerciseWorkout.reps,
-      "setId": exerciseWorkout.id
+      "setId": exerciseWorkout.id,
+      "fromWorkout": true,
     });
   }
 
@@ -95,10 +114,19 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                 onPressed: () {
                   Navigator.of(context).pushNamed(BodyPartsScreen.routeName);
                 }),
-            IconButton(
-                visualDensity: VisualDensity.compact,
-                icon: FaIcon(FontAwesomeIcons.ellipsisV),
-                onPressed: () {}),
+            Container(
+                child: IconDropDown(
+              icons: [
+                Icon(Icons.timeline),
+                Icon(Icons.view_agenda),
+                Icon(Icons.settings),
+              ],
+              backgroundColor: Theme.of(context).colorScheme.analysis,
+              iconColor: Colors.white,
+              onChange: (index) {
+                print(index);
+              },
+            )),
           ],
         ),
         drawer: MainDrawer(),
@@ -135,11 +163,6 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                         }
 
                         if (state is WorkoutSets) {
-                          // return PageView.builder(
-                          //     controller: _pageController,
-                          //     itemCount: 3,
-                          //     scrollDirection: Axis.horizontal,
-                          //     itemBuilder: (context, workout) =>
                           return StreamBuilder(
                             builder: (context, sts) {
                               if (sts.connectionState ==
@@ -179,8 +202,8 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                                                   reps: rep.reps,
                                                   weight: rep.weight,
                                                   rpe: rep.rpe,
-                                                  onPressComment:
-                                                      viewCommentHandler,
+                                                  onPressComment: () =>
+                                                      viewCommentHandler(rep),
                                                 ),
                                               ),
                                           (_) => item = SizedBox(

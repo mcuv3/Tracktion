@@ -41,14 +41,10 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     DateTime date = toDayDate(DateTime.now());
     if (event.date == null && state is WorkoutSets) {
       date = (state as WorkoutSets).date;
-    } else if(event.date !=null)
-      date = toDayDate(event.date);
+    } else if (event.date != null) date = toDayDate(event.date);
     yield WorkoutLoading();
     try {
-      // var date = toDayDate(event.date);
-
       final sets = this.db.findSetsByDate(date);
-      // common.updateDate = date;
       yield WorkoutSets(sets: sets, date: date);
     } catch (e) {
       yield WorkoutTransactionFailed("Cannot fetch this workout");
@@ -97,7 +93,16 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
 
   Future<void> _saveRep(SaveRep event) async {
     try {
-      await this.db.saveRep(event.rep);
+      print(event.rep.setId);
+
+      final rep = Rep(
+          id: event.rep.id,
+          note: event.rep.notes,
+          weight: event.rep.weight,
+          reps: event.rep.reps,
+          rpe: event.rep.rpe,
+          setId: event.rep.setId);
+      await this.db.saveRep(rep);
     } catch (e) {
       print(e);
     }

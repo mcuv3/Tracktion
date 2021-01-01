@@ -77,8 +77,8 @@ class _SearchExerciseState extends State<SearchExercise> {
                         child: BodyPartWidget(
                           bodyPart,
                           withTitle: false,
-                          width: 200,
-                          height: 200,
+                          width: 150,
+                          height: 150,
                         )),
                   ),
                   BlocBuilder<ExerciseBloc, ExerciseState>(
@@ -86,7 +86,7 @@ class _SearchExerciseState extends State<SearchExercise> {
                       Widget main;
 
                       if (state is Exercises) {
-                        return StreamBuilder(
+                        main = StreamBuilder(
                           builder: (context, exs) {
                             if (exs.connectionState == ConnectionState.active) {
                               List<Exercise> exes = exs.data;
@@ -96,21 +96,17 @@ class _SearchExerciseState extends State<SearchExercise> {
                                       .contains(search.toLowerCase()))
                                   .toList();
 
-                              return Container(
-                                height: query.size.height * 0.47,
-                                width: query.size.width * 0.9,
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  reverse: true,
-                                  itemBuilder: (ctx, i) => GestureDetector(
-                                      onTap: () {
-                                        Navigator.of(context).pushNamed(
-                                            ExerciseWorkOut.routeName,
-                                            arguments: {"exercise": exes[i]});
-                                      },
-                                      child: ExerciseItem(exes[i])),
-                                  itemCount: exes.length,
-                                ),
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                reverse: true,
+                                itemBuilder: (ctx, i) => GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).pushNamed(
+                                          ExerciseWorkOut.routeName,
+                                          arguments: {"exercise": exes[i]});
+                                    },
+                                    child: ExerciseItem(exes[i])),
+                                itemCount: exes.length,
                               );
                             }
 
