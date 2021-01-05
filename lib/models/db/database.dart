@@ -58,10 +58,10 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
-  Future<void> deleteSet(SetWorkout setWorkout) {
+  Future<void> deleteSet(int setId) {
     return transaction(() async {
-      await (delete(reps)..where((e) => e.setId.equals(setWorkout.id))).go();
-      await delete(setWorkouts).delete(setWorkout);
+      await (delete(reps)..where((e) => e.setId.equals(setId))).go();
+      await (delete(setWorkouts)..where((e) => e.id.equals(setId))).go();
     });
   }
 
@@ -70,11 +70,17 @@ class SQLDatabase extends _$SQLDatabase {
       final exeId = exerciseSet.exeId;
       final workoutId = exerciseSet.workoutId;
       final repsSet = exerciseSet.reps;
+
       final setId = await into(setWorkouts).insert(
           SetWorkout(
               id: exerciseSet.id, workOutId: workoutId, exerciseId: exeId),
           mode: InsertMode.replace);
+
       await (delete(reps)..where((entry) => entry.setId.equals(setId))).go();
+    
+      if (repsSet.length == 0)
+        await (delete(setWorkouts)..where((s) => s.id.equals(setId))).go();
+
       for (final rep in repsSet) {
         await into(reps).insert(
             RepsCompanion.insert(

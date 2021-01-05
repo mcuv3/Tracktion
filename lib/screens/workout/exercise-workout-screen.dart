@@ -14,6 +14,7 @@ import 'package:tracktion/shapes/add-exercise.dart';
 import 'package:tracktion/widgets/StackAppBar.dart';
 import 'package:tracktion/widgets/modals/NoteInput.dart';
 import 'package:tracktion/widgets/modals/RepInputs.dart';
+import 'package:tracktion/widgets/modals/shouldSave.dart';
 import 'package:tracktion/widgets/reps-item.dart';
 import 'package:tracktion/widgets/streams/ExerciseStream.dart';
 import 'package:tracktion/widgets/ui/TracktionButton.dart';
@@ -103,33 +104,14 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
   }
 
   Future<bool> onPopHandler() async {
-    if (fromWorkout) return true;
+    var shouldSave = true;
+    var willDelete = reps.length == 0 && fromWorkout;
 
-    var shouldSave = await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-              content: Text("Do you want to save your changes?"),
-              actions: [
-                FlatButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(false);
-                    },
-                    child: Text(
-                      "Discard",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.routines),
-                    )),
-                FlatButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                    },
-                    child: Text(
-                      "Save",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.analysis),
-                    )),
-              ],
-            ));
+    if (!fromWorkout || willDelete)
+      shouldSave = await shouldSaveModal(
+          context, willDelete ? "This set will be deleted." : null);
+
+    if (!shouldSave && willDelete) return false;
 
     if (shouldSave) {
       final set = SetWorkout(id: setId, exercise: exs, reps: reps);
@@ -226,25 +208,30 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                   flex: 3,
                   child: Container(
                     margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                    child: ListView.builder(
-                      itemCount: reps.length,
-                      itemBuilder: (ctx, i) => Dismissible(
-                        key: Key(reps[i].id.toString()),
-                        onDismissed: (_) => removeRepHandler(i),
-                        child: GestureDetector(
-                          onTap: () => editRepHandler(reps[i], i),
-                          child: RepItem(
-                            hasComment: reps[i].notes != "",
-                            reps: reps[i].reps,
-                            weight: reps[i].weight,
-                            rpe: reps[i].rpe,
-                            isExpanded: true,
-                            onPressComment: () =>
-                                changeCommentHandler(reps[i], i),
+                    child: reps.length == 0
+                        ? Padding(
+                            padding: EdgeInsets.only(top: 25),
+                            child: Text("No reps added.",
+                                style: TextStyle(fontSize: 18)))
+                        : ListView.builder(
+                            itemCount: reps.length,
+                            itemBuilder: (ctx, i) => Dismissible(
+                              key: Key(reps[i].id.toString()),
+                              onDismissed: (_) => removeRepHandler(i),
+                              child: GestureDetector(
+                                onTap: () => editRepHandler(reps[i], i),
+                                child: RepItem(
+                                  hasComment: reps[i].notes != "",
+                                  reps: reps[i].reps,
+                                  weight: reps[i].weight,
+                                  rpe: reps[i].rpe,
+                                  isExpanded: true,
+                                  onPressComment: () =>
+                                      changeCommentHandler(reps[i], i),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
                   ),
                 )
               ],

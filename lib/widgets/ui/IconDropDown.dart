@@ -44,7 +44,7 @@ class _IconDropDownState extends State<IconDropDown>
 
   @override
   void dispose() {
-    closeMenu();
+    if (isMenuOpen) closeMenu();
     _animationController.dispose();
     super.dispose();
   }

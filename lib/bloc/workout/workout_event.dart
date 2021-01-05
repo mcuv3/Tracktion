@@ -20,8 +20,13 @@ class SaveSet extends WorkoutEvent {
 }
 
 class DeleteSet extends WorkoutEvent {
-  final SetWorkout set;
-  DeleteSet(this.set);
+  final int setId;
+  DeleteSet(this.setId);
+}
+
+class DeleteSets extends WorkoutEvent {
+  final List<int> setsId;
+  DeleteSets(this.setsId);
 }
 
 class SaveRep extends WorkoutEvent {

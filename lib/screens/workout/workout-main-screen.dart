@@ -27,6 +27,9 @@ class _WorkOutScreenState extends State<WorkOutScreen>
   Animation<double> animation;
   bool direction = true;
   DateTime currentDate;
+  var delitionMode = false;
+  List<int> selectedSets = [];
+
   var init = false;
 
   @override
@@ -43,6 +46,8 @@ class _WorkOutScreenState extends State<WorkOutScreen>
   }
 
   void viewCommentHandler(Rep rep) async {
+    if (delitionMode) return selectItemHandler(rep.setId);
+
     var isNew = rep.notes == "";
     var updatedRep = await noteRepModal(context: context, rep: rep);
 
@@ -82,11 +87,41 @@ class _WorkOutScreenState extends State<WorkOutScreen>
     });
   }
 
-  Widget buildHeader(BuildContext context, String title) {
+  List<Union3<Exercise, Rep, String>> mutateSets(List<SetWorkout> sets) {
+    final List<Union3<Exercise, Rep, String>> items = [];
+    sets.forEach((set) {
+      set.exercise.setId = set.id;
+      items.add(set.exercise.asFirst());
+      set.reps.forEach((rep) {
+        rep.setId = set.id;
+        return items.add(rep.asSecond());
+      });
+      items.add("".asThird());
+    });
+    return items;
+  }
+
+  Widget buildHeader(
+      {BuildContext context, String title, int index, int setId}) {
+    var selectedToDelete = selectedSets.contains(setId);
+
     return Container(
       padding: EdgeInsets.all(4),
       width: double.infinity,
       decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+        border: delitionMode
+            ? Border.all(
+                color: selectedToDelete ? Colors.red : Colors.transparent,
+                width: 1)
+            : null,
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(10), topRight: Radius.circular(10)),
         color: Theme.of(context).colorScheme.exercise,
@@ -99,35 +134,96 @@ class _WorkOutScreenState extends State<WorkOutScreen>
     );
   }
 
+  void selectItemHandler(int setId) {
+    setState(() {
+      if (selectedSets.contains(setId))
+        selectedSets.remove(setId);
+      else
+        selectedSets.add(setId);
+    });
+  }
+
+  void deleteSetsHandler() {
+    if (selectedSets.length > 0) {
+      BlocProvider.of<WorkoutBloc>(context).add(DeleteSets(selectedSets));
+      setState(() {
+        selectedSets = [];
+      });
+    }
+  }
+
+  BoxDecoration repStyle(int itemIndex, int setId) {
+    var selectedToDelete = selectedSets.contains(setId);
+    return BoxDecoration(
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(delitionMode ? 0.5 : 0.2),
+          spreadRadius: 4,
+          blurRadius: 7,
+          offset: Offset(0, 3), // changes position of shadow
+        ),
+      ],
+      border: delitionMode
+          ? Border(
+              left: BorderSide(
+                  color: selectedToDelete ? Colors.red : Colors.transparent,
+                  width: 1),
+              right: BorderSide(
+                  color: selectedToDelete ? Colors.red : Colors.transparent,
+                  width: 1))
+          : null,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          actions: [
-            IconButton(
-                icon: FaIcon(
-                  FontAwesomeIcons.plusCircle,
-                  size: 30,
-                ),
-                onPressed: () {
-                  Navigator.of(context).pushNamed(BodyPartsScreen.routeName);
-                }),
-            Container(
-                child: IconDropDown(
-              icons: [
-                Icon(Icons.timeline),
-                Icon(Icons.view_agenda),
-                Icon(Icons.settings),
-              ],
-              backgroundColor: Theme.of(context).colorScheme.analysis,
-              iconColor: Colors.white,
-              onChange: (index) {
-                print(index);
-              },
-            )),
-          ],
+          actions: delitionMode
+              ? [
+                  IconButton(
+                      icon: FaIcon(
+                        FontAwesomeIcons.trash,
+                        size: 24,
+                      ),
+                      onPressed: deleteSetsHandler),
+                  IconButton(
+                      icon: FaIcon(
+                        FontAwesomeIcons.times,
+                        size: 24,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          delitionMode = false;
+                        });
+                      }),
+                ]
+              : [
+                  IconButton(
+                      icon: FaIcon(
+                        FontAwesomeIcons.plusCircle,
+                        size: 30,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pushNamed(BodyPartsScreen.routeName);
+                      }),
+                  Container(
+                      child: IconDropDown(
+                    icons: [
+                      Icon(Icons.timeline),
+                      Icon(Icons.view_agenda),
+                      Icon(Icons.settings),
+                    ],
+                    backgroundColor: Theme.of(context).colorScheme.analysis,
+                    iconColor: Colors.white,
+                    onChange: (index) {
+                      print(index);
+                    },
+                  )),
+                ],
         ),
         drawer: MainDrawer(),
         body: Container(
@@ -168,18 +264,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                               if (sts.connectionState ==
                                   ConnectionState.active) {
                                 List<SetWorkout> sets = sts.data;
-                                final List<Union3<Exercise, Rep, String>>
-                                    items = [];
-                                sets.forEach((set) {
-                                  set.exercise.setId = set.id;
-                                  items.add(set.exercise.asFirst());
-                                  set.reps.forEach((rep) {
-                                    rep.setId = set.id;
-                                    return items.add(rep.asSecond());
-                                  });
-                                  items.add("".asThird());
-                                });
-
+                                final items = mutateSets(sts.data);
                                 return Container(
                                   width: size.width,
                                   child: ListView.builder(
@@ -189,21 +274,51 @@ class _WorkOutScreenState extends State<WorkOutScreen>
 
                                       items[i].switchCase(
                                           (exe) => item = GestureDetector(
-                                              onTap: () => showSetDetails(
-                                                  setId: exe.setId, sets: sets),
+                                              onLongPress: () {
+                                                if (delitionMode) return;
+                                                setState(() {
+                                                  delitionMode = true;
+                                                });
+                                              },
+                                              onTap: () {
+                                                if (!delitionMode) {
+                                                  return showSetDetails(
+                                                      setId: exe.setId,
+                                                      sets: sets);
+                                                }
+                                                selectItemHandler(exe.setId);
+                                              },
                                               child: buildHeader(
-                                                  context, exe.name)),
+                                                  context: context,
+                                                  title: exe.name,
+                                                  index: i,
+                                                  setId: exe.setId)),
                                           (rep) => item = GestureDetector(
-                                                onTap: () => showSetDetails(
-                                                    setId: rep.setId,
-                                                    sets: sets),
-                                                child: RepItem(
-                                                  hasComment: rep.notes != "",
-                                                  reps: rep.reps,
-                                                  weight: rep.weight,
-                                                  rpe: rep.rpe,
-                                                  onPressComment: () =>
-                                                      viewCommentHandler(rep),
+                                                onLongPress: () {
+                                                  if (delitionMode) return;
+                                                  setState(() {
+                                                    delitionMode = true;
+                                                  });
+                                                },
+                                                onTap: () {
+                                                  if (!delitionMode)
+                                                    return showSetDetails(
+                                                        setId: rep.setId,
+                                                        sets: sets);
+                                                  selectItemHandler(rep.setId);
+                                                },
+                                                child: Container(
+                                                  decoration: delitionMode
+                                                      ? repStyle(i, rep.setId)
+                                                      : null,
+                                                  child: RepItem(
+                                                    hasComment: rep.notes != "",
+                                                    reps: rep.reps,
+                                                    weight: rep.weight,
+                                                    rpe: rep.rpe,
+                                                    onPressComment: () =>
+                                                        viewCommentHandler(rep),
+                                                  ),
                                                 ),
                                               ),
                                           (_) => item = SizedBox(

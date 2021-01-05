@@ -34,6 +34,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       _saveRep(event);
     } else if (event is SaveSet) {
       _saveSet(event);
+    } else if (event is DeleteSets) {
+      _deleteSets(event);
     }
   }
 
@@ -60,7 +62,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
 
   Future<void> _deleteSet(DeleteSet event) async {
     try {
-      await this.db.deleteSet(event.set);
+      await this.db.deleteSet(event.setId);
     } catch (e) {
       print(e);
     }
@@ -103,6 +105,18 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
           rpe: event.rep.rpe,
           setId: event.rep.setId);
       await this.db.saveRep(rep);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void _deleteSets(DeleteSets event) async {
+    try {
+      final sets = event.setsId;
+
+      for (final id in sets) {
+        await this.db.deleteSet(id);
+      }
     } catch (e) {
       print(e);
     }
