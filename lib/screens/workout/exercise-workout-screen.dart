@@ -12,10 +12,10 @@ import 'package:tracktion/screens/index.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/add-exercise.dart';
 import 'package:tracktion/widgets/StackAppBar.dart';
+import 'package:tracktion/widgets/items/reps-item.dart';
 import 'package:tracktion/widgets/modals/NoteInput.dart';
 import 'package:tracktion/widgets/modals/RepInputs.dart';
 import 'package:tracktion/widgets/modals/shouldSave.dart';
-import 'package:tracktion/widgets/reps-item.dart';
 import 'package:tracktion/widgets/streams/ExerciseStream.dart';
 import 'package:tracktion/widgets/ui/TracktionButton.dart';
 

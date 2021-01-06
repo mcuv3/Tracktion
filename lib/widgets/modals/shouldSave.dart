@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import '../../colors/custom_colors.dart';
 
 Future<bool> shouldSaveModal(BuildContext context,
-        [String message = "Do you want to save your changes?"]) =>
+        [String message  ]) =>
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              content: Text(message),
+              content: Text(message == null ? "Do you want to save your changes?":message),
               actions: [
                 FlatButton(
                     onPressed: () {

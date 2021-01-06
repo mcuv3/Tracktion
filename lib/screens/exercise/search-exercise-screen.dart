@@ -8,9 +8,9 @@ import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/exercise-search-shape.dart';
 // import 'package:tracktion/models/database.dart';
 import 'package:tracktion/widgets/ErrorMessage.dart';
-import 'package:tracktion/widgets/ExerciseItem.dart';
-import 'package:tracktion/widgets/InputSearch.dart';
 import 'package:tracktion/widgets/body-part.dart';
+import 'package:tracktion/widgets/inputs/InputSearch.dart';
+import 'package:tracktion/widgets/items/ExerciseItem.dart';
 
 import '../../colors/custom_colors.dart';
 

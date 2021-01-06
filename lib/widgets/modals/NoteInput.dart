@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tracktion/models/app/index.dart';
-import 'package:tracktion/widgets/input.dart';
+import 'package:tracktion/widgets/inputs/input.dart';
 
 Future<Rep> noteRepModal({BuildContext context, Rep rep}) async {
   var note = rep.notes;

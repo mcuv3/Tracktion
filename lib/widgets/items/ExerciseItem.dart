@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tracktion/models/app/exercise.dart';
 import 'package:tracktion/util/enumToString.dart';
 
-import '../colors/custom_colors.dart';
+import '../../colors/custom_colors.dart';
 
 class ExerciseItem extends StatelessWidget {
   final Exercise exs;

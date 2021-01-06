@@ -4,12 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/app/index.dart';
-import 'package:tracktion/widgets/DatePicker.dart';
 import 'package:tracktion/widgets/Drawer.dart';
+import 'package:tracktion/widgets/inputs/DatePicker.dart';
+import 'package:tracktion/widgets/items/WorkoutItem.dart';
 import 'package:tracktion/widgets/modals/NoteInput.dart';
-import 'package:tracktion/widgets/reps-item.dart';
 import 'package:tracktion/widgets/ui/IconDropDown.dart';
-import 'package:union/union.dart';
 
 import '../../colors/custom_colors.dart';
 import '../index.dart';
@@ -29,6 +28,8 @@ class _WorkOutScreenState extends State<WorkOutScreen>
   DateTime currentDate;
   var delitionMode = false;
   List<int> selectedSets = [];
+  List<int> orderSets = [];
+  var sortMode = false;
 
   var init = false;
 
@@ -87,53 +88,6 @@ class _WorkOutScreenState extends State<WorkOutScreen>
     });
   }
 
-  List<Union3<Exercise, Rep, String>> mutateSets(List<SetWorkout> sets) {
-    final List<Union3<Exercise, Rep, String>> items = [];
-    sets.forEach((set) {
-      set.exercise.setId = set.id;
-      items.add(set.exercise.asFirst());
-      set.reps.forEach((rep) {
-        rep.setId = set.id;
-        return items.add(rep.asSecond());
-      });
-      items.add("".asThird());
-    });
-    return items;
-  }
-
-  Widget buildHeader(
-      {BuildContext context, String title, int index, int setId}) {
-    var selectedToDelete = selectedSets.contains(setId);
-
-    return Container(
-      padding: EdgeInsets.all(4),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 5,
-            blurRadius: 7,
-            offset: Offset(0, 3), // changes position of shadow
-          ),
-        ],
-        border: delitionMode
-            ? Border.all(
-                color: selectedToDelete ? Colors.red : Colors.transparent,
-                width: 1)
-            : null,
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-        color: Theme.of(context).colorScheme.exercise,
-      ),
-      child: Text(
-        title,
-        style: TextStyle(
-            fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
   void selectItemHandler(int setId) {
     setState(() {
       if (selectedSets.contains(setId))
@@ -152,43 +106,21 @@ class _WorkOutScreenState extends State<WorkOutScreen>
     }
   }
 
-  BoxDecoration repStyle(int itemIndex, int setId) {
-    var selectedToDelete = selectedSets.contains(setId);
-    return BoxDecoration(
-      boxShadow: [
-        BoxShadow(
-          color: Colors.grey.withOpacity(delitionMode ? 0.5 : 0.2),
-          spreadRadius: 4,
-          blurRadius: 7,
-          offset: Offset(0, 3), // changes position of shadow
-        ),
-      ],
-      border: delitionMode
-          ? Border(
-              left: BorderSide(
-                  color: selectedToDelete ? Colors.red : Colors.transparent,
-                  width: 1),
-              right: BorderSide(
-                  color: selectedToDelete ? Colors.red : Colors.transparent,
-                  width: 1))
-          : null,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          actions: delitionMode
+          actions: delitionMode | sortMode
               ? [
-                  IconButton(
-                      icon: FaIcon(
-                        FontAwesomeIcons.trash,
-                        size: 24,
-                      ),
-                      onPressed: deleteSetsHandler),
+                  if (!sortMode)
+                    IconButton(
+                        icon: FaIcon(
+                          FontAwesomeIcons.trash,
+                          size: 24,
+                        ),
+                        onPressed: deleteSetsHandler),
                   IconButton(
                       icon: FaIcon(
                         FontAwesomeIcons.times,
@@ -197,10 +129,21 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                       onPressed: () {
                         setState(() {
                           delitionMode = false;
+                          sortMode = false;
                         });
                       }),
                 ]
               : [
+                  IconButton(
+                      icon: FaIcon(
+                        FontAwesomeIcons.sort,
+                        size: 30,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          sortMode = !sortMode;
+                        });
+                      }),
                   IconButton(
                       icon: FaIcon(
                         FontAwesomeIcons.plusCircle,
@@ -226,129 +169,124 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                 ],
         ),
         drawer: MainDrawer(),
-        body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-          child: Column(
-            children: [
-              BlocListener<WorkoutBloc, WorkoutState>(
-                listener: (context, state) {
-                  if (state is WorkoutSets) {
-                    setState(() {
-                      currentDate = state.date;
-                    });
-                  }
-                },
-                child: DatePicker(
-                  changeDate: changeDateHandler,
-                  currentDate: currentDate,
-                ),
+        body: Column(
+          children: [
+            BlocListener<WorkoutBloc, WorkoutState>(
+              listener: (context, state) {
+                if (state is WorkoutSets) {
+                  setState(() {
+                    currentDate = state.date;
+                  });
+                }
+              },
+              child: DatePicker(
+                changeDate: changeDateHandler,
+                currentDate: currentDate,
               ),
-              Expanded(
-                child: AnimatedBuilder(
-                  animation: _pageController,
-                  builder: (context, _) => Transform.translate(
-                    offset: Offset(animation.value * (direction ? -1 : 1), 0.0),
-                    child: BlocBuilder<WorkoutBloc, WorkoutState>(
-                      builder: (context, state) {
-                        if (state is WorkoutLoading) {
-                          return Center(
-                            child: CircularProgressIndicator(
-                              backgroundColor: Colors.red,
-                            ),
-                          );
-                        }
-
-                        if (state is WorkoutSets) {
-                          return StreamBuilder(
-                            builder: (context, sts) {
-                              if (sts.connectionState ==
-                                  ConnectionState.active) {
-                                List<SetWorkout> sets = sts.data;
-                                final items = mutateSets(sts.data);
-                                return Container(
-                                  width: size.width,
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemBuilder: (ctx, i) {
-                                      Widget item;
-
-                                      items[i].switchCase(
-                                          (exe) => item = GestureDetector(
-                                              onLongPress: () {
-                                                if (delitionMode) return;
-                                                setState(() {
-                                                  delitionMode = true;
-                                                });
-                                              },
-                                              onTap: () {
-                                                if (!delitionMode) {
-                                                  return showSetDetails(
-                                                      setId: exe.setId,
-                                                      sets: sets);
-                                                }
-                                                selectItemHandler(exe.setId);
-                                              },
-                                              child: buildHeader(
-                                                  context: context,
-                                                  title: exe.name,
-                                                  index: i,
-                                                  setId: exe.setId)),
-                                          (rep) => item = GestureDetector(
-                                                onLongPress: () {
-                                                  if (delitionMode) return;
-                                                  setState(() {
-                                                    delitionMode = true;
-                                                  });
-                                                },
-                                                onTap: () {
-                                                  if (!delitionMode)
-                                                    return showSetDetails(
-                                                        setId: rep.setId,
-                                                        sets: sets);
-                                                  selectItemHandler(rep.setId);
-                                                },
-                                                child: Container(
-                                                  decoration: delitionMode
-                                                      ? repStyle(i, rep.setId)
-                                                      : null,
-                                                  child: RepItem(
-                                                    hasComment: rep.notes != "",
-                                                    reps: rep.reps,
-                                                    weight: rep.weight,
-                                                    rpe: rep.rpe,
-                                                    onPressComment: () =>
-                                                        viewCommentHandler(rep),
-                                                  ),
-                                                ),
-                                              ),
-                                          (_) => item = SizedBox(
-                                                height: 10,
-                                              ));
-                                      return item;
-                                    },
-                                    itemCount: items.length,
-                                  ),
-                                );
+            ),
+            Expanded(
+              flex: 1,
+              child: AnimatedBuilder(
+                animation: _pageController,
+                builder: (context, _) => Transform.translate(
+                  offset: Offset(animation.value * (direction ? -1 : 1), 0.0),
+                  child: BlocBuilder<WorkoutBloc, WorkoutState>(
+                    builder: (context, state) {
+                      if (state is WorkoutSets) {
+                        return StreamBuilder(
+                          builder: (context, sts) {
+                            if (sts.connectionState == ConnectionState.active) {
+                              List<SetWorkout> sets = sts.data;
+                              if (sets.length == 0) {
+                                setState(() {
+                                  for (final set in sets) orderSets.add(set.id);
+                                });
                               }
+                              if (sortMode)
+                                sets.sort((a, b) => orderSets.indexOf(a.id));
+                              var content = [
+                                for (final set in sets)
+                                  InkWell(
+                                    key: ValueKey(set.id),
+                                    onLongPress: sortMode
+                                        ? null
+                                        : () {
+                                            if (delitionMode) return;
+                                            setState(() {
+                                              delitionMode = true;
+                                            });
+                                          },
+                                    highlightColor: Colors.red,
+                                    splashColor: Colors.red.withOpacity(0.3),
+                                    onTap: () {
+                                      if (!delitionMode) {
+                                        return showSetDetails(
+                                            setId: set.id, sets: sets);
+                                      }
+                                      selectItemHandler(set.id);
+                                    },
+                                    child: Padding(
+                                      padding: EdgeInsets.all(10),
+                                      child: WorkoutItem(
+                                        isSortMode: sortMode,
+                                        delitionMode: delitionMode,
+                                        isSelected:
+                                            selectedSets.contains(set.id),
+                                        onViewComment: (v) {},
+                                        set: set,
+                                      ),
+                                    ),
+                                  )
+                              ];
 
-                              return Center(
-                                child: CircularProgressIndicator(),
+                              return Container(
+                                width: size.width,
+                                child: !sortMode
+                                    ? Column(
+                                        children: content,
+                                      )
+                                    : ReorderableListView(
+                                        onReorder: (prev, next) {
+                                          var ids = orderSets;
+                                          if (ids.length == 0)
+                                            for (final set in sets)
+                                              ids.add(set.id);
+
+                                          print(ids);
+                                          if (next >= orderSets.length)
+                                            next = orderSets.length - 1;
+                                          // if (next > prev) next -= 1;
+                                          final item = ids.removeAt(prev);
+                                          ids.insert(next, item);
+                                          print(ids);
+
+                                          setState(() {
+                                            orderSets = ids;
+                                          });
+                                        },
+                                        children: content
+                                        // itemCount: sets.length,
+                                        ),
                               );
-                            },
-                            stream: state.sets,
-                          );
-                        }
+                            }
 
-                        return Center(
-                          child: CircularProgressIndicator(),
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          },
+                          stream: state.sets,
                         );
-                      },
-                    ),
+                      }
+
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

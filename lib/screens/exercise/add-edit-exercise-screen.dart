@@ -11,10 +11,10 @@ import 'package:tracktion/util/difficultyToEnum.dart';
 import 'package:tracktion/util/enumToString.dart';
 import 'package:tracktion/util/showMessage.dart';
 import 'package:tracktion/util/showModalConfirmation.dart';
-import 'package:tracktion/widgets/Select.dart';
 import 'package:tracktion/widgets/StackAppBar.dart';
 import 'package:tracktion/widgets/body-part.dart';
-import 'package:tracktion/widgets/input.dart';
+import 'package:tracktion/widgets/inputs/Select.dart';
+import 'package:tracktion/widgets/inputs/input.dart';
 
 import '../../colors/custom_colors.dart';
 import '../index.dart';
