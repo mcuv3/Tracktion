@@ -10,15 +10,18 @@ class WorkoutItem extends StatelessWidget {
   final bool isSortMode;
   final bool isSelected;
   final Function(Rep) onViewComment;
+  final bool editable;
+  final bool selectable;
   final SetWorkout set;
 
   WorkoutItem(
-      {this.delitionMode,
-      this.isSelected,
-      this.set,
+      {this.delitionMode = false,
+      this.isSelected = false,
+      this.selectable = false,
+      @required this.set,
       this.onViewComment,
-      this.isSortMode});
-
+      this.isSortMode = false,
+      this.editable = false});
   @override
   Widget build(BuildContext context) {
     final header = Container(
@@ -55,17 +58,46 @@ class WorkoutItem extends StatelessWidget {
           ),
           // margin: EdgeInsets.only(bottom: 15),
           child: isSortMode
-              ? header
+              ? Row(
+                  mainAxisAlignment: selectable
+                      ? MainAxisAlignment.spaceAround
+                      : MainAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(4),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.exercise,
+                      ),
+                      child: Text(
+                        set.exercise.name,
+                        style: TextStyle(
+                            fontSize: 22,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    if (selectable)
+                      Checkbox(
+                        checkColor: Colors.white,
+                        activeColor: Colors.white,
+                        value: true,
+                        onChanged: (newValue) {},
+                      )
+                  ],
+                )
               : Column(
                   children: [
                     header,
                     for (final rep in set.reps)
                       RepItem(
+                        selectable: selectable,
+                        editable: editable,
                         hasComment: rep.notes != "",
                         reps: rep.reps,
                         weight: rep.weight,
                         rpe: rep.rpe,
-                        onPressComment: () => onViewComment(rep),
+                        onPressIcon: () => onViewComment(rep),
                       ),
                   ],
                 ),

@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/auth/auth_cubit.dart';
 import 'package:tracktion/bloc/common/Workout.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
+import 'package:tracktion/bloc/workout-picker/workoutpicker_bloc.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/models/server/ServerMigrator.dart';
@@ -100,6 +101,9 @@ class _MyAppState extends State<MyApp> {
             ),
             BlocProvider<WorkoutBloc>(
               create: (context) => WorkoutBloc(db: database, common: common),
+            ),
+            BlocProvider<WorkoutpickerBloc>(
+              create: (context) => WorkoutpickerBloc(db: database),
             ),
             BlocProvider(
                 create: (BuildContext context) =>

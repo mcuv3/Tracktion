@@ -12,8 +12,10 @@ class BodyPartsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
     return Scaffold(
-        drawer: MainDrawer(),
+        drawer: args != null ? null : MainDrawer(),
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.black),
           // automaticallyImplyLeading: false,

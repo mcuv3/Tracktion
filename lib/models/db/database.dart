@@ -77,7 +77,7 @@ class SQLDatabase extends _$SQLDatabase {
           mode: InsertMode.replace);
 
       await (delete(reps)..where((entry) => entry.setId.equals(setId))).go();
-    
+
       if (repsSet.length == 0)
         await (delete(setWorkouts)..where((s) => s.id.equals(setId))).go();
 
@@ -150,6 +150,44 @@ class SQLDatabase extends _$SQLDatabase {
         return sets;
       });
     });
+  }
+
+  Future<List<modelsApp.SetWorkout>> findSets(DateTime targetDate) async {
+    final query = select(setWorkouts).join([
+      innerJoin(workouts, workouts.id.equalsExp(setWorkouts.workOutId)),
+      innerJoin(exercises, exercises.id.equalsExp(setWorkouts.exerciseId)),
+      innerJoin(reps, reps.setId.equalsExp(setWorkouts.id)),
+    ])
+      ..where(workouts.date.equals(targetDate));
+    final data = await query.get();
+
+    return data.fold<List<modelsApp.SetWorkout>>([], (sets, st) {
+        final setWk = st.readTable(setWorkouts);
+        final rep = st.readTable(reps);
+        final indexSet = sets.indexWhere((st) => st.id == setWk.id);
+        final repetition = modelsApp.Rep(
+            id: rep.id,
+            weight: rep.weight,
+            reps: rep.reps,
+            rpe: rep.rpe,
+            notes: rep.note);
+
+        if (indexSet == -1) {
+          final exe = st.readTable(exercises);
+          final exercise = modelsApp.Exercise(
+              id: exe.id,
+              name: exe.name,
+              difficulty: exe.difficulty,
+              notes: exe.notes,
+              bodyParts: []);
+          sets.add(modelsApp.SetWorkout(
+              id: setWk.id, exercise: exercise, reps: [repetition]));
+        } else {
+          sets[indexSet].reps = [...sets[indexSet].reps, repetition];
+        }
+        return sets;
+      });
+ 
   }
 
   Future<Stream<List<exeApp.Exercise>>> findByBodyPart(BodyPartEnum bd) async {

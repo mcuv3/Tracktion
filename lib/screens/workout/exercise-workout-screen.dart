@@ -226,7 +226,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                                   weight: reps[i].weight,
                                   rpe: reps[i].rpe,
                                   isExpanded: true,
-                                  onPressComment: () =>
+                                  onPressIcon: () =>
                                       changeCommentHandler(reps[i], i),
                                 ),
                               ),

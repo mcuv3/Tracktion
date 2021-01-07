@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:tracktion/widgets/inputs/DatePicker.dart';
 import 'package:tracktion/widgets/items/WorkoutItem.dart';
 import 'package:tracktion/widgets/modals/NoteInput.dart';
 import 'package:tracktion/widgets/ui/IconDropDown.dart';
+import 'package:tracktion/widgets/ui/WorkoutEmpty.dart';
 
 import '../../colors/custom_colors.dart';
 import '../index.dart';
@@ -40,10 +42,10 @@ class _WorkOutScreenState extends State<WorkOutScreen>
         AnimationController(duration: Duration(milliseconds: 200), vsync: this)
           ..addListener(() => setState(() {}));
     animation = Tween(begin: 0.0, end: 500.0).animate(_pageController);
-    super.initState();
     Future.delayed(Duration.zero).then((_) {
       BlocProvider.of<WorkoutBloc>(context).add(FetchWorkout());
     });
+    super.initState();
   }
 
   void viewCommentHandler(Rep rep) async {
@@ -106,9 +108,50 @@ class _WorkOutScreenState extends State<WorkOutScreen>
     }
   }
 
+  void orderSetsHandler(int prev, int next, List<SetWorkout> sets) {
+    var ids = orderSets;
+    if (ids.length == 0) for (final set in sets) ids.add(set.id);
+    if (next >= orderSets.length) next = orderSets.length - 1;
+    // if (next > prev) next -= 1;
+    final item = ids.removeAt(prev);
+    ids.insert(next, item);
+
+    setState(() {
+      orderSets = ids;
+    });
+  }
+
+  Widget buildSet(SetWorkout set, List<SetWorkout> sets) => InkWell(
+        key: ValueKey(set.id),
+        onLongPress: sortMode
+            ? null
+            : () {
+                if (delitionMode) return;
+                setState(() {
+                  delitionMode = true;
+                });
+              },
+        highlightColor: Colors.red,
+        splashColor: Colors.red.withOpacity(0.3),
+        onTap: () {
+          if (!delitionMode) return showSetDetails(setId: set.id, sets: sets);
+
+          selectItemHandler(set.id);
+        },
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: WorkoutItem(
+            isSortMode: sortMode,
+            delitionMode: delitionMode,
+            isSelected: selectedSets.contains(set.id),
+            onViewComment: (v) {},
+            set: set,
+          ),
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -150,8 +193,9 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                         size: 30,
                       ),
                       onPressed: () {
-                        Navigator.of(context)
-                            .pushNamed(BodyPartsScreen.routeName);
+                        Navigator.of(context).pushNamed(
+                            BodyPartsScreen.routeName,
+                            arguments: {"pushed": true});
                       }),
                   Container(
                       child: IconDropDown(
@@ -185,11 +229,10 @@ class _WorkOutScreenState extends State<WorkOutScreen>
               ),
             ),
             Expanded(
-              flex: 1,
               child: AnimatedBuilder(
                 animation: _pageController,
                 builder: (context, _) => Transform.translate(
-                  offset: Offset(animation.value * (direction ? -1 : 1), 0.0),
+                  offset: Offset(animation.value * (direction ? 1 : -1), 0.0),
                   child: BlocBuilder<WorkoutBloc, WorkoutState>(
                     builder: (context, state) {
                       if (state is WorkoutSets) {
@@ -197,77 +240,26 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                           builder: (context, sts) {
                             if (sts.connectionState == ConnectionState.active) {
                               List<SetWorkout> sets = sts.data;
-                              if (sets.length == 0) {
-                                setState(() {
-                                  for (final set in sets) orderSets.add(set.id);
-                                });
-                              }
                               if (sortMode)
                                 sets.sort((a, b) => orderSets.indexOf(a.id));
-                              var content = [
-                                for (final set in sets)
-                                  InkWell(
-                                    key: ValueKey(set.id),
-                                    onLongPress: sortMode
-                                        ? null
-                                        : () {
-                                            if (delitionMode) return;
-                                            setState(() {
-                                              delitionMode = true;
-                                            });
-                                          },
-                                    highlightColor: Colors.red,
-                                    splashColor: Colors.red.withOpacity(0.3),
-                                    onTap: () {
-                                      if (!delitionMode) {
-                                        return showSetDetails(
-                                            setId: set.id, sets: sets);
-                                      }
-                                      selectItemHandler(set.id);
-                                    },
-                                    child: Padding(
-                                      padding: EdgeInsets.all(10),
-                                      child: WorkoutItem(
-                                        isSortMode: sortMode,
-                                        delitionMode: delitionMode,
-                                        isSelected:
-                                            selectedSets.contains(set.id),
-                                        onViewComment: (v) {},
-                                        set: set,
-                                      ),
-                                    ),
-                                  )
-                              ];
 
-                              return Container(
-                                width: size.width,
-                                child: !sortMode
-                                    ? Column(
-                                        children: content,
-                                      )
-                                    : ReorderableListView(
-                                        onReorder: (prev, next) {
-                                          var ids = orderSets;
-                                          if (ids.length == 0)
-                                            for (final set in sets)
-                                              ids.add(set.id);
+                              if (sets.isEmpty) return WorkoutEmpty();
 
-                                          print(ids);
-                                          if (next >= orderSets.length)
-                                            next = orderSets.length - 1;
-                                          // if (next > prev) next -= 1;
-                                          final item = ids.removeAt(prev);
-                                          ids.insert(next, item);
-                                          print(ids);
-
-                                          setState(() {
-                                            orderSets = ids;
-                                          });
-                                        },
-                                        children: content
-                                        // itemCount: sets.length,
-                                        ),
-                              );
+                              return !sortMode
+                                  ? ListView.builder(
+                                      itemCount: sets.length,
+                                      itemBuilder: (context, i) =>
+                                          buildSet(sets[i], sets),
+                                    )
+                                  : ReorderableListView(
+                                      onReorder: (prev, next) =>
+                                          orderSetsHandler(prev, next, sets),
+                                      children: [
+                                          for (final set in sets)
+                                            buildSet(set, sets)
+                                        ]
+                                      // itemCount: sets.length,
+                                      );
                             }
 
                             return Center(
