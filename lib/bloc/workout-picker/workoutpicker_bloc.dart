@@ -19,6 +19,10 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
   ) async* {
     if (event is PickWorkout) {
       yield* _pickWorkout(event);
+    } else if (event is DeleteSet) {
+      yield* _deleteSet(event);
+    } else {
+      yield* _saveRep(event);
     }
   }
 
@@ -31,6 +35,31 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
     } catch (e) {
       print(e);
       yield WorkoutPickerFailure("Cannot fetch that workout");
+    }
+  }
+
+  Stream<WorkoutpickerState> _deleteSet(DeleteSet event) async* {
+    final sets = [...(state as Workout).sets];
+    final prevDate = (state as Workout).date;
+    yield WorkoutLoading();
+
+    try {
+      sets.removeWhere((element) => element.id == event.setId);
+      yield Workout(sets: sets, date: prevDate);
+    } catch (e) {
+      yield WorkoutPickerFailure("Cannot delete the set");
+    }
+  }
+
+  Stream<WorkoutpickerState> _saveRep(SaveRep event) async* {
+    final sets = [...(state as Workout).sets];
+    final prevDate = (state as Workout).date;
+    yield WorkoutLoading();
+    try {
+      sets[event.setIndex].reps[event.repIndex] = event.rep;
+      yield Workout(sets: sets, date: prevDate);
+    } catch (e) {
+      yield WorkoutPickerFailure("Cannot sava the rep");
     }
   }
 

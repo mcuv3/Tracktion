@@ -144,7 +144,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
             isSortMode: sortMode,
             delitionMode: delitionMode,
             isSelected: selectedSets.contains(set.id),
-            onViewComment: (v) {},
+            // onViewComment: (v) {},
             set: set,
           ),
         ),

@@ -5,6 +5,13 @@ import 'package:tracktion/widgets/items/reps-item.dart';
 
 import '../../colors/custom_colors.dart';
 
+extension ExtendedIterable<E> on Iterable<E> {
+  Iterable<T> mapIndex<T>(T f(E e, int i)) {
+    var i = 0;
+    return this.map((e) => f(e, i++));
+  }
+}
+
 class WorkoutItem extends StatelessWidget {
   final bool delitionMode;
   final bool isSortMode;
@@ -12,12 +19,25 @@ class WorkoutItem extends StatelessWidget {
   final Function(Rep) onViewComment;
   final bool editable;
   final bool selectable;
+  final List<bool> repsSelectors;
+  final void Function({int setId, int repIndex}) onCheckRep;
+  final void Function(int setId) onCheckSet;
+  final void Function(Rep rep, int repIndex) onEditRep;
+  final void Function(int setId) onDeleteSet;
+  final bool touchable;
+
   final SetWorkout set;
 
   WorkoutItem(
       {this.delitionMode = false,
       this.isSelected = false,
       this.selectable = false,
+      this.touchable = false,
+      this.onCheckRep,
+      this.onCheckSet,
+      this.repsSelectors,
+      this.onDeleteSet,
+      this.onEditRep,
       @required this.set,
       this.onViewComment,
       this.isSortMode = false,
@@ -25,17 +45,86 @@ class WorkoutItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final header = Container(
-      padding: EdgeInsets.all(4),
+      padding: EdgeInsets.only(left: 8),
       width: double.infinity,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.exercise,
       ),
-      child: Text(
-        set.exercise.name,
-        style: TextStyle(
-            fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+      child: Row(
+        mainAxisAlignment: (selectable || editable)
+            ? MainAxisAlignment.spaceBetween
+            : MainAxisAlignment.start,
+        children: [
+          Text(
+            set.exercise.name,
+            style: TextStyle(
+                fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          if (selectable)
+            Container(
+              decoration:
+                  BoxDecoration(color: Theme.of(context).colorScheme.analysis),
+              child: Checkbox(
+                checkColor: isSelected
+                    ? Theme.of(context).colorScheme.analysis
+                    : Colors.black,
+                activeColor: Colors.white,
+                visualDensity: VisualDensity.compact,
+                value: isSelected,
+                onChanged: (newValue) {
+                  onCheckSet(set.id);
+                },
+              ),
+            ),
+          if (editable)
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              icon: Icon(
+                Icons.delete,
+              ),
+              onPressed: () {
+                onDeleteSet(set.id);
+              },
+              color: Colors.white,
+              padding: EdgeInsets.all(0),
+            )
+        ],
       ),
     );
+
+    Widget buildAction(
+        {Rep rep, bool selectedValue, int index, bool hasComment}) {
+      if (selectable) {
+        return Checkbox(
+          value: selectedValue,
+          onChanged: (newValue) {
+            onCheckRep(setId: set.id, repIndex: index);
+          },
+        );
+      } else if (editable) {
+        return IconButton(
+          visualDensity: VisualDensity.compact,
+          icon: Icon(
+            Icons.edit,
+          ),
+          onPressed: () {
+            onEditRep(rep, index);
+          },
+          color: Colors.red,
+          padding: EdgeInsets.all(0),
+        );
+      }
+      return IconButton(
+        visualDensity: VisualDensity.compact,
+        icon: Icon(
+          hasComment ? Icons.comment : Icons.insert_comment_outlined,
+        ),
+        onPressed: () => onViewComment(rep),
+        color: Colors.red,
+        padding: EdgeInsets.all(0),
+      );
+    }
+
     return AnimatedContainer(
       duration: Duration(milliseconds: 300),
       child: ClipRRect(
@@ -58,47 +147,49 @@ class WorkoutItem extends StatelessWidget {
           ),
           // margin: EdgeInsets.only(bottom: 15),
           child: isSortMode
-              ? Row(
-                  mainAxisAlignment: selectable
-                      ? MainAxisAlignment.spaceAround
-                      : MainAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(4),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.exercise,
-                      ),
-                      child: Text(
+              ? Container(
+                  padding: EdgeInsets.all(4),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.exercise,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: selectable
+                        ? MainAxisAlignment.spaceAround
+                        : MainAxisAlignment.start,
+                    children: [
+                      Text(
                         set.exercise.name,
                         style: TextStyle(
                             fontSize: 22,
                             color: Colors.white,
                             fontWeight: FontWeight.bold),
                       ),
-                    ),
-                    if (selectable)
-                      Checkbox(
-                        checkColor: Colors.white,
-                        activeColor: Colors.white,
-                        value: true,
-                        onChanged: (newValue) {},
-                      )
-                  ],
+                    ],
+                  ),
                 )
               : Column(
                   children: [
                     header,
-                    for (final rep in set.reps)
-                      RepItem(
-                        selectable: selectable,
-                        editable: editable,
-                        hasComment: rep.notes != "",
-                        reps: rep.reps,
-                        weight: rep.weight,
-                        rpe: rep.rpe,
-                        onPressIcon: () => onViewComment(rep),
-                      ),
+                    ...set.reps
+                        .mapIndex(
+                          (rep, index) => RepItem(
+                              selectable: selectable,
+                              editable: editable,
+                              hasComment: rep.notes != "",
+                              reps: rep.reps,
+                              weight: rep.weight,
+                              rpe: rep.rpe,
+                              onPressIcon: () => onViewComment(rep),
+                              actions: buildAction(
+                                  hasComment: rep.notes != "",
+                                  index: index,
+                                  rep: rep,
+                                  selectedValue: repsSelectors != null
+                                      ? repsSelectors[index]
+                                      : false)),
+                        )
+                        .toList(),
                   ],
                 ),
         ),

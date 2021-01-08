@@ -9,12 +9,14 @@ class RepItem extends StatelessWidget {
   final Function onPressIcon;
   final bool editable;
   final bool selectable;
+  final Widget actions;
 
   RepItem(
       {@required this.hasComment,
       @required this.reps,
       @required this.weight,
       @required this.rpe,
+      this.actions,
       @required this.onPressIcon,
       this.selectable = false,
       this.isExpanded = false,
@@ -24,35 +26,14 @@ class RepItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyle = TextStyle(fontSize: 18);
     final deviceWidth = MediaQuery.of(context).size.width;
-
-    Widget mainIcon = IconButton(
-      visualDensity: VisualDensity.compact,
-      icon: Icon(
-        hasComment ? Icons.comment : Icons.insert_comment_outlined,
-      ),
-      onPressed: onPressIcon,
-      color: Colors.red,
-      padding: EdgeInsets.all(0),
-    );
-
-    if (editable)
-      mainIcon = IconButton(
-        visualDensity: VisualDensity.compact,
-        icon: Icon(
-          Icons.edit,
-        ),
-        onPressed: onPressIcon,
-        color: Colors.red,
-        padding: EdgeInsets.all(0),
-      );
-    if (selectable) {
-      mainIcon = Checkbox(
-        value: false,
-        onChanged: (newValue) {},
-      );
-    }
-
-    return Container(
+    //TODO: fix this is logic please
+    return AnimatedContainer(
+      width: selectable
+          ? deviceWidth
+          : editable
+              ? deviceWidth - 40
+              : deviceWidth,
+      duration: Duration(milliseconds: 200),
       height: 60,
       margin: isExpanded ? EdgeInsets.only(bottom: 10) : null,
       padding: EdgeInsets.all(10),
@@ -95,7 +76,7 @@ class RepItem extends StatelessWidget {
                 child: Text("RPE $rpe", style: textStyle),
               ),
             ),
-            mainIcon
+            if (actions != null) actions
           ],
         ),
       ),
