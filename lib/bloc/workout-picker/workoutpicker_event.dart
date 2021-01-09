@@ -8,15 +8,15 @@ class PickWorkout extends WorkoutpickerEvent {
   PickWorkout(this.date);
 }
 
-class DeleteSet extends WorkoutpickerEvent {
+class DeleteSetPicker extends WorkoutpickerEvent {
   final int setId;
-  DeleteSet(this.setId);
+  DeleteSetPicker(this.setId);
 }
 
-class SaveRep extends WorkoutpickerEvent {
+class SaveRepPicker extends WorkoutpickerEvent {
   final appModels.Rep rep;
   final int setIndex;
   final int repIndex;
 
-  SaveRep({this.rep, this.setIndex, this.repIndex});
+  SaveRepPicker({this.rep, this.setIndex, this.repIndex});
 }

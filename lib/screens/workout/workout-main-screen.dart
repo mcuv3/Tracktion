@@ -41,7 +41,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
     _pageController =
         AnimationController(duration: Duration(milliseconds: 200), vsync: this)
           ..addListener(() => setState(() {}));
-    animation = Tween(begin: 0.0, end: 500.0).animate(_pageController);
+    // animation = Tween(begin: 0.0, end: 500.0).animate(_pageController);
     Future.delayed(Duration.zero).then((_) {
       BlocProvider.of<WorkoutBloc>(context).add(FetchWorkout());
     });
@@ -69,7 +69,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
   }
 
   void changeDateHandler(bool isRight) {
-    isRight ? _pageController.forward() : _pageController.reverse();
+    // isRight ? _pageController.forward() : _pageController.reverse();
     setState(() {
       direction = isRight;
       currentDate = DateTime(currentDate.year, currentDate.month,
@@ -104,18 +104,24 @@ class _WorkOutScreenState extends State<WorkOutScreen>
       BlocProvider.of<WorkoutBloc>(context).add(DeleteSets(selectedSets));
       setState(() {
         selectedSets = [];
+        delitionMode = false;
       });
     }
   }
 
   void orderSetsHandler(int prev, int next, List<SetWorkout> sets) {
     var ids = orderSets;
+    print(prev);
+    print(next);
     if (ids.length == 0) for (final set in sets) ids.add(set.id);
     if (next >= orderSets.length) next = orderSets.length - 1;
     // if (next > prev) next -= 1;
+    print(ids);
+
     final item = ids.removeAt(prev);
     ids.insert(next, item);
-
+    //
+    print(ids);
     setState(() {
       orderSets = ids;
     });
@@ -134,6 +140,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
         highlightColor: Colors.red,
         splashColor: Colors.red.withOpacity(0.3),
         onTap: () {
+          if (sortMode) return;
           if (!delitionMode) return showSetDetails(setId: set.id, sets: sets);
 
           selectItemHandler(set.id);
@@ -232,7 +239,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
               child: AnimatedBuilder(
                 animation: _pageController,
                 builder: (context, _) => Transform.translate(
-                  offset: Offset(animation.value * (direction ? 1 : -1), 0.0),
+                  offset: Offset(0.0 * (direction ? 1 : -1), 0.0),
                   child: BlocBuilder<WorkoutBloc, WorkoutState>(
                     builder: (context, state) {
                       if (state is WorkoutSets) {
@@ -240,10 +247,14 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                           builder: (context, sts) {
                             if (sts.connectionState == ConnectionState.active) {
                               List<SetWorkout> sets = sts.data;
-                              if (sortMode)
-                                sets.sort((a, b) => orderSets.indexOf(a.id));
-
-                              if (sets.isEmpty) return WorkoutEmpty();
+                              // if (sortMode)
+                              sets.sort((a, b) => orderSets
+                                  .indexOf(a.id)
+                                  .compareTo(orderSets.indexOf(b.id)));
+                              if (sets.isEmpty)
+                                return WorkoutEmpty(
+                                  currentDate: state.date,
+                                );
 
                               return !sortMode
                                   ? ListView.builder(

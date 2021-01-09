@@ -8,6 +8,7 @@ import 'package:tracktion/util/toDayDate.dart';
 
 import '../../models/app/index.dart' as modelsApp;
 import '../../models/db/database.dart';
+import '../../util/mapWithIndex.dart';
 
 part 'workout_event.dart';
 part 'workout_state.dart';
@@ -36,6 +37,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       _saveSet(event);
     } else if (event is DeleteSets) {
       _deleteSets(event);
+    } else if (event is CopySets) {
+      _copySets(event);
     }
   }
 
@@ -88,6 +91,43 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
         reps: reps,
       );
       await this.db.saveSet(exerciseSet);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _copySets(CopySets event) async {
+    try {
+      final filters = event.workoutFilters;
+      final workout = await this.db.findOrCreateWorkout(event.date);
+      final cleanedSets = event.sets
+          .map((set) {
+            if (filters[set.id]["active"]) {
+              final filteredReps = set.reps.whereIndex((e, i) {
+                if (filters[set.id]["reps"][i]) {
+                  e.id = null;
+                  return true;
+                } else
+                  return false;
+              }).toList();
+              return modelsApp.SetWorkout(
+                  reps: filteredReps, exercise: set.exercise, id: null);
+            }
+            return null;
+          })
+          .where((s) => s != null)
+          .toList();
+
+      for (final set in cleanedSets) {
+        final reps = set.reps;
+        final exerciseSet = ExerciseSet(
+          id: set.id,
+          exeId: set.exercise.id,
+          workoutId: workout.id,
+          reps: reps,
+        );
+        await this.db.saveSet(exerciseSet);
+      }
     } catch (e) {
       print(e);
     }

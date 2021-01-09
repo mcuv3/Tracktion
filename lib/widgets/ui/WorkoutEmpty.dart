@@ -5,8 +5,10 @@ import 'package:tracktion/screens/index.dart';
 import 'package:tracktion/screens/workout/calendar-picker-screen.dart';
 
 class WorkoutEmpty extends StatelessWidget {
+  final DateTime currentDate;
   const WorkoutEmpty({
     Key key,
+    @required this.currentDate,
   }) : super(key: key);
 
   @override
@@ -50,7 +52,7 @@ class WorkoutEmpty extends StatelessWidget {
                       expand: false,
                       context: context,
                       backgroundColor: Colors.transparent,
-                      builder: (context) => CalendarScreen(),
+                      builder: (context) => CalendarScreen(currentDate),
                     );
                   },
                   icon: FaIcon(

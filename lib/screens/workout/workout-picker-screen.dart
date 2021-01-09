@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tracktion/bloc/workout-picker/workoutpicker_bloc.dart';
+import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/app/set.dart';
 import 'package:tracktion/widgets/items/WorkoutItem.dart';
@@ -9,38 +10,38 @@ import 'package:tracktion/widgets/modals/RepInputs.dart';
 import 'package:tracktion/widgets/modals/confirmationModal.dart';
 
 class WorkoutPickedScreen extends StatefulWidget {
-  final DateTime date;
+  final DateTime datePicked;
+  final DateTime targetDate;
 
-  WorkoutPickedScreen(this.date);
+  WorkoutPickedScreen({this.datePicked, this.targetDate});
 
   @override
   _WorkoutPickedScreenState createState() => _WorkoutPickedScreenState();
 }
 
 class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
-  Map<int, dynamic> workoutStatus = {};
+  Map<int, dynamic> workoutFilters = {};
   var editMode = false;
   var selectMode = true;
-  List<SetWorkout> sets = [];
 
   void changeRepStatusHandler({int repIndex, int setId}) {
-    final newStatus = {...workoutStatus};
+    final newStatus = {...workoutFilters};
     final repPrevValue = newStatus[setId]["reps"][repIndex];
     newStatus[setId]["reps"][repIndex] = !repPrevValue;
     setState(() {
-      workoutStatus = newStatus;
+      workoutFilters = newStatus;
     });
   }
 
   void changeSetStatusHandler(int setId) {
-    final newStatus = {...workoutStatus};
+    final newStatus = {...workoutFilters};
     final prevSetStatus = newStatus[setId]["active"];
     newStatus[setId]["active"] = !prevSetStatus;
     newStatus[setId]["reps"] = (newStatus[setId]["reps"] as List<bool>)
         .map((e) => !prevSetStatus)
         .toList();
     setState(() {
-      workoutStatus = newStatus;
+      workoutFilters = newStatus;
     });
   }
 
@@ -56,7 +57,7 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
     });
 
     setState(() {
-      workoutStatus = status;
+      workoutFilters = status;
     });
   }
 
@@ -64,22 +65,22 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
     final shouldDelete = await confirmationModal(
         context: context, message: "Do you want to delete this set?");
     if (shouldDelete) {
-      BlocProvider.of<WorkoutpickerBloc>(context).add(DeleteSet(setId));
+      BlocProvider.of<WorkoutpickerBloc>(context).add(DeleteSetPicker(setId));
     }
   }
 
   void saveRepHandler({Rep rep, int setIndex, int repIndex}) async {
     final updatedRep = await repInputsModal(context, rep);
-    BlocProvider.of<WorkoutpickerBloc>(context)
-        .add(SaveRep(rep: updatedRep, setIndex: setIndex, repIndex: repIndex));
+    BlocProvider.of<WorkoutpickerBloc>(context).add(
+        SaveRepPicker(rep: updatedRep, setIndex: setIndex, repIndex: repIndex));
   }
 
   @override
   void initState() {
     super.initState();
-
     Future.delayed(Duration.zero).then((_) {
-      BlocProvider.of<WorkoutpickerBloc>(context).add(PickWorkout(widget.date));
+      BlocProvider.of<WorkoutpickerBloc>(context)
+          .add(PickWorkout(widget.datePicked));
     });
   }
 
@@ -95,12 +96,24 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
       builder: (context, state) {
         if (state is Workout) {
           final sets = state.sets;
-          if (sets.length == 0 || workoutStatus.isEmpty)
-            return Center(
-              child: Text("There are not sets here"),
+          if (sets.length == 0 || workoutFilters.isEmpty)
+            return Container(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  FaIcon(
+                    FontAwesomeIcons.timesCircle,
+                    color: Colors.red,
+                    size: 60,
+                  ),
+                  Text("There are not sets here",
+                      style: TextStyle(
+                          fontSize: 28, color: Colors.black.withOpacity(0.5))),
+                ],
+              ),
             );
-
-          print(workoutStatus);
 
           return Container(
             child: Column(
@@ -111,7 +124,7 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
                     child: ListView.builder(
                         itemCount: sets.length,
                         itemBuilder: (context, i) => WorkoutItem(
-                              isSelected: workoutStatus[sets[i].id]["active"],
+                              isSelected: workoutFilters[sets[i].id]["active"],
                               onDeleteSet: deleteSetHandler,
                               onEditRep: (rep, repIndex) => saveRepHandler(
                                   rep: rep, repIndex: repIndex, setIndex: i),
@@ -119,7 +132,7 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
                               selectable: selectMode,
                               onCheckRep: changeRepStatusHandler,
                               onCheckSet: changeSetStatusHandler,
-                              repsSelectors: workoutStatus[sets[i].id]["reps"],
+                              repsSelectors: workoutFilters[sets[i].id]["reps"],
                               set: sets[i],
                             )),
                   ),
@@ -152,7 +165,18 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
                         : [
                             FlatButton.icon(
                                 color: Colors.white,
-                                onPressed: () {},
+                                onPressed: () async {
+                                  final shouldDelete = await confirmationModal(
+                                      context: context,
+                                      message:
+                                          "Do you want to apply this changes?");
+                                  if (shouldDelete)
+                                    BlocProvider.of<WorkoutBloc>(context).add(
+                                        CopySets(
+                                            date: widget.targetDate,
+                                            sets: sets,
+                                            workoutFilters: workoutFilters));
+                                },
                                 icon: FaIcon(
                                   FontAwesomeIcons.plus,
                                   size: 12,

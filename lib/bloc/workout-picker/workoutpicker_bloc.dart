@@ -19,7 +19,7 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
   ) async* {
     if (event is PickWorkout) {
       yield* _pickWorkout(event);
-    } else if (event is DeleteSet) {
+    } else if (event is DeleteSetPicker) {
       yield* _deleteSet(event);
     } else {
       yield* _saveRep(event);
@@ -31,6 +31,7 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
     try {
       var date = toDayDate(event.date);
       final sets = await this.db.findSets(date);
+
       yield Workout(date: date, sets: sets);
     } catch (e) {
       print(e);
@@ -38,7 +39,7 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
     }
   }
 
-  Stream<WorkoutpickerState> _deleteSet(DeleteSet event) async* {
+  Stream<WorkoutpickerState> _deleteSet(DeleteSetPicker event) async* {
     final sets = [...(state as Workout).sets];
     final prevDate = (state as Workout).date;
     yield WorkoutLoading();
@@ -51,7 +52,7 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
     }
   }
 
-  Stream<WorkoutpickerState> _saveRep(SaveRep event) async* {
+  Stream<WorkoutpickerState> _saveRep(SaveRepPicker event) async* {
     final sets = [...(state as Workout).sets];
     final prevDate = (state as Workout).date;
     yield WorkoutLoading();

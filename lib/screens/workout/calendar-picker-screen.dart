@@ -6,6 +6,10 @@ import 'package:tracktion/screens/workout/workout-picker-screen.dart';
 import '../../colors/custom_colors.dart';
 
 class CalendarScreen extends StatefulWidget {
+  final DateTime currentDate;
+
+  CalendarScreen(this.currentDate);
+
   @override
   State<StatefulWidget> createState() {
     return _CalendarScreenState();
@@ -19,7 +23,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
       isDismissible: false,
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => WorkoutPickedScreen(date),
+      builder: (context) => WorkoutPickedScreen(
+        targetDate: widget.currentDate,
+        datePicked: date,
+      ),
     );
     setState(() {
       _selectedDay = date;

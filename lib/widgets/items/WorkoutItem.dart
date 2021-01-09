@@ -4,13 +4,7 @@ import 'package:tracktion/models/app/set.dart';
 import 'package:tracktion/widgets/items/reps-item.dart';
 
 import '../../colors/custom_colors.dart';
-
-extension ExtendedIterable<E> on Iterable<E> {
-  Iterable<T> mapIndex<T>(T f(E e, int i)) {
-    var i = 0;
-    return this.map((e) => f(e, i++));
-  }
-}
+import '../../util/mapWithIndex.dart';
 
 class WorkoutItem extends StatelessWidget {
   final bool delitionMode;
@@ -125,74 +119,70 @@ class WorkoutItem extends StatelessWidget {
       );
     }
 
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 300),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: Container(
-          decoration: BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(delitionMode ? 0.5 : 0.2),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(0, 3), // changes position of shadow
-              ),
-            ],
-            border: delitionMode
-                ? Border.all(
-                    color: isSelected ? Colors.red : Colors.transparent,
-                    width: 1)
-                : null,
-          ),
-          // margin: EdgeInsets.only(bottom: 15),
-          child: isSortMode
-              ? Container(
-                  padding: EdgeInsets.all(4),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.exercise,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: selectable
-                        ? MainAxisAlignment.spaceAround
-                        : MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        set.exercise.name,
-                        style: TextStyle(
-                            fontSize: 22,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                )
-              : Column(
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(15),
+      child: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(delitionMode ? 0.5 : 0.2),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],
+          border: delitionMode
+              ? Border.all(
+                  color: isSelected ? Colors.red : Colors.transparent, width: 1)
+              : null,
+        ),
+        // margin: EdgeInsets.only(bottom: 15),
+        child: isSortMode
+            ? Container(
+                padding: EdgeInsets.all(4),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.exercise,
+                ),
+                child: Row(
+                  mainAxisAlignment: selectable
+                      ? MainAxisAlignment.spaceAround
+                      : MainAxisAlignment.start,
                   children: [
-                    header,
-                    ...set.reps
-                        .mapIndex(
-                          (rep, index) => RepItem(
-                              selectable: selectable,
-                              editable: editable,
-                              hasComment: rep.notes != "",
-                              reps: rep.reps,
-                              weight: rep.weight,
-                              rpe: rep.rpe,
-                              onPressIcon: () => onViewComment(rep),
-                              actions: buildAction(
-                                  hasComment: rep.notes != "",
-                                  index: index,
-                                  rep: rep,
-                                  selectedValue: repsSelectors != null
-                                      ? repsSelectors[index]
-                                      : false)),
-                        )
-                        .toList(),
+                    Text(
+                      set.exercise.name,
+                      style: TextStyle(
+                          fontSize: 22,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
-        ),
+              )
+            : Column(
+                children: [
+                  header,
+                  ...set.reps
+                      .mapIndex(
+                        (rep, index) => RepItem(
+                            selectable: selectable,
+                            editable: editable,
+                            hasComment: rep.notes != "",
+                            reps: rep.reps,
+                            weight: rep.weight,
+                            rpe: rep.rpe,
+                            onPressIcon: () => onViewComment(rep),
+                            actions: buildAction(
+                                hasComment: rep.notes != "",
+                                index: index,
+                                rep: rep,
+                                selectedValue: repsSelectors != null
+                                    ? repsSelectors[index]
+                                    : false)),
+                      )
+                      .toList(),
+                ],
+              ),
       ),
     );
   }

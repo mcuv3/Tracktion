@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class Rep {
-  final int id;
+  int id;
   final int reps;
   final double weight;
   final int rpe;

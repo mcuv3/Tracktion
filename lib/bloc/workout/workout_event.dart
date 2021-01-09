@@ -39,3 +39,13 @@ class DeleteRep extends WorkoutEvent {
   final Rep rep;
   DeleteRep(this.rep);
 }
+
+class CopySets extends WorkoutEvent {
+  final List<modelsApp.SetWorkout> sets;
+  final DateTime date;
+  final Map<int, dynamic> workoutFilters;
+  CopySets(
+      {@required this.sets,
+      @required this.date,
+      @required this.workoutFilters});
+}

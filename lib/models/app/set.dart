@@ -3,8 +3,13 @@ import 'package:flutter/foundation.dart';
 import './index.dart';
 
 class SetWorkout {
-  final int id;
+  int id;
   final Exercise exercise;
   List<Rep> reps;
   SetWorkout({@required this.id, @required this.exercise, @required this.reps});
+
+  void cleanIds() {
+    this.id = null;
+    for (final rep in this.reps) rep.id = null;
+  }
 }

@@ -10,7 +10,11 @@ class WorkoutLoading extends WorkoutState {}
 class WorkoutSets extends WorkoutState {
   final Stream<List<modelsApp.SetWorkout>> sets;
   final DateTime date;
-  WorkoutSets({this.sets, this.date});
+
+  WorkoutSets({
+    @required this.sets,
+    @required this.date,
+  });
 }
 
 class WorkoutTransactionFailed extends WorkoutState {
