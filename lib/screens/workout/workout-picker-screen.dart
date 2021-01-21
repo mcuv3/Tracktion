@@ -166,16 +166,20 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
                             FlatButton.icon(
                                 color: Colors.white,
                                 onPressed: () async {
-                                  final shouldDelete = await confirmationModal(
+                                  final shouldCopy = await confirmationModal(
                                       context: context,
                                       message:
                                           "Do you want to apply this changes?");
-                                  if (shouldDelete)
+                                  if (shouldCopy) {
                                     BlocProvider.of<WorkoutBloc>(context).add(
                                         CopySets(
                                             date: widget.targetDate,
                                             sets: sets,
                                             workoutFilters: workoutFilters));
+                                    int count = 0;
+                                    Navigator.of(context)
+                                        .popUntil((_) => count++ >= 2);
+                                  }
                                 },
                                 icon: FaIcon(
                                   FontAwesomeIcons.plus,

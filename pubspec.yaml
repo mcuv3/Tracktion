@@ -18,6 +18,7 @@ dependencies:
   moor: ^3.4.0
   path_provider: ^1.6.24
   moor_flutter: ^3.1.0
+  fl_chart: ^0.12.2
   flutter_staggered_grid_view: ^0.3.3
   union: ^0.0.3+1
   font_awesome_flutter: ^8.11.0

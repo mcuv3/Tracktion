@@ -5,19 +5,15 @@ class RepItem extends StatelessWidget {
   final int reps;
   final double weight;
   final int rpe;
-  final bool hasComment;
-  final Function onPressIcon;
   final bool editable;
   final bool selectable;
   final Widget actions;
 
   RepItem(
-      {@required this.hasComment,
-      @required this.reps,
+      {@required this.reps,
       @required this.weight,
       @required this.rpe,
       this.actions,
-      @required this.onPressIcon,
       this.selectable = false,
       this.isExpanded = false,
       this.editable = false});

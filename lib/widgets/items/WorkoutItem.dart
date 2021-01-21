@@ -36,6 +36,7 @@ class WorkoutItem extends StatelessWidget {
       this.onViewComment,
       this.isSortMode = false,
       this.editable = false});
+
   @override
   Widget build(BuildContext context) {
     final header = Container(
@@ -167,11 +168,9 @@ class WorkoutItem extends StatelessWidget {
                         (rep, index) => RepItem(
                             selectable: selectable,
                             editable: editable,
-                            hasComment: rep.notes != "",
                             reps: rep.reps,
                             weight: rep.weight,
                             rpe: rep.rpe,
-                            onPressIcon: () => onViewComment(rep),
                             actions: buildAction(
                                 hasComment: rep.notes != "",
                                 index: index,

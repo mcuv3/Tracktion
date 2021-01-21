@@ -34,6 +34,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
   int setId;
   var date = DateTime.now();
   var init = false;
+
   var fromWorkout = false;
 
   @override
@@ -221,13 +222,22 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                               child: GestureDetector(
                                 onTap: () => editRepHandler(reps[i], i),
                                 child: RepItem(
-                                  hasComment: reps[i].notes != "",
                                   reps: reps[i].reps,
                                   weight: reps[i].weight,
                                   rpe: reps[i].rpe,
                                   isExpanded: true,
-                                  onPressIcon: () =>
-                                      changeCommentHandler(reps[i], i),
+                                  actions: IconButton(
+                                    visualDensity: VisualDensity.compact,
+                                    icon: Icon(
+                                      reps[i].notes != ""
+                                          ? Icons.comment
+                                          : Icons.insert_comment_outlined,
+                                    ),
+                                    onPressed: () =>
+                                        changeCommentHandler(reps[i], i),
+                                    color: Colors.red,
+                                    padding: EdgeInsets.all(0),
+                                  ),
                                 ),
                               ),
                             ),
