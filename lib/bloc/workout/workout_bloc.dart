@@ -82,15 +82,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   Future<void> _saveSet(SaveSet event) async {
     try {
       final workout = await this.db.findOrCreateWorkout(event.date);
-      final set = event.set;
-      final reps = set.reps;
-      final exerciseSet = ExerciseSet(
-        id: set.id,
-        exeId: set.exercise.id,
-        workoutId: workout.id,
-        reps: reps,
-      );
-      await this.db.saveSet(exerciseSet);
+      await this.db.saveSet(event.set, workout.id);
     } catch (e) {
       print(e);
     }
@@ -111,23 +103,18 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
                   return false;
               }).toList();
               return modelsApp.SetWorkout(
-                  reps: filteredReps, exercise: set.exercise, id: null);
+                  maxWeigth: set.maxWeigth,
+                  volume: set.volume,
+                  reps: filteredReps,
+                  exercise: set.exercise,
+                  id: null);
             }
             return null;
           })
           .where((s) => s != null)
           .toList();
 
-      for (final set in cleanedSets) {
-        final reps = set.reps;
-        final exerciseSet = ExerciseSet(
-          id: set.id,
-          exeId: set.exercise.id,
-          workoutId: workout.id,
-          reps: reps,
-        );
-        await this.db.saveSet(exerciseSet);
-      }
+      for (final set in cleanedSets) await this.db.saveSet(set, workout.id);
     } catch (e) {
       print(e);
     }

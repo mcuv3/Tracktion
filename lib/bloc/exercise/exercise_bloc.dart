@@ -43,7 +43,10 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
           id: exe.id,
           difficulty: exe.difficulty,
           name: exe.name,
-          notes: exe.notes);
+          notes: exe.notes,
+          lastWorkouts: exe.lastWorkoutsToString(),
+          maxVolume: exe.maxVolume,
+          maxWeigth: exe.maxWeigth);
 
       await db.deleteExercise(exeEntity);
 
@@ -66,7 +69,10 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
           id: exe.id,
           difficulty: exe.difficulty,
           name: exe.name,
-          notes: exe.notes);
+          notes: exe.notes,
+          lastWorkouts: exe.lastWorkoutsToString(),
+          maxVolume: exe.maxVolume,
+          maxWeigth: exe.maxWeigth);
 
       final exeWithBd =
           ExerciseWithBodyParts(bodyParts: exe.bodyParts, exe: exeDb);
@@ -89,7 +95,13 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
           verb: "post", endPoint: '/api/exercise/v1/', payload: exe.toJson()));
 
       final exeDb = Exercise(
-          difficulty: exe.difficulty, name: exe.name, notes: exe.notes);
+          id: exe.id,
+          difficulty: exe.difficulty,
+          name: exe.name,
+          notes: exe.notes,
+          lastWorkouts: exe.lastWorkoutsToString(),
+          maxVolume: exe.maxVolume,
+          maxWeigth: exe.maxWeigth);
       final exeWithBd =
           ExerciseWithBodyParts(bodyParts: exe.bodyParts, exe: exeDb);
       await db.saveExercise(exeWithBd);

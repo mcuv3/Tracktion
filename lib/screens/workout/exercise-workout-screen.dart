@@ -115,6 +115,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
     if (!shouldSave && willDelete) return false;
 
     if (shouldSave) {
+      // TODO: here is the tricky part
       final set = SetWorkout(id: setId, exercise: exs, reps: reps);
       BlocProvider.of<WorkoutBloc>(context).add(SaveSet(set: set, date: date));
     }

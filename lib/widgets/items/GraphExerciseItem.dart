@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class GraphExerciseItem extends StatefulWidget {
   @override
@@ -35,40 +36,55 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text("DeadLift", style: TextStyle(color: Colors.white, fontSize: 24)),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "DeadLift",
+                    style: TextStyle(color: Colors.white, fontSize: 24),
+                  ),
+                  Row(
+                    children: [
+                      IconButton(
+                        visualDensity: VisualDensity.compact,
+                        onPressed: () {
+                          setState(() {
+                            showAvg = !showAvg;
+                          });
+                        },
+                        icon: FaIcon(
+                            showAvg
+                                ? FontAwesomeIcons.calendarWeek
+                                : FontAwesomeIcons.calendarDay,
+                            color: showAvg
+                                ? Colors.white.withOpacity(0.5)
+                                : Colors.white),
+                      ),
+                      IconButton(
+                        visualDensity: VisualDensity.compact,
+                        onPressed: () {
+                          setState(() {
+                            showAvg = !showAvg;
+                          });
+                        },
+                        icon: FaIcon(FontAwesomeIcons.eye, color: Colors.white),
+                      ),
+                    ],
+                  )
+                ]),
+          ),
           Stack(
             children: <Widget>[
               AspectRatio(
                 aspectRatio: 1.70,
                 child: Container(
                   padding: const EdgeInsets.only(
-                      right: 18.0, left: 12.0, top: 24, bottom: 12),
-                  // margin: EdgeInsets.all(10),
-                  // decoration: const BoxDecoration(
-                  //     borderRadius: BorderRadius.all(
-                  //       Radius.circular(18),
-                  //     ),
-                  //     color: Color(0xff232d37)),
-
+                      right: 18.0, left: 12.0, top: 12, bottom: 12),
                   child: LineChart(
                     showAvg ? avgData() : mainData(),
                   ),
-                ),
-              ),
-              Positioned(
-                top: 0,
-                left: 0,
-                child: IconButton(
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () {
-                    setState(() {
-                      showAvg = !showAvg;
-                    });
-                  },
-                  icon: Icon(Icons.ac_unit,
-                      color: showAvg
-                          ? Colors.white.withOpacity(0.5)
-                          : Colors.white),
                 ),
               ),
             ],
@@ -81,7 +97,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                     width: width * 0.45,
                     child: Column(
                       children: [
-                        Text("1MR",
+                        Text("1MR Stimate",
                             style: TextStyle(
                                 color: Colors.white.withOpacity(0.5))),
                         Text("4848.546kg ",

@@ -65,15 +65,18 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
-  Future<void> saveSet(ExerciseSet exerciseSet) {
+  Future<void> saveSet(modelsApp.SetWorkout set, int workoutId) {
     return transaction(() async {
-      final exeId = exerciseSet.exeId;
-      final workoutId = exerciseSet.workoutId;
-      final repsSet = exerciseSet.reps;
+      final exeId = set.exercise.id;
+      final repsSet = set.reps;
 
       final setId = await into(setWorkouts).insert(
           SetWorkout(
-              id: exerciseSet.id, workOutId: workoutId, exerciseId: exeId),
+              setMaxWeigth: set.maxWeigth,
+              setVolume: set.volume,
+              id: set.id,
+              workOutId: workoutId,
+              exerciseId: exeId),
           mode: InsertMode.replace);
 
       await (delete(reps)..where((entry) => entry.setId.equals(setId))).go();
@@ -123,35 +126,8 @@ class SQLDatabase extends _$SQLDatabase {
       ..where(workouts.date.equals(targetDate));
 
     return query.watch().map((row) {
-      return row.fold<List<modelsApp.SetWorkout>>([], (sets, st) {
-        final setWk = st.readTable(setWorkouts);
-        final rep = st.readTable(reps);
-        final indexSet = sets.indexWhere((st) => st.id == setWk.id);
-        final repetition = modelsApp.Rep(
-            id: rep.id,
-            weight: rep.weight,
-            reps: rep.reps,
-            rpe: rep.rpe,
-            notes: rep.note);
-
-        if (indexSet == -1) {
-          final exe = st.readTable(exercises);
-          final exercise = modelsApp.Exercise(
-              id: exe.id,
-              name: exe.name,
-              difficulty: exe.difficulty,
-              notes: exe.notes,
-              bodyParts: []);
-          repetition.updateSetId = setWk.id;
-          sets.add(modelsApp.SetWorkout(
-              id: setWk.id, exercise: exercise, reps: [repetition]));
-        } else {
-          repetition.updateSetId = sets[indexSet].id;
-
-          sets[indexSet].reps = [...sets[indexSet].reps, repetition];
-        }
-        return sets;
-      });
+      return row.fold<List<modelsApp.SetWorkout>>(
+          [], (sets, st) => _mergeExerciseSetWorkout(sets, st));
     });
   }
 
@@ -164,32 +140,44 @@ class SQLDatabase extends _$SQLDatabase {
       ..where(workouts.date.equals(targetDate));
     final data = await query.get();
 
-    return data.fold<List<modelsApp.SetWorkout>>([], (sets, st) {
-      final setWk = st.readTable(setWorkouts);
-      final rep = st.readTable(reps);
-      final indexSet = sets.indexWhere((st) => st.id == setWk.id);
-      final repetition = modelsApp.Rep(
-          id: rep.id,
-          weight: rep.weight,
-          reps: rep.reps,
-          rpe: rep.rpe,
-          notes: rep.note);
+    return data.fold<List<modelsApp.SetWorkout>>(
+        [], (sets, st) => _mergeExerciseSetWorkout(sets, st));
+  }
 
-      if (indexSet == -1) {
-        final exe = st.readTable(exercises);
-        final exercise = modelsApp.Exercise(
-            id: exe.id,
-            name: exe.name,
-            difficulty: exe.difficulty,
-            notes: exe.notes,
-            bodyParts: []);
-        sets.add(modelsApp.SetWorkout(
-            id: setWk.id, exercise: exercise, reps: [repetition]));
-      } else {
-        sets[indexSet].reps = [...sets[indexSet].reps, repetition];
-      }
-      return sets;
-    });
+  List<modelsApp.SetWorkout> _mergeExerciseSetWorkout(
+      List<modelsApp.SetWorkout> sets, TypedResult st) {
+    final setWk = st.readTable(setWorkouts);
+    final rep = st.readTable(reps);
+    final indexSet = sets.indexWhere((st) => st.id == setWk.id);
+    final repetition = modelsApp.Rep(
+        id: rep.id,
+        weight: rep.weight,
+        reps: rep.reps,
+        rpe: rep.rpe,
+        notes: rep.note);
+
+    if (indexSet == -1) {
+      final exe = st.readTable(exercises);
+      final exercise = modelsApp.Exercise(
+          id: exe.id,
+          lastWorkouts:
+              modelsApp.Exercise.stringToLastWorkouts(exe.lastWorkouts),
+          maxVolume: exe.maxVolume,
+          maxWeigth: exe.maxWeigth,
+          name: exe.name,
+          difficulty: exe.difficulty,
+          notes: exe.notes,
+          bodyParts: []);
+      sets.add(modelsApp.SetWorkout(
+          id: setWk.id,
+          exercise: exercise,
+          reps: [repetition],
+          maxWeigth: setWk.setMaxWeigth,
+          volume: setWk.setVolume));
+    } else {
+      sets[indexSet].reps = [...sets[indexSet].reps, repetition];
+    }
+    return sets;
   }
 
   Future<Stream<List<exeApp.Exercise>>> findByBodyPart(BodyPartEnum bd) async {
@@ -218,6 +206,10 @@ class SQLDatabase extends _$SQLDatabase {
     if (indexExe == -1) {
       exes.add(exeApp.Exercise(
           id: exercise.id,
+          lastWorkouts:
+              modelsApp.Exercise.stringToLastWorkouts(exercise.lastWorkouts),
+          maxVolume: exercise.maxVolume,
+          maxWeigth: exercise.maxWeigth,
           name: exercise.name,
           bodyParts: [bodyPart],
           difficulty: exercise.difficulty,
@@ -286,16 +278,4 @@ class ExerciseWithBodyParts {
   final Exercise exe;
   final List<BodyPartEnum> bodyParts;
   ExerciseWithBodyParts({this.exe, this.bodyParts});
-}
-
-class ExerciseSet {
-  final int id;
-  final int exeId;
-  final int workoutId;
-  final List<modelsApp.Rep> reps;
-  ExerciseSet(
-      {@required this.id,
-      @required this.exeId,
-      @required this.reps,
-      @required this.workoutId});
 }

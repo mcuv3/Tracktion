@@ -13,6 +13,10 @@ class Migrations extends Table {
 class Exercises extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text().withLength(min: 1, max: 50)();
+  TextColumn get lastWorkouts =>
+      text()(); // [ { maxWeigth:double,reps:int,date:string,volume:double } ] 12 records
+  RealColumn get maxVolume => real()();
+  RealColumn get maxWeigth => real()();
   TextColumn get notes => text().withLength(min: 1, max: 200)();
   IntColumn get difficulty => intEnum<Difficulty>()();
 }
