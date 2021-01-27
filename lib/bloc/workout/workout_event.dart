@@ -16,7 +16,8 @@ class DeleteWorkout extends WorkoutEvent {
 class SaveSet extends WorkoutEvent {
   final modelsApp.SetWorkout set;
   final DateTime date;
-  SaveSet({this.set, this.date});
+  final bool isEdit;
+  SaveSet({this.set, this.date, this.isEdit});
 }
 
 class DeleteSet extends WorkoutEvent {

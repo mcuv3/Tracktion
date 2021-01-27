@@ -4,6 +4,10 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tracktion/bloc/common/Workout.dart';
+import 'package:tracktion/util/getMaxVolume.dart';
+import 'package:tracktion/util/getMaxWeigth.dart';
+import 'package:tracktion/util/getSetMaxWeigth.dart';
+import 'package:tracktion/util/getSetVolume.dart';
 import 'package:tracktion/util/toDayDate.dart';
 
 import '../../models/app/index.dart' as modelsApp;
@@ -50,6 +54,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     yield WorkoutLoading();
     try {
       final sets = this.db.findSetsByDate(date);
+
       yield WorkoutSets(sets: sets, date: date);
     } catch (e) {
       yield WorkoutTransactionFailed("Cannot fetch this workout");
@@ -82,7 +87,63 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   Future<void> _saveSet(SaveSet event) async {
     try {
       final workout = await this.db.findOrCreateWorkout(event.date);
-      await this.db.saveSet(event.set, workout.id);
+      var currentExe = event.set.exercise;
+      var willDeleteSet = event.set.reps.length == 0;
+
+      var exe = modelsApp.Exercise(
+          id: currentExe.id,
+          difficulty: currentExe.difficulty,
+          name: currentExe.name,
+          notes: currentExe.notes,
+          lastWorkouts: currentExe.lastWorkouts,
+          maxWeigth: currentExe.maxWeigth,
+          maxVolume: currentExe.maxVolume,
+          bodyParts: currentExe.bodyParts);
+
+      var volume = getSetVolume(event.set.reps);
+      var maxWeigth = getSetMaxWeigth(event.set.reps);;
+
+      if (event.isEdit) {
+        var maxWeigthSet = getMaxWeigth(exe.lastWorkouts);
+        var maxVolumeSet = getMaxVolume(exe.lastWorkouts);
+        if (willDeleteSet) {
+          exe.lastWorkouts.removeWhere((wk) => wk.date == event.date);
+          maxWeigthSet = getMaxWeigth(exe.lastWorkouts);
+           maxVolumeSet = getMaxVolume(exe.lastWorkouts);
+        } 
+          if( exe.lastWorkouts.length ==0 ) {
+            exe.maxVolume = 0.0;
+            exe.maxWeigth = 0.0;
+          }
+
+          if (maxVolumeSet != null maxVolumeSet.volume > exe.maxVolume) 
+          exe.maxVolume = maxVolumeSet.volume;
+
+          if (maxWeigthSet != null && maxWeigthSet.maxWeigth > exe.maxWeigth)
+            exe.maxWeigth = maxWeigthSet.maxWeigth;
+
+
+      } else {
+        if (exe.lastWorkouts.length >= 12) {
+          exe.lastWorkouts.removeAt(11);
+        }
+        if (volume > exe.maxVolume) exe.maxVolume = volume;
+        if (maxWeigth > exe.maxWeigth) exe.maxWeigth = maxWeigth;
+
+        exe.lastWorkouts.insert(
+            0,
+            modelsApp.SetResume(
+                date: event.date, maxWeigth: maxWeigth, volume: volume));
+      }
+
+      await this.db.saveSet(
+          modelsApp.SetWorkout(
+              id: event.set.id,
+              exercise: exe,
+              volume: volume,
+              maxWeigth: maxWeigth,
+              reps: event.set.reps),
+          workout.id);
     } catch (e) {
       print(e);
     }

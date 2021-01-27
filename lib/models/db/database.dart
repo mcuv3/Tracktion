@@ -270,6 +270,10 @@ class SQLDatabase extends _$SQLDatabase {
   Future saveRep(Rep rep) => into(reps).insert(rep, mode: InsertMode.replace);
   Future deleteRep(Rep rep) => delete(reps).delete(rep);
 
+  Future insertExercise(Exercise exe) =>
+      into(exercises).insert(exe, mode: InsertMode.replace);
+
+
   Future<int> saveWorkOut(WorkoutsCompanion wk) =>
       into(workouts).insert(wk, mode: InsertMode.replace);
 }
