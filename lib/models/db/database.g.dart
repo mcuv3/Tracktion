@@ -929,14 +929,14 @@ class $MigrationsTable extends Migrations
 
 class SetWorkout extends DataClass implements Insertable<SetWorkout> {
   final int id;
-  final double setVolume;
-  final double setMaxWeigth;
+  final double volume;
+  final double maxWeigth;
   final int workOutId;
   final int exerciseId;
   SetWorkout(
       {@required this.id,
-      @required this.setVolume,
-      @required this.setMaxWeigth,
+      @required this.volume,
+      @required this.maxWeigth,
       @required this.workOutId,
       @required this.exerciseId});
   factory SetWorkout.fromData(Map<String, dynamic> data, GeneratedDatabase db,
@@ -946,10 +946,10 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
     final doubleType = db.typeSystem.forDartType<double>();
     return SetWorkout(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      setVolume: doubleType
-          .mapFromDatabaseResponse(data['${effectivePrefix}set_volume']),
-      setMaxWeigth: doubleType
-          .mapFromDatabaseResponse(data['${effectivePrefix}set_max_weigth']),
+      volume:
+          doubleType.mapFromDatabaseResponse(data['${effectivePrefix}volume']),
+      maxWeigth: doubleType
+          .mapFromDatabaseResponse(data['${effectivePrefix}max_weigth']),
       workOutId: intType
           .mapFromDatabaseResponse(data['${effectivePrefix}work_out_id']),
       exerciseId: intType
@@ -962,11 +962,11 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
     if (!nullToAbsent || id != null) {
       map['id'] = Variable<int>(id);
     }
-    if (!nullToAbsent || setVolume != null) {
-      map['set_volume'] = Variable<double>(setVolume);
+    if (!nullToAbsent || volume != null) {
+      map['volume'] = Variable<double>(volume);
     }
-    if (!nullToAbsent || setMaxWeigth != null) {
-      map['set_max_weigth'] = Variable<double>(setMaxWeigth);
+    if (!nullToAbsent || maxWeigth != null) {
+      map['max_weigth'] = Variable<double>(maxWeigth);
     }
     if (!nullToAbsent || workOutId != null) {
       map['work_out_id'] = Variable<int>(workOutId);
@@ -980,12 +980,11 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
   SetWorkoutsCompanion toCompanion(bool nullToAbsent) {
     return SetWorkoutsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      setVolume: setVolume == null && nullToAbsent
+      volume:
+          volume == null && nullToAbsent ? const Value.absent() : Value(volume),
+      maxWeigth: maxWeigth == null && nullToAbsent
           ? const Value.absent()
-          : Value(setVolume),
-      setMaxWeigth: setMaxWeigth == null && nullToAbsent
-          ? const Value.absent()
-          : Value(setMaxWeigth),
+          : Value(maxWeigth),
       workOutId: workOutId == null && nullToAbsent
           ? const Value.absent()
           : Value(workOutId),
@@ -1000,8 +999,8 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return SetWorkout(
       id: serializer.fromJson<int>(json['id']),
-      setVolume: serializer.fromJson<double>(json['setVolume']),
-      setMaxWeigth: serializer.fromJson<double>(json['setMaxWeigth']),
+      volume: serializer.fromJson<double>(json['volume']),
+      maxWeigth: serializer.fromJson<double>(json['maxWeigth']),
       workOutId: serializer.fromJson<int>(json['workOutId']),
       exerciseId: serializer.fromJson<int>(json['exerciseId']),
     );
@@ -1011,8 +1010,8 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'setVolume': serializer.toJson<double>(setVolume),
-      'setMaxWeigth': serializer.toJson<double>(setMaxWeigth),
+      'volume': serializer.toJson<double>(volume),
+      'maxWeigth': serializer.toJson<double>(maxWeigth),
       'workOutId': serializer.toJson<int>(workOutId),
       'exerciseId': serializer.toJson<int>(exerciseId),
     };
@@ -1020,14 +1019,14 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
 
   SetWorkout copyWith(
           {int id,
-          double setVolume,
-          double setMaxWeigth,
+          double volume,
+          double maxWeigth,
           int workOutId,
           int exerciseId}) =>
       SetWorkout(
         id: id ?? this.id,
-        setVolume: setVolume ?? this.setVolume,
-        setMaxWeigth: setMaxWeigth ?? this.setMaxWeigth,
+        volume: volume ?? this.volume,
+        maxWeigth: maxWeigth ?? this.maxWeigth,
         workOutId: workOutId ?? this.workOutId,
         exerciseId: exerciseId ?? this.exerciseId,
       );
@@ -1035,8 +1034,8 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
   String toString() {
     return (StringBuffer('SetWorkout(')
           ..write('id: $id, ')
-          ..write('setVolume: $setVolume, ')
-          ..write('setMaxWeigth: $setMaxWeigth, ')
+          ..write('volume: $volume, ')
+          ..write('maxWeigth: $maxWeigth, ')
           ..write('workOutId: $workOutId, ')
           ..write('exerciseId: $exerciseId')
           ..write(')'))
@@ -1047,54 +1046,54 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
   int get hashCode => $mrjf($mrjc(
       id.hashCode,
       $mrjc(
-          setVolume.hashCode,
-          $mrjc(setMaxWeigth.hashCode,
+          volume.hashCode,
+          $mrjc(maxWeigth.hashCode,
               $mrjc(workOutId.hashCode, exerciseId.hashCode)))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is SetWorkout &&
           other.id == this.id &&
-          other.setVolume == this.setVolume &&
-          other.setMaxWeigth == this.setMaxWeigth &&
+          other.volume == this.volume &&
+          other.maxWeigth == this.maxWeigth &&
           other.workOutId == this.workOutId &&
           other.exerciseId == this.exerciseId);
 }
 
 class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
   final Value<int> id;
-  final Value<double> setVolume;
-  final Value<double> setMaxWeigth;
+  final Value<double> volume;
+  final Value<double> maxWeigth;
   final Value<int> workOutId;
   final Value<int> exerciseId;
   const SetWorkoutsCompanion({
     this.id = const Value.absent(),
-    this.setVolume = const Value.absent(),
-    this.setMaxWeigth = const Value.absent(),
+    this.volume = const Value.absent(),
+    this.maxWeigth = const Value.absent(),
     this.workOutId = const Value.absent(),
     this.exerciseId = const Value.absent(),
   });
   SetWorkoutsCompanion.insert({
     this.id = const Value.absent(),
-    @required double setVolume,
-    @required double setMaxWeigth,
+    @required double volume,
+    @required double maxWeigth,
     @required int workOutId,
     @required int exerciseId,
-  })  : setVolume = Value(setVolume),
-        setMaxWeigth = Value(setMaxWeigth),
+  })  : volume = Value(volume),
+        maxWeigth = Value(maxWeigth),
         workOutId = Value(workOutId),
         exerciseId = Value(exerciseId);
   static Insertable<SetWorkout> custom({
     Expression<int> id,
-    Expression<double> setVolume,
-    Expression<double> setMaxWeigth,
+    Expression<double> volume,
+    Expression<double> maxWeigth,
     Expression<int> workOutId,
     Expression<int> exerciseId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (setVolume != null) 'set_volume': setVolume,
-      if (setMaxWeigth != null) 'set_max_weigth': setMaxWeigth,
+      if (volume != null) 'volume': volume,
+      if (maxWeigth != null) 'max_weigth': maxWeigth,
       if (workOutId != null) 'work_out_id': workOutId,
       if (exerciseId != null) 'exercise_id': exerciseId,
     });
@@ -1102,14 +1101,14 @@ class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
 
   SetWorkoutsCompanion copyWith(
       {Value<int> id,
-      Value<double> setVolume,
-      Value<double> setMaxWeigth,
+      Value<double> volume,
+      Value<double> maxWeigth,
       Value<int> workOutId,
       Value<int> exerciseId}) {
     return SetWorkoutsCompanion(
       id: id ?? this.id,
-      setVolume: setVolume ?? this.setVolume,
-      setMaxWeigth: setMaxWeigth ?? this.setMaxWeigth,
+      volume: volume ?? this.volume,
+      maxWeigth: maxWeigth ?? this.maxWeigth,
       workOutId: workOutId ?? this.workOutId,
       exerciseId: exerciseId ?? this.exerciseId,
     );
@@ -1121,11 +1120,11 @@ class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (setVolume.present) {
-      map['set_volume'] = Variable<double>(setVolume.value);
+    if (volume.present) {
+      map['volume'] = Variable<double>(volume.value);
     }
-    if (setMaxWeigth.present) {
-      map['set_max_weigth'] = Variable<double>(setMaxWeigth.value);
+    if (maxWeigth.present) {
+      map['max_weigth'] = Variable<double>(maxWeigth.value);
     }
     if (workOutId.present) {
       map['work_out_id'] = Variable<int>(workOutId.value);
@@ -1140,8 +1139,8 @@ class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
   String toString() {
     return (StringBuffer('SetWorkoutsCompanion(')
           ..write('id: $id, ')
-          ..write('setVolume: $setVolume, ')
-          ..write('setMaxWeigth: $setMaxWeigth, ')
+          ..write('volume: $volume, ')
+          ..write('maxWeigth: $maxWeigth, ')
           ..write('workOutId: $workOutId, ')
           ..write('exerciseId: $exerciseId')
           ..write(')'))
@@ -1163,27 +1162,25 @@ class $SetWorkoutsTable extends SetWorkouts
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
-  final VerificationMeta _setVolumeMeta = const VerificationMeta('setVolume');
-  GeneratedRealColumn _setVolume;
+  final VerificationMeta _volumeMeta = const VerificationMeta('volume');
+  GeneratedRealColumn _volume;
   @override
-  GeneratedRealColumn get setVolume => _setVolume ??= _constructSetVolume();
-  GeneratedRealColumn _constructSetVolume() {
+  GeneratedRealColumn get volume => _volume ??= _constructVolume();
+  GeneratedRealColumn _constructVolume() {
     return GeneratedRealColumn(
-      'set_volume',
+      'volume',
       $tableName,
       false,
     );
   }
 
-  final VerificationMeta _setMaxWeigthMeta =
-      const VerificationMeta('setMaxWeigth');
-  GeneratedRealColumn _setMaxWeigth;
+  final VerificationMeta _maxWeigthMeta = const VerificationMeta('maxWeigth');
+  GeneratedRealColumn _maxWeigth;
   @override
-  GeneratedRealColumn get setMaxWeigth =>
-      _setMaxWeigth ??= _constructSetMaxWeigth();
-  GeneratedRealColumn _constructSetMaxWeigth() {
+  GeneratedRealColumn get maxWeigth => _maxWeigth ??= _constructMaxWeigth();
+  GeneratedRealColumn _constructMaxWeigth() {
     return GeneratedRealColumn(
-      'set_max_weigth',
+      'max_weigth',
       $tableName,
       false,
     );
@@ -1209,7 +1206,7 @@ class $SetWorkoutsTable extends SetWorkouts
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, setVolume, setMaxWeigth, workOutId, exerciseId];
+      [id, volume, maxWeigth, workOutId, exerciseId];
   @override
   $SetWorkoutsTable get asDslTable => this;
   @override
@@ -1224,19 +1221,17 @@ class $SetWorkoutsTable extends SetWorkouts
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
     }
-    if (data.containsKey('set_volume')) {
-      context.handle(_setVolumeMeta,
-          setVolume.isAcceptableOrUnknown(data['set_volume'], _setVolumeMeta));
+    if (data.containsKey('volume')) {
+      context.handle(_volumeMeta,
+          volume.isAcceptableOrUnknown(data['volume'], _volumeMeta));
     } else if (isInserting) {
-      context.missing(_setVolumeMeta);
+      context.missing(_volumeMeta);
     }
-    if (data.containsKey('set_max_weigth')) {
-      context.handle(
-          _setMaxWeigthMeta,
-          setMaxWeigth.isAcceptableOrUnknown(
-              data['set_max_weigth'], _setMaxWeigthMeta));
+    if (data.containsKey('max_weigth')) {
+      context.handle(_maxWeigthMeta,
+          maxWeigth.isAcceptableOrUnknown(data['max_weigth'], _maxWeigthMeta));
     } else if (isInserting) {
-      context.missing(_setMaxWeigthMeta);
+      context.missing(_maxWeigthMeta);
     }
     if (data.containsKey('work_out_id')) {
       context.handle(_workOutIdMeta,

@@ -72,8 +72,8 @@ class SQLDatabase extends _$SQLDatabase {
 
       final setId = await into(setWorkouts).insert(
           SetWorkout(
-              setMaxWeigth: set.maxWeigth,
-              setVolume: set.volume,
+              maxWeigth: set.maxWeigth,
+              volume: set.volume,
               id: set.id,
               workOutId: workoutId,
               exerciseId: exeId),
@@ -172,8 +172,8 @@ class SQLDatabase extends _$SQLDatabase {
           id: setWk.id,
           exercise: exercise,
           reps: [repetition],
-          maxWeigth: setWk.setMaxWeigth,
-          volume: setWk.setVolume));
+          maxWeigth: setWk.maxWeigth,
+          volume: setWk.volume));
     } else {
       sets[indexSet].reps = [...sets[indexSet].reps, repetition];
     }
@@ -237,6 +237,24 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
+  Future<double> findMaxVolume(int exerciseId) async {
+    final max = setWorkouts.volume.max();
+    final query = selectOnly(setWorkouts)
+      ..where(setWorkouts.exerciseId.equals(exerciseId))
+      ..addColumns([max]);
+    return query.map((row) => row.read(max)).getSingle();
+  }
+
+  Future<double> findMaxWeigth(int exerciseId) async {
+    final max = setWorkouts.maxWeigth.max();
+
+    final query = selectOnly(setWorkouts)
+      ..where(setWorkouts.exerciseId.equals(exerciseId))
+      ..addColumns([max]);
+
+    return query.map((row) => row.read(max)).getSingle();
+  }
+
   // COMPLEX DELETES
 
   Future<void> deleteExercise(Exercise exe) async {
@@ -272,7 +290,6 @@ class SQLDatabase extends _$SQLDatabase {
 
   Future insertExercise(Exercise exe) =>
       into(exercises).insert(exe, mode: InsertMode.replace);
-
 
   Future<int> saveWorkOut(WorkoutsCompanion wk) =>
       into(workouts).insert(wk, mode: InsertMode.replace);

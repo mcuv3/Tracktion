@@ -8,8 +8,8 @@ class Workouts extends Table {
 
 class SetWorkouts extends Table {
   IntColumn get id => integer().autoIncrement()();
-  RealColumn get setVolume => real()();
-  RealColumn get setMaxWeigth => real()();
+  RealColumn get volume => real()();
+  RealColumn get maxWeigth => real()();
   IntColumn get workOutId =>
       integer().customConstraint("NOT NULL REFERENCES workouts (id)")();
   IntColumn get exerciseId =>
