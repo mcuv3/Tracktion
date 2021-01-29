@@ -99,9 +99,9 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
           difficulty: exe.difficulty,
           name: exe.name,
           notes: exe.notes,
-          lastWorkouts: exe.lastWorkoutsToString(),
-          maxVolume: exe.maxVolume,
-          maxWeigth: exe.maxWeigth);
+          lastWorkouts: "",
+          maxVolume: 0.0,
+          maxWeigth: 0.0);
       final exeWithBd =
           ExerciseWithBodyParts(bodyParts: exe.bodyParts, exe: exeDb);
       await db.saveExercise(exeWithBd);

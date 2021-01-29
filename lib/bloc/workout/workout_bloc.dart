@@ -118,14 +118,31 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
             willDelete: willDeleteSet);
       } else {
         if (exe.lastWorkouts.length >= 12) exe.lastWorkouts.removeAt(11);
-        exe = consenceMaxes(
-            exe: exe, maxWeigth: maxWeigth, volume: volume, willDelete: willDeleteSet);
-
         exe.lastWorkouts.insert(
             0,
             modelsApp.SetResume(
-                date: event.date, maxWeigth: maxWeigth, volume: volume));
+                date: event.date,
+                maxWeigth: maxWeigth,
+                volume: volume,
+                reps: event.set.reps.length));
+
+        exe = consenceMaxes(
+            exe: exe,
+            maxWeigth: maxWeigth,
+            volume: volume,
+            willDelete: willDeleteSet);
       }
+
+      final lastWorkoutsString = exe.lastWorkoutsToString();
+
+      await this.db.insertExercise(Exercise(
+          id: exe.id,
+          difficulty: exe.difficulty,
+          lastWorkouts: lastWorkoutsString,
+          maxVolume: exe.maxVolume,
+          maxWeigth: exe.maxWeigth,
+          name: exe.name,
+          notes: exe.notes));
 
       await this.db.saveSet(
           modelsApp.SetWorkout(

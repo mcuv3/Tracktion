@@ -191,7 +191,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                         builder: (context, sts) {
                           if (sts.connectionState == ConnectionState.active) {
                             List<SetWorkout> sets = sts.data;
-                            // if (sortMode)
+
                             sets.sort((a, b) => orderSets
                                 .indexOf(a.id)
                                 .compareTo(orderSets.indexOf(b.id)));

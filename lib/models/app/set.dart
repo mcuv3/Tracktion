@@ -20,4 +20,9 @@ class SetWorkout {
     this.id = null;
     for (final rep in this.reps) rep.id = null;
   }
+
+  @override
+  String toString() {
+    return "{Exe:${this.exercise.name} reps:${this.reps.length} maxWeigth:${this.maxWeigth} volume:${this.volume}}";
+  }
 }

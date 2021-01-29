@@ -46,17 +46,24 @@ class Exercise {
       });
 
   String lastWorkoutsToString() =>
-      json.encode(this.lastWorkouts.map((set) => set.toString()).toList());
+      json.encode(this.lastWorkouts.map((set) => set.toJson()).toList());
 
   static List<SetResume> stringToLastWorkouts(String str) {
-    final js = json.decode(str) as List<Map<String, dynamic>>;
-    return js
-        .map((record) => SetResume(
-            reps: record["reps"],
-            date: DateTime(record["date"]),
-            maxWeigth: record["maxWeith"],
-            volume: record["volume"]))
-        .toList();
+    if (str == "") return [];
+
+    try {
+      final js = json.decode(str) as List<dynamic>;
+      return js
+          .map((record) => SetResume(
+              reps: record["reps"],
+              date: DateTime.parse(record["date"]),
+              maxWeigth: record["maxWeigth"],
+              volume: record["volume"]))
+          .toList();
+    } catch (e) {
+      print(e);
+      return [];
+    }
   }
 }
 
@@ -67,8 +74,12 @@ class SetResume {
   final double volume;
   SetResume({this.maxWeigth, this.reps, this.date, this.volume});
 
-  @override
-  String toString() {
-    return "";
+  Map<String, dynamic> toJson() {
+    return {
+      "reps": this.reps,
+      "maxWeigth": this.maxWeigth,
+      "volume": this.volume,
+      "date": this.date.toString()
+    };
   }
 }

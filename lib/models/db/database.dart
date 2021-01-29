@@ -145,7 +145,8 @@ class SQLDatabase extends _$SQLDatabase {
   }
 
   List<modelsApp.SetWorkout> _mergeExerciseSetWorkout(
-      List<modelsApp.SetWorkout> sets, TypedResult st) {
+      List<modelsApp.SetWorkout> _sets, TypedResult st) {
+    final sets = [..._sets];
     final setWk = st.readTable(setWorkouts);
     final rep = st.readTable(reps);
     final indexSet = sets.indexWhere((st) => st.id == setWk.id);
@@ -203,7 +204,7 @@ class SQLDatabase extends _$SQLDatabase {
     final exes = [...exs];
 
     final indexExe = exes.indexWhere((exe) => exe.id == exercise.id);
-    if (indexExe == -1) {
+    if (indexExe == -1)
       exes.add(exeApp.Exercise(
           id: exercise.id,
           lastWorkouts:
@@ -214,9 +215,9 @@ class SQLDatabase extends _$SQLDatabase {
           bodyParts: [bodyPart],
           difficulty: exercise.difficulty,
           notes: exercise.notes));
-    } else {
+    else
       exes[indexExe].bodyPartSet = [...exes[indexExe].bodyParts, bodyPart];
-    }
+
     return exes;
   }
 

@@ -123,9 +123,9 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
 
       exe = Exercise(
           id: exe == null ? null : exe.id,
-          lastWorkouts: exe.lastWorkouts,
-          maxVolume: exe.maxVolume,
-          maxWeigth: exe.maxWeigth,
+          lastWorkouts: editMode ? exe.lastWorkouts : [],
+          maxVolume: editMode ? exe.maxVolume : 0.0,
+          maxWeigth: editMode ? exe.maxWeigth : 0.0,
           bodyParts: parts,
           difficulty: dt,
           notes: notesController.text,

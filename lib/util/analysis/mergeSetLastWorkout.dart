@@ -24,12 +24,12 @@ Exercise consenceMaxes(
       bodyParts: exe.bodyParts);
 
   if (_exe.lastWorkouts.length == 0) {
-    exe.maxVolume = 0.0;
-    exe.maxWeigth = 0.0;
+    _exe.maxVolume = 0.0;
+    _exe.maxWeigth = 0.0;
   } else {
     if (!willDelete) {
-      if (volume > exe.maxVolume) exe.maxVolume = volume;
-      if (maxWeigth > exe.maxWeigth) exe.maxWeigth = maxWeigth;
+      if (volume > _exe.maxVolume) _exe.maxVolume = volume;
+      if (maxWeigth > _exe.maxWeigth) _exe.maxWeigth = maxWeigth;
     }
   }
   return _exe;
