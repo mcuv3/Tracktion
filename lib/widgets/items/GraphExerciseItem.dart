@@ -1,8 +1,13 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tracktion/models/app/set.dart';
 
 class GraphExerciseItem extends StatefulWidget {
+  final SetWorkout set;
+
+  GraphExerciseItem(this.set);
+
   @override
   _GraphExerciseItemState createState() => _GraphExerciseItemState();
 }
@@ -42,7 +47,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "DeadLift",
+                    widget.set.exercise.name,
                     style: TextStyle(color: Colors.white, fontSize: 24),
                   ),
                   Row(
@@ -97,10 +102,10 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                     width: width * 0.45,
                     child: Column(
                       children: [
-                        Text("1MR Stimate",
+                        Text("Max Weight Set", // TODO REMPLACE FOR 1MR
                             style: TextStyle(
                                 color: Colors.white.withOpacity(0.5))),
-                        Text("4848.546kg ",
+                        Text("${widget.set.maxWeigth} kg",
                             style: TextStyle(color: Colors.white)),
                       ],
                     )),
@@ -114,7 +119,8 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                       Text("Workout Volume",
                           style:
                               TextStyle(color: Colors.white.withOpacity(0.5))),
-                      Text("1230.0kg", style: TextStyle(color: Colors.white)),
+                      Text("${widget.set.volume.toString()} kg",
+                          style: TextStyle(color: Colors.white)),
                     ],
                   ),
                 ),
@@ -135,7 +141,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                         Text("Max Weigth",
                             style: TextStyle(
                                 color: Colors.white.withOpacity(0.5))),
-                        Text("4848.546kg ",
+                        Text("${widget.set.exercise.maxWeigth} kg",
                             style: TextStyle(color: Colors.white)),
                       ],
                     )),
@@ -149,7 +155,8 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                       Text("Max Volume",
                           style:
                               TextStyle(color: Colors.white.withOpacity(0.5))),
-                      Text("1230.0kg", style: TextStyle(color: Colors.white)),
+                      Text("${widget.set.exercise.maxVolume} kg",
+                          style: TextStyle(color: Colors.white)),
                     ],
                   ),
                 ),

@@ -11,7 +11,9 @@ class Exercise {
   final Difficulty difficulty;
   final String notes;
   double maxWeigth;
+  int maxWeigthSetId;
   double maxVolume;
+  int maxVolumeSetId;
   List<SetResume> lastWorkouts;
   List<BodyPartEnum> bodyParts;
   int _setId;
@@ -24,6 +26,8 @@ class Exercise {
       @required this.lastWorkouts,
       @required this.maxWeigth,
       @required this.maxVolume,
+      @required this.maxVolumeSetId,
+      @required this.maxWeigthSetId,
       this.notes});
 
   set bodyPartSet(List<BodyPartEnum> bds) {
@@ -55,6 +59,7 @@ class Exercise {
       final js = json.decode(str) as List<dynamic>;
       return js
           .map((record) => SetResume(
+              setId: record["setId"],
               reps: record["reps"],
               date: DateTime.parse(record["date"]),
               maxWeigth: record["maxWeigth"],
@@ -65,17 +70,31 @@ class Exercise {
       return [];
     }
   }
+
+  Exercise copy() => Exercise(
+      id: this.id,
+      difficulty: this.difficulty,
+      maxVolumeSetId: this.maxVolumeSetId,
+      maxWeigthSetId: this.maxWeigthSetId,
+      name: this.name,
+      notes: this.notes,
+      lastWorkouts: this.lastWorkouts,
+      maxWeigth: this.maxWeigth,
+      maxVolume: this.maxVolume,
+      bodyParts: this.bodyParts);
 }
 
 class SetResume {
+  int setId;
   final double maxWeigth;
   final int reps;
   final DateTime date;
   final double volume;
-  SetResume({this.maxWeigth, this.reps, this.date, this.volume});
+  SetResume({this.setId, this.maxWeigth, this.reps, this.date, this.volume});
 
   Map<String, dynamic> toJson() {
     return {
+      "setId": this.setId,
       "reps": this.reps,
       "maxWeigth": this.maxWeigth,
       "volume": this.volume,

@@ -115,11 +115,14 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
     if (!shouldSave && willDelete) return false;
 
     if (shouldSave) {
-      // TODO: here is the tricky part
       final set = SetWorkout(
           id: setId, exercise: exs, reps: reps, maxWeigth: 0, volume: 0);
-      BlocProvider.of<WorkoutBloc>(context)
-          .add(SaveSet(set: set, date: date, isEdit: fromWorkout));
+      if (reps.length == 0 && fromWorkout)
+        BlocProvider.of<WorkoutBloc>(context)
+            .add(DeleteSet(set: set, date: date));
+      else
+        BlocProvider.of<WorkoutBloc>(context)
+            .add(SaveSet(set: set, date: date, isEdit: fromWorkout));
     }
     return true;
   }

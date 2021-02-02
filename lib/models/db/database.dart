@@ -65,7 +65,7 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
-  Future<void> saveSet(modelsApp.SetWorkout set, int workoutId) {
+  Future<int> saveSet(modelsApp.SetWorkout set, int workoutId) {
     return transaction(() async {
       final exeId = set.exercise.id;
       final repsSet = set.reps;
@@ -94,6 +94,8 @@ class SQLDatabase extends _$SQLDatabase {
                 setId: setId),
             mode: InsertMode.replace);
       }
+
+      return setId;
     });
   }
 
@@ -161,6 +163,8 @@ class SQLDatabase extends _$SQLDatabase {
       final exe = st.readTable(exercises);
       final exercise = modelsApp.Exercise(
           id: exe.id,
+          maxVolumeSetId: exe.maxVolumeSetId,
+          maxWeigthSetId: exe.maxWeigthSetId,
           lastWorkouts:
               modelsApp.Exercise.stringToLastWorkouts(exe.lastWorkouts),
           maxVolume: exe.maxVolume,
@@ -207,6 +211,8 @@ class SQLDatabase extends _$SQLDatabase {
     if (indexExe == -1)
       exes.add(exeApp.Exercise(
           id: exercise.id,
+          maxVolumeSetId: exercise.maxVolumeSetId,
+          maxWeigthSetId: exercise.maxWeigthSetId,
           lastWorkouts:
               modelsApp.Exercise.stringToLastWorkouts(exercise.lastWorkouts),
           maxVolume: exercise.maxVolume,
@@ -238,22 +244,29 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
-  Future<double> findMaxVolume(int exerciseId) async {
+  Future<SetWorkout> findMaxVolume(int exerciseId, int setId) async {
     final max = setWorkouts.volume.max();
     final query = selectOnly(setWorkouts)
+      ..where(setWorkouts.id.isNotIn([setId]))
       ..where(setWorkouts.exerciseId.equals(exerciseId))
       ..addColumns([max]);
-    return query.map((row) => row.read(max)).getSingle();
+
+    return query.map((row) {
+      return row.readTable(setWorkouts);
+    }).getSingle();
   }
 
-  Future<double> findMaxWeigth(int exerciseId) async {
+  Future<SetWorkout> findMaxWeigth(int exerciseId, int setId) async {
     final max = setWorkouts.maxWeigth.max();
 
     final query = selectOnly(setWorkouts)
+      ..where(setWorkouts.id.isNotIn([setId]))
       ..where(setWorkouts.exerciseId.equals(exerciseId))
       ..addColumns([max]);
 
-    return query.map((row) => row.read(max)).getSingle();
+    return query.map((row) {
+      return row.readTable(setWorkouts);
+    }).getSingle();
   }
 
   // COMPLEX DELETES

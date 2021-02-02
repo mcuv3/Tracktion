@@ -124,6 +124,8 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
       exe = Exercise(
           id: exe == null ? null : exe.id,
           lastWorkouts: editMode ? exe.lastWorkouts : [],
+          maxVolumeSetId: exe.maxVolumeSetId,
+          maxWeigthSetId: exe.maxWeigthSetId,
           maxVolume: editMode ? exe.maxVolume : 0.0,
           maxWeigth: editMode ? exe.maxWeigth : 0.0,
           bodyParts: parts,
@@ -173,6 +175,9 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    SizedBox(
+                      height: 90,
+                    ),
                     Text('Body Part', style: Theme.of(context).textTheme.title),
                     Container(
                       height: 120,

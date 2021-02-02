@@ -18,6 +18,7 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
   void _handleNewDate(date) {
+    print(date);
     showCupertinoModalBottomSheet(
       expand: true,
       isDismissible: false,
@@ -85,6 +86,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
           weekDays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
           events: _events,
           onDateSelected: (date) => _handleNewDate(date),
+          hideTodayIcon: true,
           eventDoneColor: Colors.redAccent,
           selectedColor: Theme.of(context).colorScheme.exercise,
           todayColor: Theme.of(context).colorScheme.exercise,

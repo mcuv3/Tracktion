@@ -159,83 +159,6 @@ class _WorkOutScreenState extends State<WorkOutScreen>
 
   @override
   Widget build(BuildContext context) {
-    Widget body;
-
-    if (analysisMode)
-      body = WorkoutAnalysisScreen();
-    else
-      body = Column(
-        children: [
-          BlocListener<WorkoutBloc, WorkoutState>(
-            listener: (context, state) {
-              if (state is WorkoutSets) {
-                setState(() {
-                  currentDate = state.date;
-                });
-              }
-            },
-            child: DatePicker(
-              changeDate: changeDateHandler,
-              currentDate: currentDate,
-            ),
-          ),
-          Expanded(
-            child: AnimatedBuilder(
-              animation: _pageController,
-              builder: (context, _) => Transform.translate(
-                offset: Offset(0.0 * (direction ? 1 : -1), 0.0),
-                child: BlocBuilder<WorkoutBloc, WorkoutState>(
-                  builder: (context, state) {
-                    if (state is WorkoutSets) {
-                      return StreamBuilder(
-                        builder: (context, sts) {
-                          if (sts.connectionState == ConnectionState.active) {
-                            List<SetWorkout> sets = sts.data;
-
-                            sets.sort((a, b) => orderSets
-                                .indexOf(a.id)
-                                .compareTo(orderSets.indexOf(b.id)));
-                            if (sets.isEmpty)
-                              return WorkoutEmpty(
-                                currentDate: state.date,
-                              );
-
-                            return !sortMode
-                                ? ListView.builder(
-                                    itemCount: sets.length,
-                                    itemBuilder: (context, i) =>
-                                        buildSet(sets[i], sets),
-                                  )
-                                : ReorderableListView(
-                                    onReorder: (prev, next) =>
-                                        orderSetsHandler(prev, next, sets),
-                                    children: [
-                                        for (final set in sets)
-                                          buildSet(set, sets)
-                                      ]
-                                    // itemCount: sets.length,
-                                    );
-                          }
-
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        },
-                        stream: state.sets,
-                      );
-                    }
-
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-        ],
-      );
-
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
@@ -302,7 +225,81 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                   ],
           ),
           drawer: MainDrawer(),
-          body: body),
+          body: Column(
+            children: [
+              BlocListener<WorkoutBloc, WorkoutState>(
+                listener: (context, state) {
+                  if (state is WorkoutSets) {
+                    setState(() {
+                      currentDate = state.date;
+                    });
+                  }
+                },
+                child: DatePicker(
+                  changeDate: changeDateHandler,
+                  currentDate: currentDate,
+                ),
+              ),
+              Expanded(
+                child: AnimatedBuilder(
+                  animation: _pageController,
+                  builder: (context, _) => Transform.translate(
+                    offset: Offset(0.0 * (direction ? 1 : -1), 0.0),
+                    child: BlocBuilder<WorkoutBloc, WorkoutState>(
+                      builder: (context, state) {
+                        if (state is WorkoutSets) {
+                          return StreamBuilder(
+                            builder: (context, sts) {
+                              if (sts.connectionState ==
+                                  ConnectionState.active) {
+                                List<SetWorkout> sets = sts.data;
+
+                                sets.sort((a, b) => orderSets
+                                    .indexOf(a.id)
+                                    .compareTo(orderSets.indexOf(b.id)));
+                                if (sets.isEmpty)
+                                  return WorkoutEmpty(
+                                    currentDate: state.date,
+                                  );
+
+                                if (analysisMode)
+                                  return WorkoutAnalysisScreen(sets);
+
+                                return !sortMode
+                                    ? ListView.builder(
+                                        itemCount: sets.length,
+                                        itemBuilder: (context, i) =>
+                                            buildSet(sets[i], sets),
+                                      )
+                                    : ReorderableListView(
+                                        onReorder: (prev, next) =>
+                                            orderSetsHandler(prev, next, sets),
+                                        children: [
+                                            for (final set in sets)
+                                              buildSet(set, sets)
+                                          ]
+                                        // itemCount: sets.length,
+                                        );
+                              }
+
+                              return Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                            stream: state.sets,
+                          );
+                        }
+
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )),
     );
   }
 }

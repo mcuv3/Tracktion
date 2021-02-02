@@ -41,6 +41,8 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       final exe = event.exe;
       final exeEntity = Exercise(
           id: exe.id,
+          maxVolumeSetId: exe.maxVolumeSetId,
+          maxWeigthSetId: exe.maxWeigthSetId,
           difficulty: exe.difficulty,
           name: exe.name,
           notes: exe.notes,
@@ -68,6 +70,8 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       final exeDb = Exercise(
           id: exe.id,
           difficulty: exe.difficulty,
+          maxVolumeSetId: exe.maxVolumeSetId,
+          maxWeigthSetId: exe.maxWeigthSetId,
           name: exe.name,
           notes: exe.notes,
           lastWorkouts: exe.lastWorkoutsToString(),
@@ -99,6 +103,8 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
           difficulty: exe.difficulty,
           name: exe.name,
           notes: exe.notes,
+          maxVolumeSetId: null,
+          maxWeigthSetId: null,
           lastWorkouts: "",
           maxVolume: 0.0,
           maxWeigth: 0.0);

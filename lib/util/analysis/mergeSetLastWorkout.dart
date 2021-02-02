@@ -15,6 +15,8 @@ Exercise consenceMaxes(
     {Exercise exe, double volume, double maxWeigth, bool willDelete}) {
   var _exe = Exercise(
       id: exe.id,
+      maxVolumeSetId: exe.maxVolumeSetId,
+      maxWeigthSetId: exe.maxWeigthSetId,
       difficulty: exe.difficulty,
       name: exe.name,
       notes: exe.notes,
