@@ -103,8 +103,6 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
           difficulty: exe.difficulty,
           name: exe.name,
           notes: exe.notes,
-          maxVolumeSetId: null,
-          maxWeigthSetId: null,
           lastWorkouts: "",
           maxVolume: 0.0,
           maxWeigth: 0.0);

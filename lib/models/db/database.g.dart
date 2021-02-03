@@ -23,8 +23,8 @@ class Exercise extends DataClass implements Insertable<Exercise> {
       @required this.lastWorkouts,
       @required this.maxVolume,
       @required this.maxWeigth,
-      @required this.maxWeigthSetId,
-      @required this.maxVolumeSetId,
+      this.maxWeigthSetId,
+      this.maxVolumeSetId,
       @required this.notes,
       @required this.difficulty});
   factory Exercise.fromData(Map<String, dynamic> data, GeneratedDatabase db,
@@ -240,16 +240,14 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     @required String lastWorkouts,
     @required double maxVolume,
     @required double maxWeigth,
-    @required int maxWeigthSetId,
-    @required int maxVolumeSetId,
+    this.maxWeigthSetId = const Value.absent(),
+    this.maxVolumeSetId = const Value.absent(),
     @required String notes,
     @required Difficulty difficulty,
   })  : name = Value(name),
         lastWorkouts = Value(lastWorkouts),
         maxVolume = Value(maxVolume),
         maxWeigth = Value(maxWeigth),
-        maxWeigthSetId = Value(maxWeigthSetId),
-        maxVolumeSetId = Value(maxVolumeSetId),
         notes = Value(notes),
         difficulty = Value(difficulty);
   static Insertable<Exercise> custom({
@@ -421,7 +419,7 @@ class $ExercisesTable extends Exercises
     return GeneratedIntColumn(
       'max_weigth_set_id',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -435,7 +433,7 @@ class $ExercisesTable extends Exercises
     return GeneratedIntColumn(
       'max_volume_set_id',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -517,16 +515,12 @@ class $ExercisesTable extends Exercises
           _maxWeigthSetIdMeta,
           maxWeigthSetId.isAcceptableOrUnknown(
               data['max_weigth_set_id'], _maxWeigthSetIdMeta));
-    } else if (isInserting) {
-      context.missing(_maxWeigthSetIdMeta);
     }
     if (data.containsKey('max_volume_set_id')) {
       context.handle(
           _maxVolumeSetIdMeta,
           maxVolumeSetId.isAcceptableOrUnknown(
               data['max_volume_set_id'], _maxVolumeSetIdMeta));
-    } else if (isInserting) {
-      context.missing(_maxVolumeSetIdMeta);
     }
     if (data.containsKey('notes')) {
       context.handle(

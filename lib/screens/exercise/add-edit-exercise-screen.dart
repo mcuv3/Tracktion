@@ -109,35 +109,35 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
   void submit(BuildContext ctx) {
     List<BodyPartEnum> parts = [];
 
-    if (form.currentState.validate()) {
-      bodyParts.forEach((b) {
-        if (b["active"]) parts.add(b["body"]);
-      });
-      var dt = difficultyToEnum(difficulty);
+    if (!form.currentState.validate()) return;
 
-      if (parts.length == 0 || dt == null) {
-        showErrorMessage(
-            context: ctx, message: 'Body parts or difficulty missing.');
-        return;
-      }
+    bodyParts.forEach((b) {
+      if (b["active"]) parts.add(b["body"]);
+    });
+    var dt = difficultyToEnum(difficulty);
 
-      exe = Exercise(
-          id: exe == null ? null : exe.id,
-          lastWorkouts: editMode ? exe.lastWorkouts : [],
-          maxVolumeSetId: exe.maxVolumeSetId,
-          maxWeigthSetId: exe.maxWeigthSetId,
-          maxVolume: editMode ? exe.maxVolume : 0.0,
-          maxWeigth: editMode ? exe.maxWeigth : 0.0,
-          bodyParts: parts,
-          difficulty: dt,
-          notes: notesController.text,
-          name: nameController.text);
+    if (parts.length == 0 || dt == null) {
+      showErrorMessage(
+          context: ctx, message: 'Body parts or difficulty missing.');
+      return;
+    }
 
-      if (editMode && exe.id != null) {
-        BlocProvider.of<ExerciseBloc>(context).add(EditExe(exe));
-      } else {
-        BlocProvider.of<ExerciseBloc>(context).add(CreateExe(exe));
-      }
+    exe = Exercise(
+        id: exe == null ? null : exe.id,
+        lastWorkouts: editMode ? exe.lastWorkouts : [],
+        maxVolumeSetId: editMode ? exe.maxVolumeSetId : null,
+        maxWeigthSetId: editMode ? exe.maxWeigthSetId : null,
+        maxVolume: editMode ? exe.maxVolume : null,
+        maxWeigth: editMode ? exe.maxWeigth : null,
+        bodyParts: parts,
+        difficulty: dt,
+        notes: notesController.text,
+        name: nameController.text);
+
+    if (editMode && exe.id != null) {
+      BlocProvider.of<ExerciseBloc>(context).add(EditExe(exe));
+    } else {
+      BlocProvider.of<ExerciseBloc>(context).add(CreateExe(exe));
     }
   }
 

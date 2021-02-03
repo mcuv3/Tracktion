@@ -244,28 +244,36 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
-  Future<SetWorkout> findMaxVolume(int exerciseId, int setId) async {
+  Future<List> findMaxVolume(int exerciseId, int setId) async {
     final max = setWorkouts.volume.max();
+    final id = setWorkouts.id;
     final query = selectOnly(setWorkouts)
       ..where(setWorkouts.id.isNotIn([setId]))
       ..where(setWorkouts.exerciseId.equals(exerciseId))
-      ..addColumns([max]);
+      ..addColumns([max, id]);
 
     return query.map((row) {
-      return row.readTable(setWorkouts);
+      final _id = row.read(id);
+      final _max = row.read(max);
+      if (_id == null || _max == null) return null;
+      return [_id, _max];
     }).getSingle();
   }
 
-  Future<SetWorkout> findMaxWeigth(int exerciseId, int setId) async {
+  Future<List> findMaxWeigth(int exerciseId, int setId) async {
     final max = setWorkouts.maxWeigth.max();
+    final id = setWorkouts.id;
 
     final query = selectOnly(setWorkouts)
       ..where(setWorkouts.id.isNotIn([setId]))
       ..where(setWorkouts.exerciseId.equals(exerciseId))
-      ..addColumns([max]);
+      ..addColumns([max, id]);
 
     return query.map((row) {
-      return row.readTable(setWorkouts);
+      final _id = row.read(id);
+      final _max = row.read(max);
+      if (_id == null || _max == null) return null;
+      return [_id, _max];
     }).getSingle();
   }
 

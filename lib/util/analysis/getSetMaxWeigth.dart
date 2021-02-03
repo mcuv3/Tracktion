@@ -5,7 +5,7 @@ double getSetMaxWeigth(List<Rep> reps) {
 
   if (_reps.length == 0) return 0.0;
 
-  if (_reps.length == 1) return reps[1].weight;
+  if (_reps.length == 1) return reps[0].weight;
 
   _reps.sort((r1, r2) => r2.weight.compareTo(r1.weight));
 

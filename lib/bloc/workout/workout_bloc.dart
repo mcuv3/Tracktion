@@ -112,7 +112,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
 
       if (event.isEdit) {
         var indexLastWorkout =
-            exe.lastWorkouts.indexWhere((set) => set.date == event.date);
+            exe.lastWorkouts.indexWhere((set) => set.setId == event.set.id);
         if (indexLastWorkout != -1)
           exe.lastWorkouts[indexLastWorkout] = newOrUpdatedSet;
         exe = await _verifyMaxVolume(
@@ -129,7 +129,10 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       }
 
       exe = consenceMaxes(
-          exe: exe, maxWeigth: maxWeigth, volume: volume, willDelete: false);
+          setId: newOrUpdatedSet.setId,
+          exe: exe,
+          maxWeigth: maxWeigth,
+          volume: volume);
 
       final setId = await this.db.saveSet(
           modelsApp.SetWorkout(
@@ -140,7 +143,13 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
               reps: event.set.reps),
           workout.id);
 
-      if (createMode) exe.lastWorkouts[0].setId = setId;
+      if (createMode) {
+        exe.lastWorkouts[0].setId = setId;
+        if (exe.lastWorkouts.length == 1) {
+          exe.maxVolumeSetId = setId;
+          exe.maxWeigthSetId = setId;
+        }
+      }
 
       await _saveExercise(exe);
     } catch (e) {
@@ -215,9 +224,11 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
 
     if (exe.maxVolumeSetId == setId &&
         (newSetVolume < exe.maxVolume || newSetVolume == null)) {
-      final newMax = await this.db.findMaxVolume(exe.id, setId);
-      exe.maxVolume = newMax.volume;
-      exe.maxVolumeSetId = newMax.id;
+      final results = await this.db.findMaxVolume(exe.id, setId);
+      if (results == null) return _exe;
+
+      exe.maxVolumeSetId = results[0];
+      exe.maxVolume = results[1];
     }
 
     return _exe;
@@ -229,9 +240,10 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
 
     if (exe.maxVolumeSetId == setId &&
         (newSetWeigth < exe.maxWeigth || newSetWeigth == null)) {
-      final newMax = await this.db.findMaxWeigth(exe.id, setId);
-      exe.maxVolume = newMax.volume;
-      exe.maxVolumeSetId = newMax.id;
+      final results = await this.db.findMaxWeigth(exe.id, setId);
+      if (results == null) return _exe;
+      exe.maxVolumeSetId = results[0];
+      exe.maxVolume = results[1];
     }
 
     return _exe;
