@@ -24,6 +24,11 @@ class ExerciseStreamWidget extends StatelessWidget {
               Exercise exs = stream.data;
               if (onLoadExercise != null) onLoadExercise(exs);
               if (stream.connectionState == ConnectionState.active) {
+                if (exs == null)
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [

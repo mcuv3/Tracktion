@@ -71,15 +71,13 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   Future<void> _deleteSet(DeleteSet event) async {
     try {
       var exe = event.set.exercise.copy();
-      exe.lastWorkouts.removeWhere((wk) => wk.setId == event.set.id);
-      exe = await _verifyMaxWeigth(
-          exe: exe, setId: event.setId, newSetWeigth: null);
-      exe = await _verifyMaxVolume(
-          exe: exe, setId: event.setId, newSetVolume: null);
-      exe = consenceMaxes(
-          exe: exe, maxWeigth: null, volume: null, willDelete: true);
+      var setId = event.set.id;
+      exe.lastWorkouts.removeWhere((wk) => wk.setId == setId);
+      exe = await _verifyMaxWeigth(exe: exe, setId: setId, newSetWeigth: null);
+      exe = await _verifyMaxVolume(exe: exe, setId: setId, newSetVolume: null);
+      exe = consenceMaxes(exe: exe, willDelete: true, setId: setId);
       await _saveExercise(exe);
-      await this.db.deleteSet(event.setId);
+      await this.db.deleteSet(setId);
     } catch (e) {
       print(e);
     }
@@ -97,7 +95,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     try {
       final workout = await this.db.findOrCreateWorkout(event.date);
       var currentExe = event.set.exercise;
-      var createMode = !event.isEdit;
+      var isCreation = !event.isEdit;
 
       var exe = currentExe.copy();
       var volume = getSetVolume(event.set.reps);
@@ -143,7 +141,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
               reps: event.set.reps),
           workout.id);
 
-      if (createMode) {
+      if (isCreation) {
         exe.lastWorkouts[0].setId = setId;
         if (exe.lastWorkouts.length == 1) {
           exe.maxVolumeSetId = setId;
@@ -206,13 +204,9 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     }
   }
 
-  void _deleteSets(DeleteSets event) async {
+  Future<void> _deleteSets(DeleteSets event) async {
     try {
-      final sets = event.setsId;
-
-      for (final id in sets) {
-        await this.db.deleteSet(id);
-      }
+      for (final set in event.sets) await this._deleteSet(DeleteSet(set));
     } catch (e) {
       print(e);
     }
@@ -227,8 +221,15 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       final results = await this.db.findMaxVolume(exe.id, setId);
       if (results == null) return _exe;
 
-      exe.maxVolumeSetId = results[0];
-      exe.maxVolume = results[1];
+      final nextMaxVolume = results[1];
+
+      if (newSetVolume != null && newSetVolume >= nextMaxVolume) {
+        _exe.maxVolumeSetId = setId;
+        _exe.maxVolume = newSetVolume;
+      } else {
+        _exe.maxVolumeSetId = results[0];
+        _exe.maxVolume = results[1];
+      }
     }
 
     return _exe;
@@ -238,12 +239,20 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       {modelsApp.Exercise exe, int setId, double newSetWeigth}) async {
     var _exe = exe.copy();
 
-    if (exe.maxVolumeSetId == setId &&
+    if (exe.maxWeigthSetId == setId &&
         (newSetWeigth < exe.maxWeigth || newSetWeigth == null)) {
       final results = await this.db.findMaxWeigth(exe.id, setId);
       if (results == null) return _exe;
-      exe.maxVolumeSetId = results[0];
-      exe.maxVolume = results[1];
+
+      final nextMaxWeigth = results[1];
+
+      if (newSetWeigth != null && newSetWeigth >= nextMaxWeigth) {
+        _exe.maxWeigthSetId = setId;
+        _exe.maxWeigth = newSetWeigth;
+      } else {
+        _exe.maxWeigthSetId = results[0];
+        _exe.maxWeigth = results[1];
+      }
     }
 
     return _exe;

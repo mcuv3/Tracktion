@@ -30,7 +30,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
   bool direction = true;
   DateTime currentDate;
   var delitionMode = false;
-  List<int> selectedSets = [];
+  List<SetWorkout> selectedSets = [];
   List<int> orderSets = [];
   var sortMode = false;
   var analysisMode = false;
@@ -49,8 +49,8 @@ class _WorkOutScreenState extends State<WorkOutScreen>
     super.initState();
   }
 
-  void viewCommentHandler(Rep rep) async {
-    if (delitionMode) return selectItemHandler(rep.setId);
+  void viewCommentHandler(Rep rep, SetWorkout set) async {
+    if (delitionMode) return selectItemHandler(set);
 
     var isNew = rep.notes == "";
     var updatedRep = await noteRepModal(context: context, rep: rep);
@@ -91,12 +91,14 @@ class _WorkOutScreenState extends State<WorkOutScreen>
     });
   }
 
-  void selectItemHandler(int setId) {
+  void selectItemHandler(SetWorkout set) {
     setState(() {
-      if (selectedSets.contains(setId))
-        selectedSets.remove(setId);
+      final indexSet = selectedSets.indexWhere((st) => st.id == set.id);
+
+      if (indexSet != -1)
+        selectedSets.removeAt(indexSet);
       else
-        selectedSets.add(setId);
+        selectedSets.add(set);
     });
   }
 
@@ -143,7 +145,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
           if (sortMode) return;
           if (!delitionMode) return showSetDetails(setId: set.id, sets: sets);
 
-          selectItemHandler(set.id);
+          selectItemHandler(set);
         },
         child: Padding(
           padding: EdgeInsets.all(10),
@@ -151,7 +153,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
             isSortMode: sortMode,
             delitionMode: delitionMode,
             isSelected: selectedSets.contains(set.id),
-            onViewComment: (rep) => viewCommentHandler(rep),
+            onViewComment: (rep) => viewCommentHandler(rep, set),
             set: set,
           ),
         ),

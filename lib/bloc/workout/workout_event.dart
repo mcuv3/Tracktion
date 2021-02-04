@@ -21,15 +21,13 @@ class SaveSet extends WorkoutEvent {
 }
 
 class DeleteSet extends WorkoutEvent {
-  final int setId;
   final modelsApp.SetWorkout set;
-  final DateTime date;
-  DeleteSet({this.setId, this.set, this.date});
+  DeleteSet(this.set);
 }
 
 class DeleteSets extends WorkoutEvent {
-  final List<int> setsId;
-  DeleteSets(this.setsId);
+  final List<modelsApp.SetWorkout> sets;
+  DeleteSets(this.sets);
 }
 
 class SaveRep extends WorkoutEvent {

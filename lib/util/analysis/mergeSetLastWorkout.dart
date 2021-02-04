@@ -14,7 +14,7 @@ List<SetResume> mergeSetLastWorkouts(
 Exercise consenceMaxes(
     {Exercise exe,
     double volume,
-    double maxWeigth,
+    double maxWeigth ,
     bool willDelete = false,
     int setId}) {
   var _exe = Exercise(
@@ -34,16 +34,14 @@ Exercise consenceMaxes(
     _exe.maxWeigthSetId = null;
     _exe.maxVolume = 0.0;
     _exe.maxWeigth = 0.0;
-  } else {
-    if (!willDelete) {
-      if (volume > _exe.maxVolume) {
-        _exe.maxVolume = volume;
-        _exe.maxVolumeSetId = setId;
-      }
-      if (maxWeigth > _exe.maxWeigth) {
-        _exe.maxWeigth = maxWeigth;
-        _exe.maxWeigthSetId = setId;
-      }
+  } else if (!willDelete) {
+    if (volume > _exe.maxVolume) {
+      _exe.maxVolume = volume;
+      _exe.maxVolumeSetId = setId;
+    }
+    if (maxWeigth > _exe.maxWeigth) {
+      _exe.maxWeigth = maxWeigth;
+      _exe.maxWeigthSetId = setId;
     }
   }
   return _exe;

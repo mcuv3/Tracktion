@@ -118,8 +118,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
       final set = SetWorkout(
           id: setId, exercise: exs, reps: reps, maxWeigth: 0, volume: 0);
       if (reps.length == 0 && fromWorkout)
-        BlocProvider.of<WorkoutBloc>(context)
-            .add(DeleteSet(set: set, date: date));
+        BlocProvider.of<WorkoutBloc>(context).add(DeleteSet(set));
       else
         BlocProvider.of<WorkoutBloc>(context)
             .add(SaveSet(set: set, date: date, isEdit: fromWorkout));

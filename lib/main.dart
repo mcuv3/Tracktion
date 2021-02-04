@@ -48,10 +48,6 @@ class _MyAppState extends State<MyApp> {
     common = Common(currentDate: DateTime.now());
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
-
-    Future.delayed(Duration.zero).then((value) {
-      // BlocProvider.of<AuthCubit>(context).checkCredentials();
-    });
   }
 
   @override
