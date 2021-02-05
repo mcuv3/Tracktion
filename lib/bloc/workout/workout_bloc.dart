@@ -158,7 +158,6 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   Future<void> _copySets(CopySets event) async {
     try {
       final filters = event.workoutFilters;
-      final workout = await this.db.findOrCreateWorkout(event.date);
       final cleanedSets = event.sets
           .map((set) {
             if (filters[set.id]["active"]) {
@@ -169,6 +168,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
                 } else
                   return false;
               }).toList();
+
               return modelsApp.SetWorkout(
                   maxWeigth: set.maxWeigth,
                   volume: set.volume,
@@ -181,7 +181,11 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
           .where((s) => s != null)
           .toList();
 
-      for (final set in cleanedSets) await this.db.saveSet(set, workout.id);
+      // for (final set in cleanedSets) {
+      await Future.wait(cleanedSets.map((s) =>
+          this._saveSet(SaveSet(date: event.date, isEdit: false, set: s))));
+      // await this._saveSet(SaveSet(date: event.date, isEdit: false, set: set));
+      // }
     } catch (e) {
       print(e);
     }
@@ -215,15 +219,16 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   Future<modelsApp.Exercise> _verifyMaxVolume(
       {modelsApp.Exercise exe, int setId, double newSetVolume}) async {
     var _exe = exe.copy();
+    var delete = newSetVolume == null;
 
     if (exe.maxVolumeSetId == setId &&
-        (newSetVolume < exe.maxVolume || newSetVolume == null)) {
+        ((!delete && newSetVolume < exe.maxVolume) || delete)) {
       final results = await this.db.findMaxVolume(exe.id, setId);
       if (results == null) return _exe;
 
       final nextMaxVolume = results[1];
 
-      if (newSetVolume != null && newSetVolume >= nextMaxVolume) {
+      if (!delete && newSetVolume >= nextMaxVolume) {
         _exe.maxVolumeSetId = setId;
         _exe.maxVolume = newSetVolume;
       } else {
@@ -238,15 +243,16 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   Future<modelsApp.Exercise> _verifyMaxWeigth(
       {modelsApp.Exercise exe, int setId, double newSetWeigth}) async {
     var _exe = exe.copy();
+    var delete = newSetWeigth == null;
 
     if (exe.maxWeigthSetId == setId &&
-        (newSetWeigth < exe.maxWeigth || newSetWeigth == null)) {
+        ((!delete && newSetWeigth < exe.maxWeigth) || delete)) {
       final results = await this.db.findMaxWeigth(exe.id, setId);
       if (results == null) return _exe;
 
       final nextMaxWeigth = results[1];
 
-      if (newSetWeigth != null && newSetWeigth >= nextMaxWeigth) {
+      if (!delete && newSetWeigth >= nextMaxWeigth) {
         _exe.maxWeigthSetId = setId;
         _exe.maxWeigth = newSetWeigth;
       } else {
