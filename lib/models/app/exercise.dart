@@ -101,4 +101,9 @@ class SetResume {
       "date": this.date.toString()
     };
   }
+
+  @override
+  String toString() {
+    return 'SetResume(reps:${this.reps},maxWeigth:${this.maxWeigth},volume:${this.volume},day:${this.date.day})';
+  }
 }

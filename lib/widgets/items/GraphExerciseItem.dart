@@ -1,7 +1,24 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/app/set.dart';
+import 'package:tracktion/util/analysis/getSetMaxWeigth.dart';
+
+import '../../util/mapWithIndex.dart';
+
+String getYLabel(double value) {
+  // var isCentenary = false;
+  // if (value > 100) {
+  //   value = value / 100;
+  //   isCentenary = true;
+  // }
+
+  return value.toInt().toString() + 'kg';
+}
+
+String getXLabel(DateTime date) =>
+    date.month.toString() + '/' + date.day.toString();
 
 class GraphExerciseItem extends StatefulWidget {
   final SetWorkout set;
@@ -18,11 +35,23 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
     const Color(0xff02d39a),
   ];
 
-  bool showAvg = false;
+  bool showMaxWeigths = false;
+
+  List<double> maxWeigthInSets;
+  List<double> maxVolumeInSets;
+
+  @override
+  void initState() {
+    maxWeigthInSets = getMaxWeigth(widget.set.exercise.lastWorkouts);
+    maxVolumeInSets = getMaxVolume(widget.set.exercise.lastWorkouts);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    final sets = widget.set.exercise.lastWorkouts;
+
     return Container(
       margin: EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -46,9 +75,11 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    widget.set.exercise.name,
-                    style: TextStyle(color: Colors.white, fontSize: 24),
+                  FittedBox(
+                    child: Text(
+                      widget.set.exercise.name,
+                      style: TextStyle(color: Colors.white, fontSize: 24),
+                    ),
                   ),
                   Row(
                     children: [
@@ -56,25 +87,22 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                         visualDensity: VisualDensity.compact,
                         onPressed: () {
                           setState(() {
-                            showAvg = !showAvg;
+                            showMaxWeigths = !showMaxWeigths;
                           });
                         },
                         icon: FaIcon(
-                            showAvg
-                                ? FontAwesomeIcons.calendarWeek
-                                : FontAwesomeIcons.calendarDay,
-                            color: showAvg
-                                ? Colors.white.withOpacity(0.5)
-                                : Colors.white),
+                            showMaxWeigths
+                                ? FontAwesomeIcons.trophy
+                                : FontAwesomeIcons.weightHanging,
+                            color: showMaxWeigths ? Colors.red : Colors.white),
                       ),
                       IconButton(
                         visualDensity: VisualDensity.compact,
                         onPressed: () {
-                          setState(() {
-                            showAvg = !showAvg;
-                          });
+                          // TODO:  go to the full details screen
                         },
-                        icon: FaIcon(FontAwesomeIcons.eye, color: Colors.white),
+                        icon: FaIcon(FontAwesomeIcons.chartBar,
+                            color: Colors.white),
                       ),
                     ],
                   )
@@ -87,9 +115,9 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                 child: Container(
                   padding: const EdgeInsets.only(
                       right: 18.0, left: 12.0, top: 12, bottom: 12),
-                  child: LineChart(
-                    showAvg ? avgData() : mainData(),
-                  ),
+                  child: LineChart(showMaxWeigths
+                      ? maxWeigths(sets, maxWeigthInSets)
+                      : volumens(sets, maxVolumeInSets)),
                 ),
               ),
             ],
@@ -171,7 +199,10 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
     );
   }
 
-  LineChartData mainData() {
+  LineChartData volumens(List<SetResume> sets, List<double> bounderies) {
+    var interval = ((bounderies[0] - bounderies[1]) / 8);
+    print(interval);
+    interval += 10 - (interval % 10);
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -198,56 +229,19 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
               color: Color(0xff68737d),
               fontWeight: FontWeight.bold,
               fontSize: 16),
-          getTitles: (value) {
-            print(value);
-            switch (value.toInt()) {
-              case 0:
-                return '11/11';
-              case 1:
-                return '11/12';
-              case 2:
-                return '11/13';
-              case 3:
-                return '11/14';
-              case 4:
-                return '11/15';
-              case 5:
-                return '11/16';
-              case 6:
-                return '11/17';
-            }
-            return '';
-          },
+          getTitles: (i) => getXLabel(sets[i.toInt()].date),
           margin: 8,
         ),
         leftTitles: SideTitles(
+          interval: interval,
           showTitles: true,
           getTextStyles: (value) => const TextStyle(
             color: Color(0xff67727d),
             fontWeight: FontWeight.bold,
             fontSize: 15,
           ),
-          getTitles: (value) {
-            switch (value.toInt()) {
-              // could be the date here
-              case 0:
-                return '0kg';
-              case 1:
-                return '10kg';
-              case 1:
-                return '10kg';
-              case 2:
-                return '20kg';
-              case 3:
-                return '30kg';
-              case 4:
-                return '40kg';
-              case 5:
-                return '50kg';
-            }
-            return '';
-          },
-          reservedSize: 28,
+          getTitles: (value) => getYLabel(value),
+          reservedSize: 40,
           margin: 12,
         ),
       ),
@@ -255,20 +249,14 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
           show: true,
           border: Border.all(color: const Color(0xff37434d), width: 1)),
       minX: 0,
-      maxX: 6,
+      maxX: sets.length.toDouble() - 1,
       minY: 0,
-      maxY: 6,
+      maxY: bounderies[0],
       lineBarsData: [
         LineChartBarData(
-          spots: [
-            FlSpot(0, 3),
-            FlSpot(1, 2),
-            FlSpot(2, 5),
-            FlSpot(3, 3.1),
-            FlSpot(4, 4),
-            FlSpot(5, 3),
-            FlSpot(6, 3),
-          ],
+          spots: sets.reversed
+              .mapIndex((e, i) => FlSpot(i.toDouble(), e.volume))
+              .toList(),
           isCurved: true,
           colors: gradientColors,
           barWidth: 5,
@@ -286,7 +274,8 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
     );
   }
 
-  LineChartData avgData() {
+  LineChartData maxWeigths(List<SetResume> sets, List<double> bounderies) {
+    final interval = (bounderies[0] - bounderies[1]) / 8;
     return LineChartData(
       lineTouchData: LineTouchData(enabled: false),
       gridData: FlGridData(
@@ -314,37 +303,18 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
               color: Color(0xff68737d),
               fontWeight: FontWeight.bold,
               fontSize: 16),
-          getTitles: (value) {
-            switch (value.toInt()) {
-              case 2:
-                return 'MAR';
-              case 5:
-                return 'JUN';
-              case 8:
-                return 'SEP';
-            }
-            return '';
-          },
+          getTitles: (index) => getXLabel(sets[index.toInt()].date),
           margin: 8,
         ),
         leftTitles: SideTitles(
+          interval: interval,
           showTitles: true,
           getTextStyles: (value) => const TextStyle(
             color: Color(0xff67727d),
             fontWeight: FontWeight.bold,
             fontSize: 15,
           ),
-          getTitles: (value) {
-            switch (value.toInt()) {
-              case 1:
-                return '10k';
-              case 3:
-                return '30k';
-              case 5:
-                return '50k';
-            }
-            return '';
-          },
+          getTitles: (value) => getYLabel(value),
           reservedSize: 28,
           margin: 12,
         ),
@@ -353,20 +323,14 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
           show: true,
           border: Border.all(color: const Color(0xff37434d), width: 1)),
       minX: 0,
-      maxX: 11,
+      maxX: sets.length.toDouble() - 1,
       minY: 0,
-      maxY: 6,
+      maxY: bounderies[0],
       lineBarsData: [
         LineChartBarData(
-          spots: [
-            FlSpot(0, 3.44),
-            FlSpot(2.6, 3.44),
-            FlSpot(4.9, 3.44),
-            FlSpot(6.8, 3.44),
-            FlSpot(8, 3.44),
-            FlSpot(9.5, 3.44),
-            FlSpot(11, 3.44),
-          ],
+          spots: sets.reversed
+              .mapIndex((e, i) => FlSpot(i.toDouble(), e.maxWeigth))
+              .toList(),
           isCurved: true,
           colors: [
             ColorTween(begin: gradientColors[0], end: gradientColors[1])
