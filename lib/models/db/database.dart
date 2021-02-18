@@ -2,6 +2,7 @@ import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tracktion/models/app/body-parts.dart';
 import 'package:tracktion/models/app/difficulties.dart';
+import 'package:tracktion/models/tables/Routines.dart';
 import 'package:tracktion/models/tables/WorkOut.dart';
 
 import '../app/exercise.dart' as exeApp;
@@ -16,7 +17,11 @@ part 'database.g.dart';
   Migrations,
   SetWorkouts,
   Workouts,
-  Reps
+  Reps,
+  RoutineGroup,
+  Routine,
+  RoutineSet,
+  RoutineRep
 ])
 class SQLDatabase extends _$SQLDatabase {
   // we tell the database where to store the data with this constructor

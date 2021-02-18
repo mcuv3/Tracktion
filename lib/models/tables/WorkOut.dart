@@ -13,7 +13,7 @@ class SetWorkouts extends Table {
   IntColumn get workOutId =>
       integer().customConstraint("NOT NULL REFERENCES workouts (id)")();
   IntColumn get exerciseId =>
-      integer().customConstraint("NOT NULL REFERENCES exercises(id)")();
+      integer().customConstraint("NOT NULL REFERENCES exercises (id)")();
 }
 
 class Reps extends Table {

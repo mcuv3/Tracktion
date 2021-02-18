@@ -13,9 +13,11 @@ import 'package:tracktion/bloc/workout-picker/workoutpicker_bloc.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/models/server/ServerMigrator.dart';
+import 'package:tracktion/screens/routine/routine-main-screen.dart';
 
 import './screens/index.dart';
 import 'bloc/exercise-stream/exercisestream_cubit.dart';
+import 'bloc/routine/routine_bloc.dart';
 
 void _enablePlatformOverrideForDesktop() {
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
@@ -105,9 +107,12 @@ class _MyAppState extends State<MyApp> {
             BlocProvider<WorkoutpickerBloc>(
               create: (context) => WorkoutpickerBloc(db: database),
             ),
+            BlocProvider<RoutineBloc>(
+              create: (context) => RoutineBloc(database),
+            ),
             BlocProvider(
                 create: (BuildContext context) =>
-                    ExerciseStreamCubit(db: database))
+                    ExerciseStreamCubit(db: database)),
           ],
           child: InitApp(changeAuthStatus: (auth) {
             setState(() {
@@ -189,6 +194,7 @@ class _InitAppState extends State<InitApp> {
         AddEditBodyPartsScreen.routeName: (ctx) => AddEditBodyPartsScreen(),
         ExerciseWorkOut.routeName: (ctx) => ExerciseWorkOut(),
         WorkOutScreen.routeName: (ctx) => WorkOutScreen(),
+        RoutineMainScreen.routeName: (ctx) => RoutineMainScreen(),
       },
     );
   }
