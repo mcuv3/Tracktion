@@ -3,37 +3,18 @@ part of 'routine_bloc.dart';
 @immutable
 abstract class RoutineEvent {}
 
-class StreamRoutines extends RoutineEvent {
-  final int groupId;
-  StreamRoutines(this.groupId);
-}
+class StreamRoutine extends RoutineEvent {}
 
-class StreamGroupRoutines extends RoutineEvent {}
-
-class CreateRoutine extends RoutineEvent {
-  final Routine routine;
-  CreateRoutine(this.routine);
-}
-
-class CreateGroupRoutine extends RoutineEvent {
-  final List<Routine> routines;
+class SaveRoutineMetadata extends RoutineEvent {
   final String name;
   final String description;
-  CreateGroupRoutine({this.routines, this.name, this.description});
+  SaveRoutineMetadata({this.name, this.description});
 }
 
-class EditRoutine extends RoutineEvent {
-  final Routine routine;
-  EditRoutine(this.routine);
-}
+class DeleteSet extends RoutineEvent {}
 
-class DeleteRoutine extends RoutineEvent {
-  final Routine routine;
-  DeleteRoutine(this.routine);
-}
+class SaveSet extends RoutineEvent {}
 
-class DeleteGroupRoutine extends RoutineEvent {
-  final int groupId;
-  final Map<int, List<int>> routines;
-  DeleteGroupRoutine({this.routines, this.groupId});
-}
+class DeleteRep extends RoutineEvent {}
+
+class SaveRep extends RoutineEvent {}

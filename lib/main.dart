@@ -17,7 +17,9 @@ import 'package:tracktion/screens/routine/routine-main-screen.dart';
 
 import './screens/index.dart';
 import 'bloc/exercise-stream/exercisestream_cubit.dart';
+import 'bloc/routine-group/routine_bloc.dart';
 import 'bloc/routine/routine_bloc.dart';
+import 'bloc/routines/routines_bloc.dart';
 
 void _enablePlatformOverrideForDesktop() {
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
@@ -109,6 +111,12 @@ class _MyAppState extends State<MyApp> {
             ),
             BlocProvider<RoutineBloc>(
               create: (context) => RoutineBloc(database),
+            ),
+            BlocProvider<RoutinesBloc>(
+              create: (context) => RoutinesBloc(database),
+            ),
+            BlocProvider<RoutineGroupBloc>(
+              create: (context) => RoutineGroupBloc(database),
             ),
             BlocProvider(
                 create: (BuildContext context) =>
