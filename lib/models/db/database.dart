@@ -21,18 +21,14 @@ part 'database.g.dart';
   RoutineGroup,
   Routine,
   RoutineSet,
-  RoutineRep
 ])
 class SQLDatabase extends _$SQLDatabase {
-  // we tell the database where to store the data with this constructor
   SQLDatabase()
       : super(FlutterQueryExecutor.inDatabaseFolder(
             path: "tracktion.sqlite",
             logStatements: false,
             singleInstance: true));
 
-  // you should bump this number whenever you change or add a table definition. Migrations
-  // are covered later in this readme.
   @override
   int get schemaVersion => 1;
 
@@ -44,65 +40,6 @@ class SQLDatabase extends _$SQLDatabase {
         return;
       },
       onUpgrade: (Migrator m, int from, int to) async {});
-
-  Future<void> saveExercise(ExerciseWithBodyParts entry) {
-    return transaction(() async {
-      final exe = entry.exe;
-      final exerciseId =
-          await into(exercises).insert(exe, mode: InsertMode.replace);
-      await (delete(exerciseBodyParts)
-            ..where((entry) => entry.exerciseId.equals(exerciseId)))
-          .go();
-
-      for (final bodyPart in entry.bodyParts) {
-        print(bodyPart);
-        await into(exerciseBodyParts).insert(
-            ExerciseBodyPart(bodyPart: bodyPart, exerciseId: exerciseId),
-            mode: InsertMode.replace);
-      }
-    });
-  }
-
-  Future<void> deleteSet(int setId) {
-    return transaction(() async {
-      await (delete(reps)..where((e) => e.setId.equals(setId))).go();
-      await (delete(setWorkouts)..where((e) => e.id.equals(setId))).go();
-    });
-  }
-
-  Future<int> saveSet(modelsApp.SetWorkout set, int workoutId) {
-    return transaction(() async {
-      final exeId = set.exercise.id;
-      final repsSet = set.reps;
-
-      final setId = await into(setWorkouts).insert(
-          SetWorkout(
-              maxWeigth: set.maxWeigth,
-              volume: set.volume,
-              id: set.id,
-              workOutId: workoutId,
-              exerciseId: exeId),
-          mode: InsertMode.replace);
-
-      await (delete(reps)..where((entry) => entry.setId.equals(setId))).go();
-
-      if (repsSet.length == 0)
-        await (delete(setWorkouts)..where((s) => s.id.equals(setId))).go();
-
-      for (final rep in repsSet) {
-        await into(reps).insert(
-            RepsCompanion.insert(
-                note: rep.notes == null ? "" : rep.notes,
-                reps: rep.reps,
-                weight: rep.weight,
-                rpe: rep.rpe,
-                setId: setId),
-            mode: InsertMode.replace);
-      }
-
-      return setId;
-    });
-  }
 
   Stream<modelsApp.Exercise> findExerciseStream(int exerciseId) {
     final query = select(exercises).join([
@@ -137,6 +74,15 @@ class SQLDatabase extends _$SQLDatabase {
           [], (sets, st) => _mergeExerciseSetWorkout(sets, st));
     });
   }
+
+  Stream<List<RoutineGroupData>> findRoutineGroups() =>
+      select(routineGroup).watch();
+
+  Stream<List<RoutineData>> findRoutines(int groupId) =>
+      (select(routine)..where((t) => t.groupId.equals(groupId))).watch();
+
+  Stream<List<RoutineSetData>> findRoutinesSet(int routineId) =>
+      (select(routineSet)..where((t) => t.routineId.equals(routineId))).watch();
 
   Future<List<modelsApp.SetWorkout>> findSets(DateTime targetDate) async {
     final query = select(setWorkouts).join([
@@ -282,7 +228,92 @@ class SQLDatabase extends _$SQLDatabase {
     }).getSingle();
   }
 
+  // UPDATES AND CRETIONS
+
+  Future<void> saveExercise(ExerciseWithBodyParts entry) {
+    return transaction(() async {
+      final exe = entry.exe;
+      final exerciseId =
+          await into(exercises).insert(exe, mode: InsertMode.replace);
+      await (delete(exerciseBodyParts)
+            ..where((entry) => entry.exerciseId.equals(exerciseId)))
+          .go();
+
+      for (final bodyPart in entry.bodyParts) {
+        print(bodyPart);
+        await into(exerciseBodyParts).insert(
+            ExerciseBodyPart(bodyPart: bodyPart, exerciseId: exerciseId),
+            mode: InsertMode.replace);
+      }
+    });
+  }
+
+  Future<int> saveSet(modelsApp.SetWorkout set, int workoutId) {
+    return transaction(() async {
+      final exeId = set.exercise.id;
+      final repsSet = set.reps;
+
+      final setId = await into(setWorkouts).insert(
+          SetWorkout(
+              maxWeigth: set.maxWeigth,
+              volume: set.volume,
+              id: set.id,
+              workOutId: workoutId,
+              exerciseId: exeId),
+          mode: InsertMode.replace);
+
+      await (delete(reps)..where((entry) => entry.setId.equals(setId))).go();
+
+      if (repsSet.length == 0)
+        await (delete(setWorkouts)..where((s) => s.id.equals(setId))).go();
+
+      for (final rep in repsSet) {
+        await into(reps).insert(
+            RepsCompanion.insert(
+                note: rep.notes == null ? "" : Value(rep.notes),
+                reps: rep.reps,
+                weight: rep.weight,
+                rpe: rep.rpe,
+                setId: setId),
+            mode: InsertMode.replace);
+      }
+
+      return setId;
+    });
+  }
+
   // COMPLEX DELETES
+
+  Future<void> deleteGroupRoutine(int groupId) async {
+    return transaction(() async {
+      final routines = await (select(routine)
+            ..where((t) => t.groupId.equals(groupId)))
+          .get();
+      for (final routine in routines)
+        await (delete(routineSet)..where((t) => t.routineId.equals(routine.id)))
+            .go();
+      await (delete(routine)..where((t) => t.groupId.equals(groupId))).go();
+      await (delete(routineGroup)..where((t) => t.id.equals(groupId))).go();
+    });
+  }
+
+  Future<void> deleteRoutine(int routineId) {
+    return transaction(() async {
+      await (delete(routineSet)..where((t) => t.routineId.equals(routineId)))
+          .go();
+      await (delete(routine)..where((t) => t.groupId.equals(routineId))).go();
+    });
+  }
+
+  Future<void> deleteRoutineSet(int setId) =>
+      (delete(routineSet)..where((t) => t.id.equals(setId))).go();
+
+  Future<void> deleteSet(int setId) {
+    return transaction(() async {
+      await (delete(reps)..where((e) => e.setId.equals(setId))).go();
+      await (delete(setWorkouts)..where((e) => e.id.equals(setId))).go();
+    });
+  }
 
   Future<void> deleteExercise(Exercise exe) async {
     await (delete(exerciseBodyParts)..where((t) => t.exerciseId.equals(exe.id)))
@@ -302,7 +333,7 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
-  // Basics Querys
+  // BASIC QUERIES
 
   Future<List<Exercise>> getAllExercises() => select(exercises).get();
   Future<List<Workout>> getAllWorkouts() => select(workouts).get();
@@ -317,6 +348,14 @@ class SQLDatabase extends _$SQLDatabase {
 
   Future insertExercise(Exercise exe) =>
       into(exercises).insert(exe, mode: InsertMode.replace);
+  Future<void> saveGroupRoutine(RoutineGroupCompanion group) =>
+      into(routineGroup).insert(group, mode: InsertMode.replace);
+
+  Future<void> saveRoutine(RoutineCompanion rt) =>
+      into(routine).insert(rt, mode: InsertMode.replace);
+
+  Future<void> saveSetRoutine(RoutineSetCompanion set) =>
+      into(routineSet).insert(set, mode: InsertMode.replace);
 
   Future<int> saveWorkOut(WorkoutsCompanion wk) =>
       into(workouts).insert(wk, mode: InsertMode.replace);

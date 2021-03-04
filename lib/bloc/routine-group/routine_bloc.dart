@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:tracktion/models/db/database.dart';
-import 'package:tracktion/models/tables/Routines.dart';
 
 part 'routine_event.dart';
 part 'routine_state.dart';
@@ -26,6 +25,17 @@ class RoutineGroupBloc extends Bloc<RoutineGroupEvent, RoutineGroupState> {
     }
   }
 
+  Stream<RoutineGroupState> _streamGroupRoutines() async* {
+    yield RoutinesLoading();
+    try {
+      final groups = this.db.findRoutineGroups();
+      yield RoutineGroups(groups);
+    } catch (e) {
+      print(e);
+      yield RoutineGroupFailure("Something went wrong fetching routines.");
+    }
+  }
+
   Stream<RoutineGroupState> _deleteGroupRoutine(
       DeleteGroupRoutine event) async* {
     yield RoutinesLoading();
@@ -40,14 +50,6 @@ class RoutineGroupBloc extends Bloc<RoutineGroupEvent, RoutineGroupState> {
     try {} catch (e) {
       print(e);
       yield RoutineGroupFailure("Cannot create the Routine");
-    }
-  }
-
-  Stream<RoutineGroupState> _streamGroupRoutines() async* {
-    yield RoutinesLoading();
-    try {} catch (e) {
-      print(e);
-      yield RoutineGroupFailure("Something went wrong fetching routines.");
     }
   }
 }

@@ -31,7 +31,10 @@ class RoutineBloc extends Bloc<RoutineEvent, RoutineState> {
 
   Stream<RoutineState> _streamRoutine(StreamRoutine event) async* {
     yield RoutineLoading();
-    try {} catch (e) {
+    try {
+      final sets = this.db.findRoutinesSet(event.routineId);
+      yield Routine(sets);
+    } catch (e) {
       print(e);
       yield RoutineFailure("Something went wrong fetching routine.");
     }

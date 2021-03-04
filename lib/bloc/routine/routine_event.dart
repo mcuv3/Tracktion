@@ -3,7 +3,10 @@ part of 'routine_bloc.dart';
 @immutable
 abstract class RoutineEvent {}
 
-class StreamRoutine extends RoutineEvent {}
+class StreamRoutine extends RoutineEvent {
+  final int routineId;
+  StreamRoutine(this.routineId);
+}
 
 class SaveRoutineMetadata extends RoutineEvent {
   final String name;

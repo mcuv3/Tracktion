@@ -24,6 +24,7 @@ dependencies:
   font_awesome_flutter: ^8.11.0
   modal_bottom_sheet: ^1.0.0+1
   flutter_clean_calendar: ^1.0.2+1
+  image_picker: ^0.6.7+22
   flutter_cupertino_date_picker:
     git: https://github.com/daveleenew/flutter-cupertino-date-picker.git
 

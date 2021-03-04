@@ -6,7 +6,7 @@ abstract class RoutineState {}
 class RoutineLoading extends RoutineState {}
 
 class Routine extends RoutineState {
-  final Stream<List<Routine>> routine;
+  final Stream<List<RoutineSetData>> routine;
   Routine(this.routine);
 }
 

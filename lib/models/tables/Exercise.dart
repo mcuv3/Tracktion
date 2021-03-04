@@ -18,7 +18,7 @@ class Exercises extends Table {
   RealColumn get maxWeigth => real()();
   IntColumn get maxWeigthSetId => integer().nullable()();
   IntColumn get maxVolumeSetId => integer().nullable()();
-  TextColumn get notes => text().withLength(min: 1, max: 200)();
+  TextColumn get notes => text().withLength(max: 200).nullable()();
   IntColumn get difficulty => intEnum<Difficulty>()();
 }
 

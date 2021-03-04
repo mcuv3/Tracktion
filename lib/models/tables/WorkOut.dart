@@ -21,7 +21,8 @@ class Reps extends Table {
   RealColumn get weight => real()();
   IntColumn get reps => integer()();
   IntColumn get rpe => integer()();
-  TextColumn get note => text()();
+  TextColumn get note =>
+      text().withLength(max: 155).withDefault(const Constant(""))();
   IntColumn get setId =>
       integer().customConstraint("NOT NULL REFERENCES sets (id)")();
 }

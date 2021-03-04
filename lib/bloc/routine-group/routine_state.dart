@@ -6,7 +6,7 @@ abstract class RoutineGroupState {}
 class RoutinesLoading extends RoutineGroupState {}
 
 class RoutineGroups extends RoutineGroupState {
-  final Stream<List<RoutineGroup>> groups;
+  final Stream<List<RoutineGroupData>> groups;
   RoutineGroups(this.groups);
 }
 
