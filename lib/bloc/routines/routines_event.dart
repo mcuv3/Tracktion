@@ -8,13 +8,13 @@ class StreamRoutines extends RoutinesEvent {
   StreamRoutines(this.groupId);
 }
 
-class SaveRoutines extends RoutinesEvent {
-  final List<Routine> routines;
-
-  SaveRoutines(this.routines);
+class SaveRoutine extends RoutinesEvent {
+  final RoutineData routine;
+  final List<RoutineSetData> sets;
+  SaveRoutine(this.routine, this.sets);
 }
 
 class DeleteRoutine extends RoutinesEvent {
-  final String id;
+  final int id;
   DeleteRoutine(this.id);
 }

@@ -8,16 +8,12 @@ class StreamRoutine extends RoutineEvent {
   StreamRoutine(this.routineId);
 }
 
-class SaveRoutineMetadata extends RoutineEvent {
-  final String name;
-  final String description;
-  SaveRoutineMetadata({this.name, this.description});
+class DeleteSet extends RoutineEvent {
+  final int setId;
+  DeleteSet(this.setId);
 }
 
-class DeleteSet extends RoutineEvent {}
-
-class SaveSet extends RoutineEvent {}
-
-class DeleteRep extends RoutineEvent {}
-
-class SaveRep extends RoutineEvent {}
+class SaveSet extends RoutineEvent {
+  final RoutineSetData set;
+  SaveSet(this.set);
+}

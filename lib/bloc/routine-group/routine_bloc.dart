@@ -38,16 +38,24 @@ class RoutineGroupBloc extends Bloc<RoutineGroupEvent, RoutineGroupState> {
 
   Stream<RoutineGroupState> _deleteGroupRoutine(
       DeleteGroupRoutine event) async* {
-    yield RoutinesLoading();
-    try {} catch (e) {
+    final groupStrems = (state as RoutineGroups).groups;
+    try {
+      await this.db.deleteGroupRoutine(event.groupId);
+      yield RoutinesGroupSuccess();
+      yield RoutineGroups(groupStrems);
+    } catch (e) {
       print(e);
       yield RoutineGroupFailure("Cannot delete de Group routine.");
     }
   }
 
   Stream<RoutineGroupState> _saveGroupRoutine(SaveGroupRoutine event) async* {
-    yield RoutinesLoading();
-    try {} catch (e) {
+    try {
+      final groupStrems = (state as RoutineGroups).groups;
+      await this.db.saveGroupRoutine(event.group.toCompanion(true));
+      yield RoutinesGroupSuccess();
+      yield RoutineGroups(groupStrems);
+    } catch (e) {
       print(e);
       yield RoutineGroupFailure("Cannot create the Routine");
     }
