@@ -50,6 +50,12 @@ flutter:
     - assets/vectors/quads.svg
     - assets/vectors/shoulders.svg
     - assets/vectors/arms.svg
+    - assets/vectors/routines/1.svg
+    - assets/vectors/routines/2.svg
+    - assets/vectors/routines/3.svg
+    - assets/vectors/routines/4.svg
+    - assets/vectors/routines/5.svg
+    - assets/vectors/routines/6.svg
 
   fonts:
     - family: CarterOne

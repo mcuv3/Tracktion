@@ -14,12 +14,14 @@ import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/models/server/ServerMigrator.dart';
 import 'package:tracktion/screens/routine/routine-main-screen.dart';
+import 'package:tracktion/screens/routine/routines-screen.dart';
 
 import './screens/index.dart';
 import 'bloc/exercise-stream/exercisestream_cubit.dart';
 import 'bloc/routine-group/routine_bloc.dart';
 import 'bloc/routine/routine_bloc.dart';
 import 'bloc/routines/routines_bloc.dart';
+import 'screens/routine/routine-screen.dart';
 
 void _enablePlatformOverrideForDesktop() {
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
@@ -203,6 +205,8 @@ class _InitAppState extends State<InitApp> {
         ExerciseWorkOut.routeName: (ctx) => ExerciseWorkOut(),
         WorkOutScreen.routeName: (ctx) => WorkOutScreen(),
         RoutineMainScreen.routeName: (ctx) => RoutineMainScreen(),
+        RoutinesScreen.routeName: (ctx) => RoutinesScreen(),
+        RoutineScreen.routeName: (ctx) => RoutineScreen(),
       },
     );
   }
