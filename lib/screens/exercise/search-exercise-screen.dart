@@ -43,8 +43,8 @@ class _SearchExerciseState extends State<SearchExercise> {
   @override
   Widget build(BuildContext context) {
     final query = MediaQuery.of(context);
-    final bodyPart = ModalRoute.of(context).settings.arguments as BodyPartEnum;
-
+    final bodyPart = ModalRoute.of(context).settings.arguments as BodyPartEnum ?? BodyPartEnum.Arms;
+    print(bodyPart);
     return Scaffold(
       appBar: AppBar(
           elevation: 0,
@@ -53,7 +53,7 @@ class _SearchExerciseState extends State<SearchExercise> {
           ),
           titleSpacing: 0,
           backgroundColor: Colors.white,
-          title: Text(bodyPart.toString().split('.')[1],
+          title: Text( bodyPart.toString()?.split('.')[1],
               style: TextStyle(
                   color: Theme.of(context).colorScheme.exercise, fontSize: 25)),
           centerTitle: true),
@@ -89,7 +89,8 @@ class _SearchExerciseState extends State<SearchExercise> {
                         main = StreamBuilder(
                           builder: (context, exs) {
                             if (exs.connectionState == ConnectionState.active) {
-                              List<Exercise> exes = exs.data;
+                              List<Exercise> exes = exs.data ?? [];
+                              print(exes);
                               exes
                                   .where((ex) => ex.name
                                       .toLowerCase()

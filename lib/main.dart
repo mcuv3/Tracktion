@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/foundation.dart';
@@ -12,7 +11,6 @@ import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/bloc/workout-picker/workoutpicker_bloc.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/db/database.dart';
-import 'package:tracktion/models/server/ServerMigrator.dart';
 import 'package:tracktion/screens/routine/routine-main-screen.dart';
 import 'package:tracktion/screens/routine/routines-screen.dart';
 
@@ -21,16 +19,18 @@ import 'bloc/exercise-stream/exercisestream_cubit.dart';
 import 'bloc/routine-group/routine_bloc.dart';
 import 'bloc/routine/routine_bloc.dart';
 import 'bloc/routines/routines_bloc.dart';
+import 'plugins/desktop/desktop.dart';
 import 'screens/routine/routine-screen.dart';
 
-void _enablePlatformOverrideForDesktop() {
-  if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
-    debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
-  }
-}
+// void _enablePlatformOverrideForDesktop() {
+//   if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
+//     debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+//   }
+// }
 
 void main() {
-  _enablePlatformOverrideForDesktop();
+  setTargetPlatformForDesktop();
+  // _enablePlatformOverrideForDesktop();
   runApp(MyApp());
 }
 
@@ -42,7 +42,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
-  SQLDatabase database;
   Common common;
   bool isAuth = false;
 
@@ -50,7 +49,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initConnectivity();
-    database = SQLDatabase();
+    // database = RepositoryProvider.of<SQLDatabase>(context);
+    // database = SQLDatabase();
     common = Common(currentDate: DateTime.now());
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
@@ -88,7 +88,7 @@ class _MyAppState extends State<MyApp> {
     switch (result) {
       case ConnectivityResult.wifi:
       case ConnectivityResult.mobile:
-        ServerMigrator(db: database).migrate();
+        // ServerMigrator(db: database).migrate();
         break;
       default:
         return;
@@ -97,39 +97,44 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        create: (BuildContext context) => AuthCubit(),
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider<ExerciseBloc>(
-              create: (BuildContext context) =>
-                  ExerciseBloc(db: database, common: common),
-            ),
-            BlocProvider<WorkoutBloc>(
-              create: (context) => WorkoutBloc(db: database, common: common),
-            ),
-            BlocProvider<WorkoutpickerBloc>(
-              create: (context) => WorkoutpickerBloc(db: database),
-            ),
-            BlocProvider<RoutineBloc>(
-              create: (context) => RoutineBloc(database),
-            ),
-            BlocProvider<RoutinesBloc>(
-              create: (context) => RoutinesBloc(database),
-            ),
-            BlocProvider<RoutineGroupBloc>(
-              create: (context) => RoutineGroupBloc(database),
-            ),
-            BlocProvider(
+    return 
+     RepositoryProvider<SQLDatabase>(
+          create: (context) => constructDb(),
+      child: BlocProvider(
+          create: (BuildContext context) => AuthCubit(),
+          child: 
+          MultiBlocProvider(
+            providers: [
+              BlocProvider<ExerciseBloc>(
                 create: (BuildContext context) =>
-                    ExerciseStreamCubit(db: database)),
-          ],
-          child: InitApp(changeAuthStatus: (auth) {
-            setState(() {
-              isAuth = auth;
-            });
-          }),
-        ));
+                    ExerciseBloc(db: RepositoryProvider.of<SQLDatabase>(context), common: common),
+              ),
+              BlocProvider<WorkoutBloc>(
+                create: (context) => WorkoutBloc(db: RepositoryProvider.of<SQLDatabase>(context), common: common),
+              ),
+              BlocProvider<WorkoutpickerBloc>(
+                create: (context) => WorkoutpickerBloc(db: RepositoryProvider.of<SQLDatabase>(context)),
+              ),
+              BlocProvider<RoutineBloc>(
+                create: (context) => RoutineBloc(RepositoryProvider.of<SQLDatabase>(context)),
+              ),
+              BlocProvider<RoutinesBloc>(
+                create: (context) => RoutinesBloc(RepositoryProvider.of<SQLDatabase>(context)),
+              ),
+              BlocProvider<RoutineGroupBloc>(
+                create: (context) => RoutineGroupBloc(RepositoryProvider.of<SQLDatabase>(context)),
+              ),
+              BlocProvider(
+                  create: (BuildContext context) =>
+                      ExerciseStreamCubit(db: RepositoryProvider.of<SQLDatabase>(context))),
+            ],
+            child: InitApp(changeAuthStatus: (auth) {
+              setState(() {
+                isAuth = auth;
+              });
+            }),
+          )),
+    );
   }
 }
 
@@ -173,7 +178,7 @@ class _InitAppState extends State<InitApp> {
           accentColor: Color(0xFF9E9E9E),
           visualDensity: VisualDensity.adaptivePlatformDensity,
           textTheme: TextTheme(
-            title: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            headline6: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
           ),
           buttonTheme: const ButtonThemeData(
             shape: RoundedRectangleBorder(

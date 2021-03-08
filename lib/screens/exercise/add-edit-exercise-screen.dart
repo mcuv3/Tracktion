@@ -178,7 +178,7 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
                     SizedBox(
                       height: 90,
                     ),
-                    Text('Body Part', style: Theme.of(context).textTheme.title),
+                    Text('Body Part', style: Theme.of(context).textTheme.headline6),
                     Container(
                       height: 120,
                       child: ListView.builder(

@@ -15,7 +15,6 @@ Difficulty toDifficulty(int d) {
       return Difficulty.Pro;
       break;
   }
-  ;
 }
 
 int difficultyToInt(Difficulty difficulty) {
@@ -33,5 +32,4 @@ int difficultyToInt(Difficulty difficulty) {
       return 4;
       break;
   }
-  ;
 }

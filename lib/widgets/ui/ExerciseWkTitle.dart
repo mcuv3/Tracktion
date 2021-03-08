@@ -26,7 +26,7 @@ class ExerciseWorkoutTitle extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
         child: Text(
           exs.name,
-          style: Theme.of(context).textTheme.title,
+          style: Theme.of(context).textTheme.headline6,
           textAlign: TextAlign.start,
         ),
       ),

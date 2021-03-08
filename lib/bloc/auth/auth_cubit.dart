@@ -1,10 +1,11 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:http/http.dart';
 import 'package:meta/meta.dart';
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../helper/http.dart';
-import 'package:http/http.dart' as http;
 
 part 'auth_state.dart';
 
@@ -26,7 +27,7 @@ class AuthCubit extends Cubit<AuthState> {
     if (response.statusCode == 401 || response.statusCode == 400) {
       print(response.body);
       return emit(AuthFailed());
-    }
+    } 
 
     var data = json.decode(response.body);
 

@@ -78,7 +78,7 @@ class BodyPartWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SvgPicture.asset(
-                '${file}.svg',
+                '$file.svg',
                 width: width * 0.6,
                 height: height * 0.6,
                 color: active ? textColor : Colors.black,

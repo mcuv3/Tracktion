@@ -1,3 +1,4 @@
+
 import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tracktion/models/app/body-parts.dart';
@@ -9,7 +10,10 @@ import '../app/exercise.dart' as exeApp;
 import '../app/index.dart' as modelsApp;
 import '../tables/Exercise.dart';
 
+export 'instance/shared.dart';
+
 part 'database.g.dart';
+
 
 @UseMoor(tables: [
   Exercises,
@@ -23,11 +27,12 @@ part 'database.g.dart';
   RoutineSet,
 ])
 class SQLDatabase extends _$SQLDatabase {
-  SQLDatabase()
-      : super(FlutterQueryExecutor.inDatabaseFolder(
-            path: "tracktion.sqlite",
-            logStatements: false,
-            singleInstance: true));
+  // SQLDatabase()
+  //     : super(kIsWeb ? WebDatabase('tracktionDb'): FlutterQueryExecutor.inDatabaseFolder(
+  //           path: "tracktion.sqlite",
+  //           logStatements: false,
+  //           singleInstance: true));
+    SQLDatabase(QueryExecutor e) : super(e);
 
   @override
   int get schemaVersion => 1;

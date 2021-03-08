@@ -79,40 +79,41 @@ class MainScreen extends StatelessWidget {
                       child: Text("Start hitting your PR’s",
                           style: TextStyle(color: Colors.black, fontSize: 24)),
                     ),
-                    Container(
-                      height: 400,
-                      child: GridView.count(
-                        primary: false,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 0, horizontal: 20),
-                        children: [
-                          makeFeatureBox(
-                              'Excercise',
-                              Theme.of(context).colorScheme.exercise,
-                              BodyPartsScreen.routeName,
+                    Expanded(
+                      child: Container(
+                        child: GridView.count(
+                          primary: false,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 0, horizontal: 20),
+                          children: [
+                            makeFeatureBox(
+                                'Excercise',
+                                Theme.of(context).colorScheme.exercise,
+                                BodyPartsScreen.routeName,
+                                context,
+                                Colors.white),
+                            makeFeatureBox(
+                                'Routines',
+                                Theme.of(context).colorScheme.routines,
+                                RoutineMainScreen.routeName,
+                                context,
+                                Colors.white),
+                            makeFeatureBox(
+                              'Workouts',
+                              Theme.of(context).colorScheme.workouts,
+                              WorkOutScreen.routeName,
                               context,
-                              Colors.white),
-                          makeFeatureBox(
-                              'Routines',
-                              Theme.of(context).colorScheme.routines,
-                              RoutineMainScreen.routeName,
-                              context,
-                              Colors.white),
-                          makeFeatureBox(
-                            'Workouts',
-                            Theme.of(context).colorScheme.workouts,
-                            WorkOutScreen.routeName,
-                            context,
-                          ),
-                          makeFeatureBox(
-                              'Analysis',
-                              Theme.of(context).colorScheme.analysis,
-                              BodyPartsScreen.routeName,
-                              context)
-                        ],
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 6,
-                        mainAxisSpacing: 12,
+                            ),
+                            makeFeatureBox(
+                                'Analysis',
+                                Theme.of(context).colorScheme.analysis,
+                                BodyPartsScreen.routeName,
+                                context)
+                          ],
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 6,
+                          mainAxisSpacing: 12,
+                        ),
                       ),
                     )
                   ],
