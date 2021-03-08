@@ -22,15 +22,9 @@ import 'bloc/routines/routines_bloc.dart';
 import 'plugins/desktop/desktop.dart';
 import 'screens/routine/routine-screen.dart';
 
-// void _enablePlatformOverrideForDesktop() {
-//   if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
-//     debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
-//   }
-// }
 
 void main() {
   setTargetPlatformForDesktop();
-  // _enablePlatformOverrideForDesktop();
   runApp(MyApp());
 }
 
@@ -49,8 +43,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initConnectivity();
-    // database = RepositoryProvider.of<SQLDatabase>(context);
-    // database = SQLDatabase();
+
     common = Common(currentDate: DateTime.now());
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
