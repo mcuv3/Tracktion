@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../colors/custom_colors.dart';
 
-Future<bool> shouldSaveModal(BuildContext context,
-        [String message  ]) =>
+Future<bool> shouldSaveModal(BuildContext context, [String message]) =>
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-              content: Text(message == null ? "Do you want to save your changes?":message),
+              content: Text(message == null
+                  ? "Do you want to save your changes?"
+                  : message),
               actions: [
-                FlatButton(
+                TextButton(
                     onPressed: () {
                       Navigator.of(context).pop(false);
                     },
@@ -18,7 +19,7 @@ Future<bool> shouldSaveModal(BuildContext context,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.routines),
                     )),
-                FlatButton(
+                TextButton(
                     onPressed: () {
                       Navigator.of(context).pop(true);
                     },

@@ -2,14 +2,14 @@ import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 
 enum CopyMethod { Previus, Smart, Manual }
-enum Theme { Black, Blue, Yellow, Orange, Green }
+enum ThemeGroup { Black, Blue, Yellow, Orange, Green }
 
 class RoutineGroup extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get name => text()();
   TextColumn get description => text().withLength(max: 250, min: 0)();
   TextColumn get imageUrl => text()();
-  IntColumn get theme => intEnum<Theme>()();
+  IntColumn get theme => intEnum<ThemeGroup>()();
 }
 
 class Routine extends Table {

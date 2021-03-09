@@ -1,4 +1,3 @@
-import '../colors/custom_colors.dart';
 import 'package:flutter/material.dart';
 
 Future<bool> showModalConfirmation({
@@ -13,8 +12,8 @@ Future<bool> showModalConfirmation({
             contentPadding: EdgeInsets.all(20),
             content: Text(contentText),
             actions: <Widget>[
-              FlatButton(
-                color: Theme.of(context).colorScheme.exercise,
+              TextButton(
+                // color: Theme.of(context).colorScheme.exercise,
                 child: Text(
                   cancelText,
                   style: TextStyle(color: Colors.white),
@@ -23,8 +22,8 @@ Future<bool> showModalConfirmation({
                   Navigator.of(context).pop(false);
                 },
               ),
-              FlatButton(
-                color: Theme.of(context).colorScheme.routines,
+              TextButton(
+                // color: Theme.of(context).colorScheme.routines,
                 child: Text(
                   confirmText,
                   style: TextStyle(color: Colors.white),

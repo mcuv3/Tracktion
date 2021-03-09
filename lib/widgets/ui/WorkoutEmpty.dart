@@ -35,7 +35,7 @@ class WorkoutEmpty extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () {
                     Navigator.of(context).pushNamed(BodyPartsScreen.routeName,
                         arguments: {"pushed": true});
@@ -46,7 +46,7 @@ class WorkoutEmpty extends StatelessWidget {
                     color: Colors.red,
                   ),
                   label: Text('Add exercises')),
-              FlatButton.icon(
+              TextButton.icon(
                   onPressed: () {
                     showCupertinoModalBottomSheet(
                       expand: false,

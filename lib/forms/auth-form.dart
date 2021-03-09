@@ -200,17 +200,17 @@ class _AuthFormState extends State<AuthForm> {
                     SizedBox(
                       width: 10,
                     ),
-                    FlatButton(
-                      color: Colors.white,
-                      textColor: Theme.of(context).primaryColor,
-                      // borderSide: BorderSide(
-                      //     color: Theme.of(context).primaryColor, width: 2.0),
-                      shape: new RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(8.0),
-                      ),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(8.0),
+                          )),
                       child: Text(
                         'Sign In',
-                        style: TextStyle(fontWeight: FontWeight.w400),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            color: Theme.of(context).primaryColor),
                       ),
                       onPressed: () {
                         if (isSingUp) {

@@ -1922,7 +1922,7 @@ class RoutineGroupData extends DataClass
   final String name;
   final String description;
   final String imageUrl;
-  final Theme theme;
+  final ThemeGroup theme;
   RoutineGroupData(
       {@required this.id,
       @required this.name,
@@ -1991,7 +1991,7 @@ class RoutineGroupData extends DataClass
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String>(json['description']),
       imageUrl: serializer.fromJson<String>(json['imageUrl']),
-      theme: serializer.fromJson<Theme>(json['theme']),
+      theme: serializer.fromJson<ThemeGroup>(json['theme']),
     );
   }
   @override
@@ -2002,7 +2002,7 @@ class RoutineGroupData extends DataClass
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String>(description),
       'imageUrl': serializer.toJson<String>(imageUrl),
-      'theme': serializer.toJson<Theme>(theme),
+      'theme': serializer.toJson<ThemeGroup>(theme),
     };
   }
 
@@ -2011,7 +2011,7 @@ class RoutineGroupData extends DataClass
           String name,
           String description,
           String imageUrl,
-          Theme theme}) =>
+          ThemeGroup theme}) =>
       RoutineGroupData(
         id: id ?? this.id,
         name: name ?? this.name,
@@ -2054,7 +2054,7 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
   final Value<String> name;
   final Value<String> description;
   final Value<String> imageUrl;
-  final Value<Theme> theme;
+  final Value<ThemeGroup> theme;
   const RoutineGroupCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -2067,7 +2067,7 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
     @required String name,
     @required String description,
     @required String imageUrl,
-    @required Theme theme,
+    @required ThemeGroup theme,
   })  : name = Value(name),
         description = Value(description),
         imageUrl = Value(imageUrl),
@@ -2093,7 +2093,7 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
       Value<String> name,
       Value<String> description,
       Value<String> imageUrl,
-      Value<Theme> theme}) {
+      Value<ThemeGroup> theme}) {
     return RoutineGroupCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -2253,8 +2253,8 @@ class $RoutineGroupTable extends RoutineGroup
     return $RoutineGroupTable(_db, alias);
   }
 
-  static TypeConverter<Theme, int> $converter0 =
-      const EnumIndexConverter<Theme>(Theme.values);
+  static TypeConverter<ThemeGroup, int> $converter0 =
+      const EnumIndexConverter<ThemeGroup>(ThemeGroup.values);
 }
 
 class RoutineData extends DataClass implements Insertable<RoutineData> {

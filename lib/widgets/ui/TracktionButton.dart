@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../colors/custom_colors.dart';
 
 class TracktionButton extends StatelessWidget {
@@ -28,8 +29,7 @@ class TracktionButton extends StatelessWidget {
           end: FractionalOffset.centerRight,
         ),
       ),
-      child: FlatButton(
-        visualDensity: VisualDensity.compact,
+      child: TextButton(
         child: Icon(
           Icons.add,
           size: 24,

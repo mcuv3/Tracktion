@@ -8,6 +8,7 @@ class TracktionInput extends StatelessWidget {
   final Function(String) change;
   final TextEditingController controller;
   final int maxLength;
+  final bool autoFocus;
 
   TracktionInput(
       {this.initialValue,
@@ -16,6 +17,7 @@ class TracktionInput extends StatelessWidget {
       this.maxlines = 1,
       this.validator,
       this.change,
+      this.autoFocus = false,
       this.maxLength});
 
   @override
@@ -27,6 +29,7 @@ class TracktionInput extends StatelessWidget {
         maxLines: maxlines,
         onChanged: change,
         onFieldSubmitted: change,
+        autofocus: autoFocus,
         onSaved: change,
         maxLength: maxLength,
         decoration: InputDecoration(

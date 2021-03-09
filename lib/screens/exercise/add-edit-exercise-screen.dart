@@ -156,68 +156,71 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
             ),
             StackAppBar(
               actions: [
-                Padding(
-                    padding: EdgeInsets.all(10),
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.delete_forever,
-                        size: 35,
-                      ),
-                      onPressed: deleteHandler,
-                    ))
+                IconButton(
+                  icon: Icon(
+                    Icons.delete_forever,
+                    size: 35,
+                  ),
+                  onPressed: deleteHandler,
+                )
               ],
             ),
             Form(
               key: form,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 90,
-                    ),
-                    Text('Body Part', style: Theme.of(context).textTheme.headline6),
-                    Container(
-                      height: 120,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, i) => bodyPartPicker(i),
-                        itemCount: bodyParts.length,
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.only(top: 40),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 90,
                       ),
-                    ),
-                    TracktionInput(
-                      controller: nameController,
-                      hint: 'Exercise name',
-                      validator: (val) {
-                        if (val.length <= 3) {
-                          return 'Name too short';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Select(
-                      options: Difficulty.values,
-                      selection: difficulty,
-                      onSelect: (val) {
-                        setState(() {
-                          difficulty = enumToString(val);
-                        });
-                      },
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    TracktionInput(
-                      controller: notesController,
-                      hint: 'Notes ..',
-                      maxlines: 5,
-                    ),
-                  ],
+                      Text('Body Part',
+                          style: Theme.of(context).textTheme.headline6),
+                      Container(
+                        height: 120,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, i) => bodyPartPicker(i),
+                          itemCount: bodyParts.length,
+                        ),
+                      ),
+                      TracktionInput(
+                        controller: nameController,
+                        hint: 'Exercise name',
+                        validator: (val) {
+                          if (val.length <= 3) {
+                            return 'Name too short';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Select(
+                        options: Difficulty.values,
+                        selection: difficulty,
+                        onSelect: (val) {
+                          print(val);
+                          setState(() {
+                            difficulty = enumToString(val);
+                          });
+                        },
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      TracktionInput(
+                        controller: notesController,
+                        hint: 'Notes ..',
+                        maxlines: 5,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             )
@@ -237,14 +240,16 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
             }
           },
           child: Builder(
-            builder: (ctx) => FlatButton.icon(
-              colorBrightness: Brightness.light,
+            builder: (ctx) => Padding(
               padding: EdgeInsets.all(8),
-              onPressed: () => submit(ctx),
-              icon: Icon(Icons.save),
-              label: Text('Save'),
-              textColor: Colors.white,
-              color: Theme.of(context).colorScheme.exercise,
+              child: TextButton.icon(
+                onPressed: () => submit(ctx),
+                icon: Icon(Icons.save,
+                    color: Theme.of(context).colorScheme.exercise),
+                label: Text('Save',
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.exercise)),
+              ),
             ),
           ),
         ));

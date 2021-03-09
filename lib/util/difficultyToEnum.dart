@@ -7,7 +7,7 @@ Difficulty difficultyToEnum(String difficulty){
         case "Easy":
           return Difficulty.Easy;
           break;
-        case "Easy":
+        case "Normal":
           return Difficulty.Normal;
           break;
         case "Hard":

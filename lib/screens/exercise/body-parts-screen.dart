@@ -53,16 +53,17 @@ class BodyPartsScreen extends StatelessWidget {
             ))
           ],
         )),
-        floatingActionButton: FlatButton.icon(
-          colorBrightness: Brightness.light,
+        floatingActionButton: Padding(
           padding: EdgeInsets.all(8),
-          onPressed: () {
-            Navigator.of(context).pushNamed(AddEditBodyPartsScreen.routeName);
-          },
-          icon: Icon(Icons.add),
-          label: Text('Add Exercise'),
-          textColor: Colors.white,
-          color: Theme.of(context).colorScheme.exercise,
+          child: TextButton.icon(
+            style: TextButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.exercise),
+            onPressed: () {
+              Navigator.of(context).pushNamed(AddEditBodyPartsScreen.routeName);
+            },
+            icon: Icon(Icons.add),
+            label: Text('Add Exercise', style: TextStyle(color: Colors.white)),
+          ),
         ));
   }
 }

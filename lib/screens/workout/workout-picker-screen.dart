@@ -163,8 +163,7 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
                             )
                           ]
                         : [
-                            FlatButton.icon(
-                                color: Colors.white,
+                            TextButton.icon(
                                 onPressed: () async {
                                   final shouldCopy = await confirmationModal(
                                       context: context,
@@ -189,8 +188,7 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
                             Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: 4, vertical: 0),
-                              child: FlatButton.icon(
-                                  color: Colors.white,
+                              child: TextButton.icon(
                                   onPressed: () {
                                     setState(() {
                                       editMode = !editMode;
@@ -205,8 +203,7 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
                                   ),
                                   label: Text("Edit")),
                             ),
-                            FlatButton.icon(
-                                color: Colors.white,
+                            TextButton.icon(
                                 onPressed: () {
                                   Navigator.of(context).pop(false);
                                 },
