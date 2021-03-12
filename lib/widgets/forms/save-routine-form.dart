@@ -4,6 +4,7 @@ import 'package:tracktion/bloc/routine-group/routine_bloc.dart';
 import 'package:tracktion/colors/custom_colors.dart';
 import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/models/tables/Routines.dart';
+import 'package:tracktion/widgets/inputs/Select.dart';
 import 'package:tracktion/widgets/inputs/input.dart';
 
 class SaveRoutineForm extends StatefulWidget {
@@ -13,7 +14,7 @@ class SaveRoutineForm extends StatefulWidget {
 
 class _SaveRoutineFormState extends State<SaveRoutineForm> {
   final form = GlobalKey<FormState>();
-
+  var level = Level.Beginner;
   final fields = {};
 
   String isRequired(String value) {
@@ -23,22 +24,21 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
 
   void onSubmit() {
     var isValid = form.currentState.validate();
-
     if (isValid) {
-      print(fields);
       BlocProvider.of<RoutineGroupBloc>(context).add(SaveGroupRoutine(
           RoutineGroupData(
               id: null,
               name: fields["name"],
               description: fields["description"],
-              imageUrl: "test",
-              theme: ThemeGroup.Blue)));
+              level: level)));
     }
   }
 
   void changeHandler(String key, String value) {
     fields[key] = value;
   }
+
+  void successHandler() {}
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,6 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
         if (state is RoutinesGroupSuccess) {
           Navigator.of(context).pop();
         }
-        if (state is RoutineGroupFailure) {}
       },
       child: Form(
         key: form,
@@ -85,6 +84,27 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
                 hint: "No pain no gain.",
                 maxlines: 5,
               ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "Level",
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.analysis,
+                    fontSize: 23),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Select<Level>(
+                  onSelect: (value) {
+                    setState(() {
+                      level = value;
+                    });
+                  },
+                  options: Level.values,
+                  value: level),
               SizedBox(
                 height: 10,
               ),

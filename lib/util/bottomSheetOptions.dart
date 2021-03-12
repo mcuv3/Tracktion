@@ -1,37 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:tracktion/models/app/difficulties.dart';
+
 import 'enumToString.dart';
 
-void bottomSheetOptions(
-    {Function cb, BuildContext context, List<dynamic> options}) {
+void bottomSheetOptions<T>(
+    {required Function cb,
+    required BuildContext context,
+    required List<T> options}) {
   showModalBottomSheet<void>(
-    context: context,
-    builder: (BuildContext context) {
-      return Container(
-        padding: EdgeInsets.all(8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: options
-              .map((i) => GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    cb(i);
-                  },
-                  child: Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          enumToString(i),
-                          style: TextStyle(fontSize: 18),
-                        ),
-                        Divider(),
-                      ],
+      context: context,
+      builder: (BuildContext context) => ListView.builder(
+            shrinkWrap: true,
+            padding: EdgeInsets.all(8),
+            itemCount: options.length,
+            itemBuilder: (context, i) => Container(
+              width: double.infinity,
+              child: Column(
+                children: <Widget>[
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      cb(options[i]);
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      child: Text(
+                        enumToString(options[i]),
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ),
-                  )))
-              .toList(),
-        ),
-      );
-    },
-  );
+                  ),
+                  Divider(),
+                ],
+              ),
+            ),
+          ));
 }

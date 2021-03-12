@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:tracktion/bloc/common/Workout.dart';
 import 'package:tracktion/models/app/body-parts.dart';
 import 'package:tracktion/models/app/exercise.dart' as exeModel;
 import 'package:tracktion/models/db/database.dart';
@@ -14,10 +13,8 @@ part 'exercise_state.dart';
 
 class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
   final SQLDatabase db;
-  final Common common;
 
-  ExerciseBloc({@required this.db, @required this.common})
-      : super(ExercisesInitial());
+  ExerciseBloc({required this.db}) : super(ExercisesInitial());
 
   @override
   Stream<ExerciseState> mapEventToState(
@@ -38,20 +35,7 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     final exes = (state as Exercises).exes;
     yield ExercisesLoading();
     try {
-      final exe = event.exe;
-      final exeEntity = Exercise(
-          id: exe.id,
-          maxVolumeSetId: exe.maxVolumeSetId,
-          maxWeigthSetId: exe.maxWeigthSetId,
-          difficulty: exe.difficulty,
-          name: exe.name,
-          notes: exe.notes,
-          lastWorkouts: exe.lastWorkoutsToString(),
-          maxVolume: exe.maxVolume,
-          maxWeigth: exe.maxWeigth);
-
-      await db.deleteExercise(exeEntity);
-
+      await db.deleteExercise(event.exeId);
       yield ExerciseDeleteSuccess();
       yield Exercises(exes);
     } catch (e) {

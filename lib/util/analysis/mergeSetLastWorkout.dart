@@ -1,7 +1,10 @@
 import 'package:tracktion/models/app/exercise.dart';
 
 List<SetResume> mergeSetLastWorkouts(
-    {Exercise exe, double volume, double maxWeigth, DateTime date}) {
+    {required Exercise exe,
+    required double volume,
+    required double maxWeigth,
+    required DateTime date}) {
   var _sets = [...exe.lastWorkouts];
 
   if (exe.lastWorkouts.length >= 12) exe.lastWorkouts.removeAt(11);
@@ -12,11 +15,11 @@ List<SetResume> mergeSetLastWorkouts(
 }
 
 Exercise consenceMaxes(
-    {Exercise exe,
-    double volume,
-    double maxWeigth ,
+    {required Exercise exe,
+    required double volume,
+    required double maxWeigth,
     bool willDelete = false,
-    int setId}) {
+    required int setId}) {
   var _exe = Exercise(
       id: exe.id,
       maxVolumeSetId: exe.maxVolumeSetId,

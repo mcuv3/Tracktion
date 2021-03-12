@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:tracktion/util/bottomSheetOptions.dart';
+import 'package:tracktion/util/enumToString.dart';
 
-class Select extends StatelessWidget {
+class Select<T> extends StatelessWidget {
   const Select(
-      {Key key,
-      @required this.selection,
-      @required this.onSelect,
-      @required this.options})
+      {Key? key,
+      required this.value,
+      required this.onSelect,
+      required this.options})
       : super(key: key);
 
-  final Function(dynamic) onSelect;
-  final String selection;
-  final List<dynamic> options;
+  final Function(T) onSelect;
+  final T value;
+  final List<T> options;
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +20,8 @@ class Select extends StatelessWidget {
       onTap: () {
         bottomSheetOptions(
             options: options,
-            cb: (val) {
-              onSelect(val);
+            cb: (option) {
+              onSelect(option);
             },
             context: context);
       },
@@ -32,7 +33,7 @@ class Select extends StatelessWidget {
             border: Border.all(color: Colors.black45, width: 1)),
         child: Row(
           children: [
-            Text(selection,
+            Text(enumToString(value),
                 style: TextStyle(color: Colors.black, fontSize: 16)),
             Icon(Icons.expand_more)
           ],

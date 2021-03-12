@@ -9,7 +9,7 @@ part 'analysis_state.dart';
 
 class AnalysisBloc extends Bloc<AnalysisEvent, AnalysisState> {
   final SQLDatabase db;
-  AnalysisBloc({this.db}) : super(AnalysisInitial());
+  AnalysisBloc({required this.db}) : super(AnalysisInitial());
 
   @override
   Stream<AnalysisState> mapEventToState(

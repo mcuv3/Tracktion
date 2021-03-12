@@ -5,7 +5,7 @@ abstract class WorkoutEvent {}
 
 class FetchWorkout extends WorkoutEvent {
   final DateTime date;
-  FetchWorkout({this.date});
+  FetchWorkout({required this.date});
 }
 
 class DeleteWorkout extends WorkoutEvent {
@@ -17,7 +17,7 @@ class SaveSet extends WorkoutEvent {
   final modelsApp.SetWorkout set;
   final DateTime date;
   final bool isEdit;
-  SaveSet({this.set, this.date, this.isEdit});
+  SaveSet({required this.set, required this.date, required this.isEdit});
 }
 
 class DeleteSet extends WorkoutEvent {
@@ -32,8 +32,7 @@ class DeleteSets extends WorkoutEvent {
 
 class SaveRep extends WorkoutEvent {
   final modelsApp.Rep rep;
-
-  SaveRep({this.rep});
+  SaveRep({required this.rep});
 }
 
 class DeleteRep extends WorkoutEvent {
@@ -46,7 +45,5 @@ class CopySets extends WorkoutEvent {
   final DateTime date;
   final Map<int, dynamic> workoutFilters;
   CopySets(
-      {@required this.sets,
-      @required this.date,
-      @required this.workoutFilters});
+      {required this.sets, required this.date, required this.workoutFilters});
 }

@@ -22,7 +22,6 @@ import 'bloc/routines/routines_bloc.dart';
 import 'plugins/desktop/desktop.dart';
 import 'screens/routine/routine-screen.dart';
 
-
 void main() {
   setTargetPlatformForDesktop();
   runApp(MyApp());
@@ -35,8 +34,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final Connectivity _connectivity = Connectivity();
-  StreamSubscription<ConnectivityResult> _connectivitySubscription;
-  Common common;
+  StreamSubscription<ConnectivityResult>? _connectivitySubscription;
+  Common? common;
   bool isAuth = false;
 
   @override
@@ -51,28 +50,21 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
-    _connectivitySubscription.cancel();
+    _connectivitySubscription!.cancel();
+
     super.dispose();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initConnectivity() async {
     ConnectivityResult result;
-    // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       result = await _connectivity.checkConnectivity();
+      _updateConnectionStatus(result);
     } on PlatformException catch (e) {
       print(e.toString());
     }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) {
-      return Future.value(null);
-    }
-
-    return _updateConnectionStatus(result);
+    if (!mounted) return Future.value(null);
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
@@ -90,36 +82,41 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return 
-     RepositoryProvider<SQLDatabase>(
-          create: (context) => constructDb(),
+    return RepositoryProvider<SQLDatabase>(
+      create: (context) => constructDb(),
       child: BlocProvider(
           create: (BuildContext context) => AuthCubit(),
-          child: 
-          MultiBlocProvider(
+          child: MultiBlocProvider(
             providers: [
               BlocProvider<ExerciseBloc>(
-                create: (BuildContext context) =>
-                    ExerciseBloc(db: RepositoryProvider.of<SQLDatabase>(context), common: common),
+                create: (BuildContext context) => ExerciseBloc(
+                    db: RepositoryProvider.of<SQLDatabase>(context),
+                    common: common),
               ),
               BlocProvider<WorkoutBloc>(
-                create: (context) => WorkoutBloc(db: RepositoryProvider.of<SQLDatabase>(context), common: common),
+                create: (context) => WorkoutBloc(
+                    db: RepositoryProvider.of<SQLDatabase>(context),
+                    common: common),
               ),
               BlocProvider<WorkoutpickerBloc>(
-                create: (context) => WorkoutpickerBloc(db: RepositoryProvider.of<SQLDatabase>(context)),
+                create: (context) => WorkoutpickerBloc(
+                    db: RepositoryProvider.of<SQLDatabase>(context)),
               ),
               BlocProvider<RoutineBloc>(
-                create: (context) => RoutineBloc(RepositoryProvider.of<SQLDatabase>(context)),
+                create: (context) =>
+                    RoutineBloc(RepositoryProvider.of<SQLDatabase>(context)),
               ),
               BlocProvider<RoutinesBloc>(
-                create: (context) => RoutinesBloc(RepositoryProvider.of<SQLDatabase>(context)),
+                create: (context) =>
+                    RoutinesBloc(RepositoryProvider.of<SQLDatabase>(context)),
               ),
               BlocProvider<RoutineGroupBloc>(
-                create: (context) => RoutineGroupBloc(RepositoryProvider.of<SQLDatabase>(context)),
+                create: (context) => RoutineGroupBloc(
+                    RepositoryProvider.of<SQLDatabase>(context)),
               ),
               BlocProvider(
-                  create: (BuildContext context) =>
-                      ExerciseStreamCubit(db: RepositoryProvider.of<SQLDatabase>(context))),
+                  create: (BuildContext context) => ExerciseStreamCubit(
+                      db: RepositoryProvider.of<SQLDatabase>(context))),
             ],
             child: InitApp(changeAuthStatus: (auth) {
               setState(() {

@@ -1,41 +1,36 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
-
 import 'body-parts.dart';
 import 'difficulties.dart';
 
 class Exercise {
-  final int id;
+  final int? id;
   final String name;
   final Difficulty difficulty;
   final String notes;
   double maxWeigth;
-  int maxWeigthSetId;
+  int? maxWeigthSetId;
   double maxVolume;
-  int maxVolumeSetId;
+  int? maxVolumeSetId;
   List<SetResume> lastWorkouts;
   List<BodyPartEnum> bodyParts;
-  int _setId;
+  int? setId;
 
   Exercise(
-      {@required this.id,
-      @required this.name,
-      @required this.difficulty,
-      @required this.bodyParts,
-      @required this.lastWorkouts,
-      @required this.maxWeigth,
-      @required this.maxVolume,
-      @required this.maxVolumeSetId,
-      @required this.maxWeigthSetId,
-      this.notes});
+      {this.id,
+      required this.name,
+      required this.difficulty,
+      required this.bodyParts,
+      required this.lastWorkouts,
+      required this.maxWeigth,
+      required this.maxVolume,
+      this.maxVolumeSetId,
+      this.maxWeigthSetId,
+      this.notes = ""});
 
   set bodyPartSet(List<BodyPartEnum> bds) {
     this.bodyParts = bds;
   }
-
-  int get setId => this._setId;
-  set setId(int id) => this._setId = id;
 
   @override
   String toString() {
@@ -85,12 +80,17 @@ class Exercise {
 }
 
 class SetResume {
-  int setId;
+  int? setId;
   final double maxWeigth;
   final int reps;
   final DateTime date;
   final double volume;
-  SetResume({this.setId, this.maxWeigth, this.reps, this.date, this.volume});
+  SetResume(
+      {this.setId,
+      required this.maxWeigth,
+      required this.reps,
+      required this.date,
+      required this.volume});
 
   Map<String, dynamic> toJson() {
     return {

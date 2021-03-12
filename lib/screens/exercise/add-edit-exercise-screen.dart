@@ -7,8 +7,6 @@ import 'package:tracktion/models/app/difficulties.dart';
 import 'package:tracktion/models/app/exercise.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/create-exercise.dart';
-import 'package:tracktion/util/difficultyToEnum.dart';
-import 'package:tracktion/util/enumToString.dart';
 import 'package:tracktion/util/showMessage.dart';
 import 'package:tracktion/util/showModalConfirmation.dart';
 import 'package:tracktion/widgets/StackAppBar.dart';
@@ -33,7 +31,7 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController notesController = TextEditingController();
   final form = GlobalKey<FormState>();
-  var difficulty = 'Difficulty';
+  var difficulty = Difficulty.Easy;
   var editMode = false;
   Exercise exe;
   var isInit = true;
@@ -52,7 +50,7 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
         this.bodyParts = BodyPartEnum.values.map((b) {
           return {"body": b, "active": exe.bodyParts.any((e) => e == b)};
         }).toList();
-        this.difficulty = enumToString(exe.difficulty);
+        this.difficulty = exe.difficulty;
         this.nameController.text = exe.name;
         this.notesController.text = exe.notes;
       }
@@ -94,7 +92,7 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
       nameController.text = "";
       notesController.text = "";
       setState(() {
-        difficulty = 'Difficulty';
+        difficulty = Difficulty.Easy;
         bodyParts = bodyParts.map((e) {
           e['active'] = false;
           return e;
@@ -114,9 +112,8 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
     bodyParts.forEach((b) {
       if (b["active"]) parts.add(b["body"]);
     });
-    var dt = difficultyToEnum(difficulty);
 
-    if (parts.length == 0 || dt == null) {
+    if (parts.length == 0) {
       showErrorMessage(
           context: ctx, message: 'Body parts or difficulty missing.');
       return;
@@ -130,7 +127,7 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
         maxVolume: editMode ? exe.maxVolume : null,
         maxWeigth: editMode ? exe.maxWeigth : null,
         bodyParts: parts,
-        difficulty: dt,
+        difficulty: difficulty,
         notes: notesController.text,
         name: nameController.text);
 
@@ -201,13 +198,12 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
                       SizedBox(
                         height: 10,
                       ),
-                      Select(
+                      Select<Difficulty>(
                         options: Difficulty.values,
-                        selection: difficulty,
+                        value: difficulty,
                         onSelect: (val) {
-                          print(val);
                           setState(() {
-                            difficulty = enumToString(val);
+                            difficulty = val;
                           });
                         },
                       ),

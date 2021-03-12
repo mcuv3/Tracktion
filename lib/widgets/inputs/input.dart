@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class TracktionInput extends StatelessWidget {
-  final String initialValue;
-  final String hint;
-  final int maxlines;
-  final String Function(String) validator;
-  final Function(String) change;
-  final TextEditingController controller;
-  final int maxLength;
+  final String? initialValue;
+  final String? hint;
+  final int? maxlines;
+  final String? Function(String?)? validator;
+  final Function(String?)? change;
+  final TextEditingController? controller;
+  final int? maxLength;
   final bool autoFocus;
 
   TracktionInput(

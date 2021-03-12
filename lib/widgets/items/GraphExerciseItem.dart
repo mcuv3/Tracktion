@@ -37,8 +37,8 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
 
   bool showMaxWeigths = false;
 
-  List<double> maxWeigthInSets;
-  List<double> maxVolumeInSets;
+  List<double> maxWeigthInSets = [];
+  List<double> maxVolumeInSets = [];
 
   @override
   void initState() {
@@ -334,9 +334,9 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
           isCurved: true,
           colors: [
             ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                .lerp(0.2),
+                .lerp(0.2)!,
             ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                .lerp(0.2),
+                .lerp(0.2)!,
           ],
           barWidth: 5,
           isStrokeCapRound: true,
@@ -345,10 +345,10 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
           ),
           belowBarData: BarAreaData(show: true, colors: [
             ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                .lerp(0.2)
+                .lerp(0.2)!
                 .withOpacity(0.1),
             ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                .lerp(0.2)
+                .lerp(0.2)!
                 .withOpacity(0.1),
           ]),
         ),

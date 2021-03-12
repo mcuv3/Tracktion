@@ -18,5 +18,6 @@ class SaveRepPicker extends WorkoutpickerEvent {
   final int setIndex;
   final int repIndex;
 
-  SaveRepPicker({this.rep, this.setIndex, this.repIndex});
+  SaveRepPicker(
+      {required this.rep, required this.setIndex, required this.repIndex});
 }

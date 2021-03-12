@@ -1,4 +1,3 @@
-
 import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tracktion/models/app/body-parts.dart';
@@ -13,7 +12,6 @@ import '../tables/Exercise.dart';
 export 'instance/shared.dart';
 
 part 'database.g.dart';
-
 
 @UseMoor(tables: [
   Exercises,
@@ -32,7 +30,7 @@ class SQLDatabase extends _$SQLDatabase {
   //           path: "tracktion.sqlite",
   //           logStatements: false,
   //           singleInstance: true));
-    SQLDatabase(QueryExecutor e) : super(e);
+  SQLDatabase(QueryExecutor e) : super(e);
 
   @override
   int get schemaVersion => 1;
@@ -320,10 +318,10 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
-  Future<void> deleteExercise(Exercise exe) async {
-    await (delete(exerciseBodyParts)..where((t) => t.exerciseId.equals(exe.id)))
+  Future<void> deleteExercise(int exeId) async {
+    await (delete(exerciseBodyParts)..where((t) => t.exerciseId.equals(exeId)))
         .go();
-    await delete(exercises).delete(exe);
+    await (delete(exercises)..where((tbl) => tbl.id.equals(exeId))).go();
   }
 
   Future<void> deleteWorkout(int workoutId) {
