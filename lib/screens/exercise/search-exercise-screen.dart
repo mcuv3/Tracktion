@@ -34,7 +34,7 @@ class _SearchExerciseState extends State<SearchExercise> {
   @override
   void initState() {
     Future.delayed(Duration.zero).then((_) {
-      final bd = ModalRoute.of(context).settings.arguments as BodyPartEnum;
+      final bd = ModalRoute.of(context)?.settings.arguments as BodyPartEnum;
       BlocProvider.of<ExerciseBloc>(context).add(FetchExers(bd));
     });
     super.initState();
@@ -43,8 +43,10 @@ class _SearchExerciseState extends State<SearchExercise> {
   @override
   Widget build(BuildContext context) {
     final query = MediaQuery.of(context);
-    final bodyPart = ModalRoute.of(context).settings.arguments as BodyPartEnum ?? BodyPartEnum.Arms;
-    print(bodyPart);
+    final bodyPart =
+        ModalRoute.of(context)?.settings.arguments as BodyPartEnum? ??
+            BodyPartEnum.Arms;
+
     return Scaffold(
       appBar: AppBar(
           elevation: 0,
@@ -53,7 +55,7 @@ class _SearchExerciseState extends State<SearchExercise> {
           ),
           titleSpacing: 0,
           backgroundColor: Colors.white,
-          title: Text( bodyPart.toString()?.split('.')[1],
+          title: Text(bodyPart.toString().split('.')[1],
               style: TextStyle(
                   color: Theme.of(context).colorScheme.exercise, fontSize: 25)),
           centerTitle: true),
@@ -83,13 +85,18 @@ class _SearchExerciseState extends State<SearchExercise> {
                   ),
                   BlocBuilder<ExerciseBloc, ExerciseState>(
                     builder: (ctx, state) {
-                      Widget main;
+                      Widget main = Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.exercise,
+                        ),
+                      );
 
                       if (state is Exercises) {
                         main = StreamBuilder(
                           builder: (context, exs) {
                             if (exs.connectionState == ConnectionState.active) {
-                              List<Exercise> exes = exs.data ?? [];
+                              var exes = exs.data as List<Exercise>? ?? [];
                               print(exes);
                               exes
                                   .where((ex) => ex.name
@@ -114,15 +121,6 @@ class _SearchExerciseState extends State<SearchExercise> {
                             return Text('Loading');
                           },
                           stream: state.exes,
-                        );
-                      }
-
-                      if (state is ExercisesLoading) {
-                        main = Center(
-                          child: CircularProgressIndicator(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.exercise,
-                          ),
                         );
                       }
 

@@ -13,7 +13,7 @@ class WorkoutPickedScreen extends StatefulWidget {
   final DateTime datePicked;
   final DateTime targetDate;
 
-  WorkoutPickedScreen({this.datePicked, this.targetDate});
+  WorkoutPickedScreen({required this.datePicked, required this.targetDate});
 
   @override
   _WorkoutPickedScreenState createState() => _WorkoutPickedScreenState();
@@ -24,7 +24,7 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
   var editMode = false;
   var selectMode = true;
 
-  void changeRepStatusHandler({int repIndex, int setId}) {
+  void changeRepStatusHandler({required int repIndex, int? setId}) {
     final newStatus = {...workoutFilters};
     final repPrevValue = newStatus[setId]["reps"][repIndex];
     newStatus[setId]["reps"][repIndex] = !repPrevValue;
@@ -63,13 +63,15 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
 
   void deleteSetHandler(int setId) async {
     final shouldDelete = await confirmationModal(
-        context: context, message: "Do you want to delete this set?");
+            context: context, message: "Do you want to delete this set?") ??
+        false;
     if (shouldDelete) {
       BlocProvider.of<WorkoutpickerBloc>(context).add(DeleteSetPicker(setId));
     }
   }
 
-  void saveRepHandler({Rep rep, int setIndex, int repIndex}) async {
+  void saveRepHandler(
+      {required Rep rep, required int setIndex, required int repIndex}) async {
     final updatedRep = await repInputsModal(context, rep);
     BlocProvider.of<WorkoutpickerBloc>(context).add(
         SaveRepPicker(rep: updatedRep, setIndex: setIndex, repIndex: repIndex));

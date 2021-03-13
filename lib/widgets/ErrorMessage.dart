@@ -6,9 +6,9 @@ class ErrorMessage extends StatelessWidget {
   final String text;
 
   ErrorMessage(
-      {@required this.primaryColor,
-      @required this.secundaryColor,
-      @required this.text});
+      {required this.primaryColor,
+      required this.secundaryColor,
+      required this.text});
 
   @override
   Widget build(BuildContext context) {

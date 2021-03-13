@@ -7,7 +7,7 @@ import 'package:tracktion/widgets/ui/CardInkwell.dart';
 const vectorsPath = "assets/vectors/routines";
 
 class GroupRoutineItem extends StatelessWidget {
-  final Function onTap;
+  final Function() onTap;
   final int index;
   GroupRoutineItem({required this.onTap, required this.index});
 

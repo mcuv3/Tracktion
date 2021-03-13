@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tracktion/models/app/body-parts.dart';
+
 import '../colors/custom_colors.dart';
 
 class BodyPartWidget extends StatelessWidget {
@@ -10,7 +11,7 @@ class BodyPartWidget extends StatelessWidget {
   final bool withTitle;
   final bool active;
   final Color textColor;
-  final Color bgColor;
+  final Color? bgColor;
   BodyPartWidget(this.bodyPart,
       {this.withTitle = true,
       this.width = 110,

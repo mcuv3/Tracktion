@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class StackAppBar extends StatelessWidget {
   const StackAppBar(
-      {Key key, @required this.actions, this.iconColor = Colors.black})
+      {Key? key, required this.actions, this.iconColor = Colors.black})
       : super(key: key);
   final List<Widget> actions;
   final Color iconColor;

@@ -3,7 +3,7 @@ import 'package:tracktion/util/arrowClipper.dart';
 
 class IconDropDown extends StatefulWidget {
   final List<Icon> icons;
-  final BorderRadius borderRadius;
+  final BorderRadius? borderRadius;
   final Color backgroundColor;
   final Color iconColor;
   final ValueChanged<int> onChange;
@@ -11,7 +11,7 @@ class IconDropDown extends StatefulWidget {
   const IconDropDown({
     Key? key,
     required this.icons,
-    required this.borderRadius,
+    this.borderRadius,
     this.backgroundColor = const Color(0xFFF67C0B9),
     this.iconColor = Colors.black,
     required this.onChange,
@@ -50,9 +50,11 @@ class _IconDropDownState extends State<IconDropDown>
   }
 
   findButton() {
-    RenderBox renderBox = _key.currentContext.findRenderObject();
-    buttonSize = renderBox.size;
-    buttonPosition = renderBox.localToGlobal(Offset.zero);
+    var renderBox = _key.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      buttonSize = renderBox.size;
+      buttonPosition = renderBox.localToGlobal(Offset.zero);
+    }
   }
 
   void closeMenu() {
@@ -115,7 +117,7 @@ class _IconDropDownState extends State<IconDropDown>
                     child: Container(
                       width: 17,
                       height: 17,
-                      color: widget.backgroundColor ?? Color(0xFFF),
+                      color: widget.backgroundColor,
                     ),
                   ),
                 ),
