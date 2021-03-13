@@ -17,13 +17,13 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
   var level = Level.Beginner;
   final fields = {};
 
-  String isRequired(String value) {
-    if (value == "") return "Field must be set.";
+  String? isRequired(String? value) {
+    if (value != null && value == "") return "Field must be set.";
     return null;
   }
 
   void onSubmit() {
-    var isValid = form.currentState.validate();
+    var isValid = form.currentState!.validate();
     if (isValid) {
       BlocProvider.of<RoutineGroupBloc>(context).add(SaveGroupRoutine(
           RoutineGroupData(
@@ -34,7 +34,7 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
     }
   }
 
-  void changeHandler(String key, String value) {
+  void changeHandler(String key, String? value) {
     fields[key] = value;
   }
 

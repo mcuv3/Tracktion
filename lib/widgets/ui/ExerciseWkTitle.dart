@@ -3,8 +3,8 @@ import 'package:tracktion/models/app/index.dart';
 
 class ExerciseWorkoutTitle extends StatelessWidget {
   const ExerciseWorkoutTitle({
-    Key key,
-    @required this.exs,
+    Key? key,
+    required this.exs,
   }) : super(key: key);
 
   final Exercise exs;

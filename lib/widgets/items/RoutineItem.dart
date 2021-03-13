@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RoutineItem extends StatelessWidget {
-  final Function onTap;
+  final Function()? onTap;
   RoutineItem({this.onTap});
 
   @override

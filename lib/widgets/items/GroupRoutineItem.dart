@@ -9,7 +9,7 @@ const vectorsPath = "assets/vectors/routines";
 class GroupRoutineItem extends StatelessWidget {
   final Function onTap;
   final int index;
-  GroupRoutineItem({this.onTap, this.index});
+  GroupRoutineItem({required this.onTap, required this.index});
 
   @override
   Widget build(BuildContext context) {

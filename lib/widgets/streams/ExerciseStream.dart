@@ -7,9 +7,9 @@ import 'package:tracktion/widgets/ui/Difficulty.dart';
 import 'package:tracktion/widgets/ui/ExerciseWkTitle.dart';
 
 class ExerciseStreamWidget extends StatelessWidget {
-  final Function(Exercise) onLoadExercise;
+  final Function(Exercise?)? onLoadExercise;
 
-  const ExerciseStreamWidget({Key key, this.onLoadExercise}) : super(key: key);
+  const ExerciseStreamWidget({Key? key, this.onLoadExercise}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +21,8 @@ class ExerciseStreamWidget extends StatelessWidget {
           return StreamBuilder(
             stream: state.exe,
             builder: (context, stream) {
-              Exercise exs = stream.data;
-              if (onLoadExercise != null) onLoadExercise(exs);
+              Exercise? exs = stream.data != null ? stream.data;
+              if (onLoadExercise != null) onLoadExercise!(exs);
               if (stream.connectionState == ConnectionState.active) {
                 if (exs == null)
                   return Center(

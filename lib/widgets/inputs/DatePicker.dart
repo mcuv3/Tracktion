@@ -4,7 +4,7 @@ import '../../colors/custom_colors.dart';
 
 class DatePicker extends StatelessWidget {
   const DatePicker(
-      {Key key, @required this.changeDate, @required this.currentDate})
+      {Key? key, required this.changeDate, required this.currentDate})
       : super(key: key);
 
   final void Function(bool) changeDate;

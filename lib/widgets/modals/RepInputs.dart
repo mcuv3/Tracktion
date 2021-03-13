@@ -51,15 +51,15 @@ Future<Rep> repInputsModal(BuildContext context, Rep rep) {
             ],
           )).then((_) => Rep(
       id: rep.id,
-      reps: values["reps"],
-      weight: values["weight"],
-      rpe: values["rpe"],
+      reps: values["reps"] as int,
+      weight: values["weight"] as double,
+      rpe: values["rpe"] as int,
       notes: rep.notes,
       setId: rep.setId));
 }
 
 class TitleRepInput extends StatelessWidget {
-  const TitleRepInput({Key key, @required this.title}) : super(key: key);
+  const TitleRepInput({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -85,10 +85,10 @@ class TitleRepInput extends StatelessWidget {
 
 class RepInput extends StatefulWidget {
   const RepInput(
-      {Key key,
-      @required this.values,
+      {Key? key,
+      required this.values,
       this.isFloat = false,
-      @required this.inputName})
+      required this.inputName})
       : super(key: key);
   final bool isFloat;
   final String inputName;
@@ -99,7 +99,7 @@ class RepInput extends StatefulWidget {
 }
 
 class _RepInputState extends State<RepInput> {
-  TextEditingController controller;
+  TextEditingController? controller;
   @override
   void initState() {
     controller =
@@ -107,7 +107,7 @@ class _RepInputState extends State<RepInput> {
     super.initState();
   }
 
-  void changeValueHandler({String value, num increment}) {
+  void changeValueHandler({required String value, num? increment}) {
     final val = widget.isFloat ? double.tryParse(value) : int.tryParse(value);
 
     var finalValue;
@@ -125,8 +125,10 @@ class _RepInputState extends State<RepInput> {
       }
     }
 
+    if (controller == null) return;
+
     setState(() {
-      controller.text = finalValue.toString();
+      controller!.text = finalValue.toString();
       widget.values[widget.inputName] = finalValue;
     });
   }
@@ -147,8 +149,9 @@ class _RepInputState extends State<RepInput> {
             color: Colors.white,
           ),
           onPressed: () {
+            if (controller != null) return;
             changeValueHandler(
-                value: controller.text, increment: widget.isFloat ? -2.5 : -1);
+                value: controller!.text, increment: widget.isFloat ? -2.5 : -1);
           },
         ),
       ),
@@ -182,8 +185,9 @@ class _RepInputState extends State<RepInput> {
             color: Colors.white,
           ),
           onPressed: () {
+            if (controller != null) return;
             changeValueHandler(
-                value: controller.text, increment: widget.isFloat ? 2.5 : 1);
+                value: controller!.text, increment: widget.isFloat ? 2.5 : 1);
           },
         ),
       ),

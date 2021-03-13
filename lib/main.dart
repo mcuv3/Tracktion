@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/auth/auth_cubit.dart';
-import 'package:tracktion/bloc/common/Workout.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/bloc/workout-picker/workoutpicker_bloc.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
@@ -35,7 +34,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult>? _connectivitySubscription;
-  Common? common;
   bool isAuth = false;
 
   @override
@@ -43,7 +41,6 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     initConnectivity();
 
-    common = Common(currentDate: DateTime.now());
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
@@ -63,8 +60,6 @@ class _MyAppState extends State<MyApp> {
     } on PlatformException catch (e) {
       print(e.toString());
     }
-
-    if (!mounted) return Future.value(null);
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
@@ -90,13 +85,11 @@ class _MyAppState extends State<MyApp> {
             providers: [
               BlocProvider<ExerciseBloc>(
                 create: (BuildContext context) => ExerciseBloc(
-                    db: RepositoryProvider.of<SQLDatabase>(context),
-                    common: common),
+                    db: RepositoryProvider.of<SQLDatabase>(context)),
               ),
               BlocProvider<WorkoutBloc>(
                 create: (context) => WorkoutBloc(
-                    db: RepositoryProvider.of<SQLDatabase>(context),
-                    common: common),
+                    db: RepositoryProvider.of<SQLDatabase>(context)),
               ),
               BlocProvider<WorkoutpickerBloc>(
                 create: (context) => WorkoutpickerBloc(
@@ -118,7 +111,7 @@ class _MyAppState extends State<MyApp> {
                   create: (BuildContext context) => ExerciseStreamCubit(
                       db: RepositoryProvider.of<SQLDatabase>(context))),
             ],
-            child: InitApp(changeAuthStatus: (auth) {
+            child: TracktionApp(changeAuthStatus: (auth) {
               setState(() {
                 isAuth = auth;
               });
@@ -128,19 +121,19 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class InitApp extends StatefulWidget {
+class TracktionApp extends StatefulWidget {
   final Function(bool) changeAuthStatus;
 
-  const InitApp({
-    Key key,
-    this.changeAuthStatus,
+  const TracktionApp({
+    Key? key,
+    required this.changeAuthStatus,
   }) : super(key: key);
 
   @override
-  _InitAppState createState() => _InitAppState();
+  _TracktionAppState createState() => _TracktionAppState();
 }
 
-class _InitAppState extends State<InitApp> {
+class _TracktionAppState extends State<TracktionApp> {
   @override
   void initState() {
     super.initState();
@@ -153,15 +146,18 @@ class _InitAppState extends State<InitApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      builder: (BuildContext context, Widget widget) {
+      builder: (BuildContext context, Widget? widget) {
         Widget error = Text('...rendering error...');
+
         if (widget is Scaffold || widget is Navigator)
           error = Scaffold(body: Center(child: error));
+
         ErrorWidget.builder = (FlutterErrorDetails errorDetails) => error;
-        return widget;
+
+        return widget!;
       },
       theme: ThemeData(
-          brightness: WidgetsBinding.instance.window.platformBrightness,
+          brightness: WidgetsBinding.instance!.window.platformBrightness,
           fontFamily: 'CarterOne',
           primarySwatch: Colors.red,
           primaryColor: Color(0xFFB71C1C),

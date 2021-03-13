@@ -9,7 +9,7 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   final form = GlobalKey<FormState>();
-  Map<String, String> fields = {};
+  Map<String, String?> fields = {};
   var isSingUp = true;
 
   @override
@@ -19,14 +19,14 @@ class _AuthFormState extends State<AuthForm> {
   }
 
   void submitForm() async {
-    final isValid = form.currentState.validate();
+    final isValid = form.currentState!.validate();
     if (isValid) {
       if (isSingUp) {
         BlocProvider.of<AuthCubit>(context)
-            .register(fields['email'], fields['name'], fields['password']);
+            .register(fields['email']!, fields['name']!, fields['password']!);
       } else
         BlocProvider.of<AuthCubit>(context)
-            .login(fields['email'], fields['password']);
+            .login(fields['email']!, fields['password']!);
     }
   }
 
@@ -52,7 +52,8 @@ class _AuthFormState extends State<AuthForm> {
                       fields['email'] = v;
                     },
                     validator: (val) {
-                      if (val.length < 7) return 'Must be a valid email.';
+                      if (val != null && val.length < 7)
+                        return 'Must be a valid email.';
                       return null;
                     },
                     textAlign: TextAlign.center,
@@ -79,7 +80,7 @@ class _AuthFormState extends State<AuthForm> {
                         fields['name'] = v;
                       },
                       validator: (val) {
-                        if (val.length < 7)
+                        if (val != null && val.length < 7)
                           return 'Most be grater than 10 characters.';
                         return null;
                       },
@@ -107,7 +108,7 @@ class _AuthFormState extends State<AuthForm> {
                       fields['password'] = v;
                     },
                     validator: (val) {
-                      if (val.length < 7)
+                      if (val != null && val.length < 7)
                         return 'Password should be at least 7 characters';
                       return null;
                     },
@@ -189,7 +190,7 @@ class _AuthFormState extends State<AuthForm> {
                       ),
                       onPressed: () {
                         if (!isSingUp) {
-                          form.currentState.reset();
+                          form.currentState!.reset();
                           setState(() {
                             isSingUp = true;
                           });
@@ -214,7 +215,7 @@ class _AuthFormState extends State<AuthForm> {
                       ),
                       onPressed: () {
                         if (isSingUp) {
-                          form.currentState.reset();
+                          form.currentState!.reset();
                           setState(() {
                             isSingUp = false;
                           });

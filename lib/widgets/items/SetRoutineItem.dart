@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SetRoutineItem extends StatelessWidget {
-  final Function onTap;
+  final Function()? onTap;
 
   SetRoutineItem({this.onTap});
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-Future<bool> confirmationModal({BuildContext context, String message}) =>
+Future<bool?> confirmationModal(
+        {required BuildContext context, required String message}) =>
     showDialog(
         context: context,
         builder: (context) => AlertDialog(

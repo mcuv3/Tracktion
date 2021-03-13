@@ -18,7 +18,7 @@ class ExerciseFailure extends ExerciseState {
   final String message;
   final num statusCode;
 
-  ExerciseFailure({@required this.message, @required this.statusCode});
+  ExerciseFailure({required this.message, required this.statusCode});
 }
 
 class ExerciseDeleteSuccess extends ExerciseState {}

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../colors/custom_colors.dart';
 
-Future<bool> shouldSaveModal(BuildContext context, [String message]) =>
+Future<bool?> shouldSaveModal(BuildContext context, [String? message]) =>
     showDialog(
         context: context,
         builder: (context) => AlertDialog(

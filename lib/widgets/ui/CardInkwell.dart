@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class CardInkwell extends StatelessWidget {
-  final Function onTap;
+  final Function() onTap;
   final Widget child;
 
-  CardInkwell(this.child, {this.onTap});
+  CardInkwell(this.child, {required this.onTap});
 
   @override
   Widget build(BuildContext context) {

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/widgets/inputs/input.dart';
 
-Future<Rep> noteRepModal({BuildContext context, Rep rep}) async {
+Future<Rep?> noteRepModal(
+    {required BuildContext context, required Rep rep}) async {
   var note = rep.notes;
 
   await showDialog(
@@ -44,16 +45,16 @@ class NoteModalContent extends StatefulWidget {
   final String note;
   final Function(String value) onFinish;
 
-  NoteModalContent({this.note, this.onFinish});
+  NoteModalContent({required this.note, required this.onFinish});
 
   @override
   _NoteModalContentState createState() => _NoteModalContentState();
 }
 
 class _NoteModalContentState extends State<NoteModalContent> {
-  bool hasContent;
+  bool hasContent = false;
   bool isEditMode = false;
-  bool isNew;
+  bool isNew = false;
   TextEditingController controller = TextEditingController();
 
   @override
@@ -82,7 +83,7 @@ class _NoteModalContentState extends State<NoteModalContent> {
                   maxlines: 2,
                   controller: controller,
                   change: (val) {
-                    if (!isNew) widget.onFinish(val);
+                    if (!isNew && val != null) widget.onFinish(val);
                     setState(() {
                       hasContent = val != '';
                     });

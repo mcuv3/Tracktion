@@ -1,19 +1,5 @@
 import 'package:tracktion/models/app/exercise.dart';
 
-List<SetResume> mergeSetLastWorkouts(
-    {required Exercise exe,
-    required double volume,
-    required double maxWeigth,
-    required DateTime date}) {
-  var _sets = [...exe.lastWorkouts];
-
-  if (exe.lastWorkouts.length >= 12) exe.lastWorkouts.removeAt(11);
-  if (volume > exe.maxVolume) exe.maxVolume = volume;
-  if (maxWeigth > exe.maxWeigth) exe.maxWeigth = maxWeigth;
-  _sets.insert(0, SetResume(date: date, maxWeigth: maxWeigth, volume: volume));
-  return _sets;
-}
-
 Exercise consenceMaxes(
     {required Exercise exe,
     required double volume,

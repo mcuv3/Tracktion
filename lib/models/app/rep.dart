@@ -1,18 +1,18 @@
 import 'package:flutter/cupertino.dart';
 
 class Rep {
-  int id;
+  int? id;
   final int reps;
   final double weight;
   final int rpe;
-  int setId;
+  int? setId;
   String notes;
   Rep(
-      {Key key,
-      @required this.id,
-      @required this.reps,
-      @required this.weight,
-      @required this.rpe,
+      {Key? key,
+      this.id,
+      required this.reps,
+      required this.weight,
+      required this.rpe,
       this.notes = "",
       this.setId});
 

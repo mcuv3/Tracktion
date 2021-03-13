@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tracktion/bloc/common/Workout.dart';
 import 'package:tracktion/util/analysis/getSetMaxWeigth.dart';
 import 'package:tracktion/util/analysis/getSetVolume.dart';
@@ -19,9 +18,7 @@ part 'workout_state.dart';
 
 class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   final SQLDatabase db;
-  final Common common;
-  WorkoutBloc({@required this.db, @required this.common})
-      : super(WorkoutInitial());
+  WorkoutBloc({required this.db}) : super(WorkoutInitial());
 
   @override
   Stream<WorkoutState> mapEventToState(
@@ -73,8 +70,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       var exe = event.set.exercise.copy();
       var setId = event.set.id;
       exe.lastWorkouts.removeWhere((wk) => wk.setId == setId);
-      exe = await _verifyMaxWeigth(exe: exe, setId: setId, newSetWeigth: null);
-      exe = await _verifyMaxVolume(exe: exe, setId: setId, newSetVolume: null);
+      exe = await _verifyMaxWeigth(exe: exe, setId: setId);
+      exe = await _verifyMaxVolume(exe: exe, setId: setId);
       exe = consenceMaxes(exe: exe, willDelete: true, setId: setId);
       await _saveExercise(exe);
       await this.db.deleteSet(setId);
@@ -241,7 +238,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   }
 
   Future<modelsApp.Exercise> _verifyMaxWeigth(
-      {modelsApp.Exercise exe, int setId, double newSetWeigth}) async {
+      {modelsApp.Exercise exe, int setId, double? newSetWeigth}) async {
     var _exe = exe.copy();
     var delete = newSetWeigth == null;
 
