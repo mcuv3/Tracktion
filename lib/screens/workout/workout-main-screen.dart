@@ -25,10 +25,10 @@ class WorkOutScreen extends StatefulWidget {
 
 class _WorkOutScreenState extends State<WorkOutScreen>
     with TickerProviderStateMixin {
-  AnimationController _pageController;
-  Animation<double> animation;
+  AnimationController? _pageController;
+  Animation<double>? animation;
   bool direction = true;
-  DateTime currentDate;
+  DateTime currentDate = DateTime.now();
   var delitionMode = false;
   List<SetWorkout> selectedSets = [];
   List<int> orderSets = [];
@@ -38,7 +38,6 @@ class _WorkOutScreenState extends State<WorkOutScreen>
 
   @override
   void initState() {
-    currentDate = DateTime.now();
     _pageController =
         AnimationController(duration: Duration(milliseconds: 200), vsync: this)
           ..addListener(() => setState(() {}));
@@ -79,10 +78,13 @@ class _WorkOutScreenState extends State<WorkOutScreen>
     BlocProvider.of<WorkoutBloc>(context).add(FetchWorkout(date: currentDate));
   }
 
-  void showSetDetails({@required int setId, @required List<SetWorkout> sets}) {
-    final exerciseWorkout =
-        sets.firstWhere((e) => e.id == setId, orElse: () => null);
-    if (exerciseWorkout == null) return;
+  void showSetDetails({required int setId, required List<SetWorkout> sets}) {
+    var idxWorkout = sets.indexWhere((e) => e.id == setId);
+
+    if (idxWorkout == -1) return;
+
+    var exerciseWorkout = sets[idxWorkout];
+
     Navigator.of(context).pushNamed(ExerciseWorkOut.routeName, arguments: {
       "exercise": exerciseWorkout.exercise,
       "reps": exerciseWorkout.reps,
@@ -115,15 +117,17 @@ class _WorkOutScreenState extends State<WorkOutScreen>
   void orderSetsHandler(int prev, int next, List<SetWorkout> sets) {
     var ids = orderSets;
 
-    if (ids.length == 0) for (final set in sets) ids.add(set.id);
-    if (next >= orderSets.length) next = orderSets.length - 1;
-    // if (next > prev) next -= 1;
-    print(ids);
+    init() {
+      for (final set in sets) {
+        if (set.id != null) ids.add(set.id!);
+      }
+    }
 
+    if (ids.length == 0) init();
+
+    if (next >= orderSets.length) next = orderSets.length - 1;
     final item = ids.removeAt(prev);
     ids.insert(next, item);
-    //
-    print(ids);
     setState(() {
       orderSets = ids;
     });
@@ -143,7 +147,8 @@ class _WorkOutScreenState extends State<WorkOutScreen>
         splashColor: Colors.red.withOpacity(0.3),
         onTap: () {
           if (sortMode) return;
-          if (!delitionMode) return showSetDetails(setId: set.id, sets: sets);
+          if (!delitionMode && set.id != null)
+            return showSetDetails(setId: set.id!, sets: sets);
 
           selectItemHandler(set);
         },
@@ -244,7 +249,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
               ),
               Expanded(
                 child: AnimatedBuilder(
-                  animation: _pageController,
+                  animation: _pageController!,
                   builder: (context, _) => Transform.translate(
                     offset: Offset(0.0 * (direction ? 1 : -1), 0.0),
                     child: BlocBuilder<WorkoutBloc, WorkoutState>(
@@ -254,15 +259,18 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                             builder: (context, sts) {
                               if (sts.connectionState ==
                                   ConnectionState.active) {
-                                List<SetWorkout> sets = sts.data;
+                                List<SetWorkout> sets = sts.data != null
+                                    ? sts.data as List<SetWorkout>
+                                    : [];
 
-                                sets.sort((a, b) => orderSets
-                                    .indexOf(a.id)
-                                    .compareTo(orderSets.indexOf(b.id)));
                                 if (sets.isEmpty)
                                   return WorkoutEmpty(
                                     currentDate: state.date,
                                   );
+
+                                sets.sort((a, b) => orderSets
+                                    .indexOf(a.id!)
+                                    .compareTo(orderSets.indexOf(b.id!)));
 
                                 if (analysisMode)
                                   return WorkoutAnalysisScreen(sets);

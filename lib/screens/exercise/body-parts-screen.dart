@@ -13,7 +13,7 @@ class BodyPartsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final args =
-        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     return Scaffold(
         drawer: args != null ? null : MainDrawer(),
         appBar: AppBar(

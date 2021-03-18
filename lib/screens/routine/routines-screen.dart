@@ -5,7 +5,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 class RoutinesScreen extends StatelessWidget {
   static const routeName = "/----";
 
-  const RoutinesScreen({Key key}) : super(key: key);
+  const RoutinesScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext rootContext) {

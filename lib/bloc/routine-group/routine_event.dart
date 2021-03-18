@@ -6,7 +6,7 @@ abstract class RoutineGroupEvent {}
 class StreamGroupRoutines extends RoutineGroupEvent {}
 
 class SaveGroupRoutine extends RoutineGroupEvent {
-  final RoutineGroupData group;
+  final RoutineGroupCompanion group;
   SaveGroupRoutine(this.group);
 }
 

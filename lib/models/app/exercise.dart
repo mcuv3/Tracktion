@@ -7,12 +7,12 @@ class Exercise {
   final int? id;
   final String name;
   final Difficulty difficulty;
-  final String notes;
+  final String? notes;
   double maxWeigth;
   int? maxWeigthSetId;
   double maxVolume;
   int? maxVolumeSetId;
-  List<SetResume> lastWorkouts;
+  List<SetResume> lastWorkouts = [];
   List<BodyPartEnum> bodyParts;
   int? setId;
 
@@ -21,9 +21,9 @@ class Exercise {
       required this.name,
       required this.difficulty,
       required this.bodyParts,
-      required this.lastWorkouts,
-      required this.maxWeigth,
-      required this.maxVolume,
+       required this.lastWorkouts ,
+       this.maxWeigth = 0.0,
+       this.maxVolume = 0.0,
       this.maxVolumeSetId,
       this.maxWeigthSetId,
       this.notes = ""});

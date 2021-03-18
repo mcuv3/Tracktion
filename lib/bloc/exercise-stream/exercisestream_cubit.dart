@@ -13,6 +13,9 @@ class ExerciseStreamCubit extends Cubit<ExerciseStreamState> {
   void streamExercise(int exerciseId) {
     if (state is ExeStream) {}
     final exe = this.db.findExerciseStream(exerciseId);
+
+
     emit(ExeStream(exe));
+  
   }
 }

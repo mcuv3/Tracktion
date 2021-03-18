@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:moor_flutter/moor_flutter.dart' as _;
 import 'package:tracktion/bloc/routine-group/routine_bloc.dart';
 import 'package:tracktion/colors/custom_colors.dart';
 import 'package:tracktion/models/db/database.dart';
@@ -26,11 +27,10 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
     var isValid = form.currentState!.validate();
     if (isValid) {
       BlocProvider.of<RoutineGroupBloc>(context).add(SaveGroupRoutine(
-          RoutineGroupData(
-              id: null,
+          RoutineGroupCompanion(
               name: fields["name"],
               description: fields["description"],
-              level: level)));
+              level: _.Value(level))));
     }
   }
 

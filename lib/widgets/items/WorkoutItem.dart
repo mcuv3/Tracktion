@@ -14,7 +14,7 @@ class WorkoutItem extends StatelessWidget {
   final bool editable;
   final bool selectable;
   final List<bool>? repsSelectors;
-  final void Function({int? setId, int repIndex})? onCheckRep;
+  final void Function({required int setId, required int repIndex})? onCheckRep;
   final void Function(int? setId)? onCheckSet;
   final void Function(Rep rep, int repIndex)? onEditRep;
   final void Function(int? setId)? onDeleteSet;
@@ -96,7 +96,7 @@ class WorkoutItem extends StatelessWidget {
         return Checkbox(
           value: selectedValue,
           onChanged: (newValue) {
-            onCheckRep!(setId: set.id, repIndex: index);
+            if (set.id != null) onCheckRep!(setId: set.id!, repIndex: index);
           },
         );
       } else if (editable && onEditRep != null) {

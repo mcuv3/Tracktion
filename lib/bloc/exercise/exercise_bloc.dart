@@ -52,7 +52,7 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     try {
       final exe = event.exe;
       final exeDb = Exercise(
-          id: exe.id,
+          id: exe.id!,
           difficulty: exe.difficulty,
           maxVolumeSetId: exe.maxVolumeSetId,
           maxWeigthSetId: exe.maxWeigthSetId,
@@ -81,15 +81,14 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
 
       await db.insertMigration(MigrationsCompanion.insert(
           verb: "post", endPoint: '/api/exercise/v1/', payload: exe.toJson()));
-
+      print(exe);
       final exeDb = Exercise(
           id: exe.id,
           difficulty: exe.difficulty,
           name: exe.name,
           notes: exe.notes,
-          lastWorkouts: "",
-          maxVolume: 0.0,
-          maxWeigth: 0.0);
+          lastWorkouts: "");
+
       final exeWithBd =
           ExerciseWithBodyParts(bodyParts: exe.bodyParts, exe: exeDb);
       await db.saveExercise(exeWithBd);

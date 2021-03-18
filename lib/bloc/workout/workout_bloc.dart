@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:tracktion/bloc/common/Workout.dart';
+import 'package:moor/moor.dart';
 import 'package:tracktion/util/analysis/getSetMaxWeigth.dart';
 import 'package:tracktion/util/analysis/getSetVolume.dart';
 import 'package:tracktion/util/analysis/mergeSetLastWorkout.dart';
@@ -47,7 +47,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     DateTime date = toDayDate(DateTime.now());
     if (event.date == null && state is WorkoutSets) {
       date = (state as WorkoutSets).date;
-    } else if (event.date != null) date = toDayDate(event.date);
+    } else if (event.date != null) date = toDayDate(event.date!);
     yield WorkoutLoading();
     try {
       final sets = this.db.findSetsByDate(date);
@@ -69,6 +69,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     try {
       var exe = event.set.exercise.copy();
       var setId = event.set.id;
+      if (setId == null) return;
+
       exe.lastWorkouts.removeWhere((wk) => wk.setId == setId);
       exe = await _verifyMaxWeigth(exe: exe, setId: setId);
       exe = await _verifyMaxVolume(exe: exe, setId: setId);
@@ -97,15 +99,16 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       var exe = currentExe.copy();
       var volume = getSetVolume(event.set.reps);
       var maxWeigth = getSetMaxWeigth(event.set.reps);
+      var setId = event.set.id;
 
       var newOrUpdatedSet = modelsApp.SetResume(
-          setId: event.set.id,
+          setId: setId,
           date: event.date,
           maxWeigth: maxWeigth,
           volume: volume,
           reps: event.set.reps.length);
 
-      if (event.isEdit) {
+      if (event.isEdit && setId !=null) {
         var indexLastWorkout =
             exe.lastWorkouts.indexWhere((set) => set.setId == event.set.id);
         if (indexLastWorkout != -1)
@@ -113,23 +116,23 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
         exe = await _verifyMaxVolume(
             exe: exe,
             newSetVolume: newOrUpdatedSet.volume,
-            setId: newOrUpdatedSet.setId);
+            setId: setId);
         exe = await _verifyMaxWeigth(
             exe: exe,
             newSetWeigth: newOrUpdatedSet.maxWeigth,
-            setId: newOrUpdatedSet.setId);
+            setId: setId);
       } else {
         if (exe.lastWorkouts.length >= 12) exe.lastWorkouts.removeAt(11);
         exe.lastWorkouts.insert(0, newOrUpdatedSet);
       }
 
       exe = consenceMaxes(
-          setId: newOrUpdatedSet.setId,
+          setId: newOrUpdatedSet.setId!,
           exe: exe,
           maxWeigth: maxWeigth,
           volume: volume);
 
-      final setId = await this.db.saveSet(
+      final setIdSaved = await this.db.saveSet(
           modelsApp.SetWorkout(
               id: event.set.id,
               exercise: exe,
@@ -138,11 +141,11 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
               reps: event.set.reps),
           workout.id);
 
-      if (isCreation) {
-        exe.lastWorkouts[0].setId = setId;
+      if (isCreation && setIdSaved!=null) {
+        exe.lastWorkouts[0].setId = setIdSaved;
         if (exe.lastWorkouts.length == 1) {
-          exe.maxVolumeSetId = setId;
-          exe.maxWeigthSetId = setId;
+          exe.maxVolumeSetId = setIdSaved;
+          exe.maxWeigthSetId = setIdSaved;
         }
       }
 
@@ -180,7 +183,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
 
       // for (final set in cleanedSets) {
       await Future.wait(cleanedSets.map((s) =>
-          this._saveSet(SaveSet(date: event.date, isEdit: false, set: s))));
+          this._saveSet(SaveSet(date: event.date, isEdit: false, set: s!))));
       // await this._saveSet(SaveSet(date: event.date, isEdit: false, set: set));
       // }
     } catch (e) {
@@ -191,14 +194,17 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   Future<void> _saveRep(SaveRep event) async {
     try {
       print(event.rep.setId);
+      final setId = event.rep.setId;
 
-      final rep = Rep(
-          id: event.rep.id,
-          note: event.rep.notes,
+      if (setId == null) return null;
+
+      final rep = RepsCompanion.insert(
+          id: Value(event.rep.id),
+          note: Value(event.rep.notes),
           weight: event.rep.weight,
           reps: event.rep.reps,
           rpe: event.rep.rpe,
-          setId: event.rep.setId);
+          setId: setId);
       await this.db.saveRep(rep);
     } catch (e) {
       print(e);
@@ -214,18 +220,21 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   }
 
   Future<modelsApp.Exercise> _verifyMaxVolume(
-      {modelsApp.Exercise exe, int setId, double newSetVolume}) async {
+      {required modelsApp.Exercise exe,
+      required int setId,
+      double? newSetVolume}) async {
     var _exe = exe.copy();
     var delete = newSetVolume == null;
 
     if (exe.maxVolumeSetId == setId &&
-        ((!delete && newSetVolume < exe.maxVolume) || delete)) {
-      final results = await this.db.findMaxVolume(exe.id, setId);
+        ((!delete && newSetVolume != null && newSetVolume < exe.maxVolume) ||
+            delete)) {
+      final results = await this.db.findMaxVolume(exe.id!, setId);
       if (results == null) return _exe;
 
       final nextMaxVolume = results[1];
 
-      if (!delete && newSetVolume >= nextMaxVolume) {
+      if (!delete && newSetVolume != null && newSetVolume >= nextMaxVolume) {
         _exe.maxVolumeSetId = setId;
         _exe.maxVolume = newSetVolume;
       } else {
@@ -238,18 +247,21 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   }
 
   Future<modelsApp.Exercise> _verifyMaxWeigth(
-      {modelsApp.Exercise exe, int setId, double? newSetWeigth}) async {
+      {required modelsApp.Exercise exe,
+      required int setId,
+      double? newSetWeigth}) async {
     var _exe = exe.copy();
     var delete = newSetWeigth == null;
 
     if (exe.maxWeigthSetId == setId &&
-        ((!delete && newSetWeigth < exe.maxWeigth) || delete)) {
-      final results = await this.db.findMaxWeigth(exe.id, setId);
+        ((!delete && newSetWeigth != null && newSetWeigth < exe.maxWeigth) ||
+            delete)) {
+      final results = await this.db.findMaxWeigth(exe.id!, setId);
       if (results == null) return _exe;
 
       final nextMaxWeigth = results[1];
 
-      if (!delete && newSetWeigth >= nextMaxWeigth) {
+      if (!delete && newSetWeigth != null && newSetWeigth >= nextMaxWeigth) {
         _exe.maxWeigthSetId = setId;
         _exe.maxWeigth = newSetWeigth;
       } else {
@@ -262,14 +274,14 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   }
 
   Future<dynamic> _saveExercise(modelsApp.Exercise exe) =>
-      this.db.insertExercise(Exercise(
-          id: exe.id,
-          maxVolumeSetId: exe.maxVolumeSetId,
-          maxWeigthSetId: exe.maxWeigthSetId,
+      this.db.insertExercise(ExercisesCompanion.insert(
+          id: Value(exe.id),
+          maxVolumeSetId: Value(exe.maxVolumeSetId),
+          maxWeigthSetId: Value(exe.maxWeigthSetId),
           difficulty: exe.difficulty,
           lastWorkouts: exe.lastWorkoutsToString(),
-          maxVolume: exe.maxVolume,
-          maxWeigth: exe.maxWeigth,
+          maxVolume: Value(exe.maxVolume),
+          maxWeigth: Value(exe.maxWeigth),
           name: exe.name,
-          notes: exe.notes));
+          notes: Value(exe.notes)));
 }

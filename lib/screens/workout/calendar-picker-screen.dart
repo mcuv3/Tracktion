@@ -36,8 +36,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
     print(_selectedEvents);
   }
 
-  List _selectedEvents;
-  DateTime _selectedDay;
+  List? _selectedEvents;
+  DateTime? _selectedDay;
 
   final Map<DateTime, List> _events = {
     DateTime(2021, 1, 7): [

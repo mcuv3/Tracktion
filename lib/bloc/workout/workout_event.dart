@@ -4,8 +4,8 @@ part of 'workout_bloc.dart';
 abstract class WorkoutEvent {}
 
 class FetchWorkout extends WorkoutEvent {
-  final DateTime date;
-  FetchWorkout({required this.date});
+  final DateTime? date;
+  FetchWorkout({this.date});
 }
 
 class DeleteWorkout extends WorkoutEvent {

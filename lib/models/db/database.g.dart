@@ -8,27 +8,27 @@ part of 'database.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
 class Exercise extends DataClass implements Insertable<Exercise> {
-  final int id;
+  final int? id;
   final String name;
   final String lastWorkouts;
-  final double maxVolume;
-  final double maxWeigth;
-  final int maxWeigthSetId;
-  final int maxVolumeSetId;
-  final String notes;
+  final double? maxVolume;
+  final double? maxWeigth;
+  final int? maxWeigthSetId;
+  final int? maxVolumeSetId;
+  final String? notes;
   final Difficulty difficulty;
   Exercise(
-      {@required this.id,
-      @required this.name,
-      @required this.lastWorkouts,
-      @required this.maxVolume,
-      @required this.maxWeigth,
+      {this.id,
+      required this.name,
+      required this.lastWorkouts,
+      this.maxVolume,
+      this.maxWeigth,
       this.maxWeigthSetId,
       this.maxVolumeSetId,
       this.notes,
-      @required this.difficulty});
+      required this.difficulty});
   factory Exercise.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
@@ -114,46 +114,46 @@ class Exercise extends DataClass implements Insertable<Exercise> {
   }
 
   factory Exercise.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Exercise(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<int?>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       lastWorkouts: serializer.fromJson<String>(json['lastWorkouts']),
-      maxVolume: serializer.fromJson<double>(json['maxVolume']),
-      maxWeigth: serializer.fromJson<double>(json['maxWeigth']),
-      maxWeigthSetId: serializer.fromJson<int>(json['maxWeigthSetId']),
-      maxVolumeSetId: serializer.fromJson<int>(json['maxVolumeSetId']),
-      notes: serializer.fromJson<String>(json['notes']),
+      maxVolume: serializer.fromJson<double?>(json['maxVolume']),
+      maxWeigth: serializer.fromJson<double?>(json['maxWeigth']),
+      maxWeigthSetId: serializer.fromJson<int?>(json['maxWeigthSetId']),
+      maxVolumeSetId: serializer.fromJson<int?>(json['maxVolumeSetId']),
+      notes: serializer.fromJson<String?>(json['notes']),
       difficulty: serializer.fromJson<Difficulty>(json['difficulty']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<int?>(id),
       'name': serializer.toJson<String>(name),
       'lastWorkouts': serializer.toJson<String>(lastWorkouts),
-      'maxVolume': serializer.toJson<double>(maxVolume),
-      'maxWeigth': serializer.toJson<double>(maxWeigth),
-      'maxWeigthSetId': serializer.toJson<int>(maxWeigthSetId),
-      'maxVolumeSetId': serializer.toJson<int>(maxVolumeSetId),
-      'notes': serializer.toJson<String>(notes),
+      'maxVolume': serializer.toJson<double?>(maxVolume),
+      'maxWeigth': serializer.toJson<double?>(maxWeigth),
+      'maxWeigthSetId': serializer.toJson<int?>(maxWeigthSetId),
+      'maxVolumeSetId': serializer.toJson<int?>(maxVolumeSetId),
+      'notes': serializer.toJson<String?>(notes),
       'difficulty': serializer.toJson<Difficulty>(difficulty),
     };
   }
 
   Exercise copyWith(
-          {int id,
-          String name,
-          String lastWorkouts,
-          double maxVolume,
-          double maxWeigth,
-          int maxWeigthSetId,
-          int maxVolumeSetId,
-          String notes,
-          Difficulty difficulty}) =>
+          {int? id,
+          String? name,
+          String? lastWorkouts,
+          double? maxVolume,
+          double? maxWeigth,
+          int? maxWeigthSetId,
+          int? maxVolumeSetId,
+          String? notes,
+          Difficulty? difficulty}) =>
       Exercise(
         id: id ?? this.id,
         name: name ?? this.name,
@@ -214,14 +214,14 @@ class Exercise extends DataClass implements Insertable<Exercise> {
 }
 
 class ExercisesCompanion extends UpdateCompanion<Exercise> {
-  final Value<int> id;
+  final Value<int?> id;
   final Value<String> name;
   final Value<String> lastWorkouts;
-  final Value<double> maxVolume;
-  final Value<double> maxWeigth;
-  final Value<int> maxWeigthSetId;
-  final Value<int> maxVolumeSetId;
-  final Value<String> notes;
+  final Value<double?> maxVolume;
+  final Value<double?> maxWeigth;
+  final Value<int?> maxWeigthSetId;
+  final Value<int?> maxVolumeSetId;
+  final Value<String?> notes;
   final Value<Difficulty> difficulty;
   const ExercisesCompanion({
     this.id = const Value.absent(),
@@ -236,29 +236,27 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
   });
   ExercisesCompanion.insert({
     this.id = const Value.absent(),
-    @required String name,
-    @required String lastWorkouts,
-    @required double maxVolume,
-    @required double maxWeigth,
+    required String name,
+    required String lastWorkouts,
+    this.maxVolume = const Value.absent(),
+    this.maxWeigth = const Value.absent(),
     this.maxWeigthSetId = const Value.absent(),
     this.maxVolumeSetId = const Value.absent(),
     this.notes = const Value.absent(),
-    @required Difficulty difficulty,
-  })  : name = Value(name),
+    required Difficulty difficulty,
+  })   : name = Value(name),
         lastWorkouts = Value(lastWorkouts),
-        maxVolume = Value(maxVolume),
-        maxWeigth = Value(maxWeigth),
         difficulty = Value(difficulty);
   static Insertable<Exercise> custom({
-    Expression<int> id,
-    Expression<String> name,
-    Expression<String> lastWorkouts,
-    Expression<double> maxVolume,
-    Expression<double> maxWeigth,
-    Expression<int> maxWeigthSetId,
-    Expression<int> maxVolumeSetId,
-    Expression<String> notes,
-    Expression<int> difficulty,
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? lastWorkouts,
+    Expression<double>? maxVolume,
+    Expression<double>? maxWeigth,
+    Expression<int>? maxWeigthSetId,
+    Expression<int>? maxVolumeSetId,
+    Expression<String>? notes,
+    Expression<int>? difficulty,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -274,15 +272,15 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
   }
 
   ExercisesCompanion copyWith(
-      {Value<int> id,
-      Value<String> name,
-      Value<String> lastWorkouts,
-      Value<double> maxVolume,
-      Value<double> maxWeigth,
-      Value<int> maxWeigthSetId,
-      Value<int> maxVolumeSetId,
-      Value<String> notes,
-      Value<Difficulty> difficulty}) {
+      {Value<int?>? id,
+      Value<String>? name,
+      Value<String>? lastWorkouts,
+      Value<double?>? maxVolume,
+      Value<double?>? maxWeigth,
+      Value<int?>? maxWeigthSetId,
+      Value<int?>? maxVolumeSetId,
+      Value<String?>? notes,
+      Value<Difficulty>? difficulty}) {
     return ExercisesCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -350,21 +348,19 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
 class $ExercisesTable extends Exercises
     with TableInfo<$ExercisesTable, Exercise> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $ExercisesTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
+    return GeneratedIntColumn('id', $tableName, true,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _nameMeta = const VerificationMeta('name');
-  GeneratedTextColumn _name;
   @override
-  GeneratedTextColumn get name => _name ??= _constructName();
+  late final GeneratedTextColumn name = _constructName();
   GeneratedTextColumn _constructName() {
     return GeneratedTextColumn('name', $tableName, false,
         minTextLength: 1, maxTextLength: 50);
@@ -372,10 +368,8 @@ class $ExercisesTable extends Exercises
 
   final VerificationMeta _lastWorkoutsMeta =
       const VerificationMeta('lastWorkouts');
-  GeneratedTextColumn _lastWorkouts;
   @override
-  GeneratedTextColumn get lastWorkouts =>
-      _lastWorkouts ??= _constructLastWorkouts();
+  late final GeneratedTextColumn lastWorkouts = _constructLastWorkouts();
   GeneratedTextColumn _constructLastWorkouts() {
     return GeneratedTextColumn(
       'last_workouts',
@@ -385,35 +379,25 @@ class $ExercisesTable extends Exercises
   }
 
   final VerificationMeta _maxVolumeMeta = const VerificationMeta('maxVolume');
-  GeneratedRealColumn _maxVolume;
   @override
-  GeneratedRealColumn get maxVolume => _maxVolume ??= _constructMaxVolume();
+  late final GeneratedRealColumn maxVolume = _constructMaxVolume();
   GeneratedRealColumn _constructMaxVolume() {
-    return GeneratedRealColumn(
-      'max_volume',
-      $tableName,
-      false,
-    );
+    return GeneratedRealColumn('max_volume', $tableName, true,
+        defaultValue: const Constant(0.0));
   }
 
   final VerificationMeta _maxWeigthMeta = const VerificationMeta('maxWeigth');
-  GeneratedRealColumn _maxWeigth;
   @override
-  GeneratedRealColumn get maxWeigth => _maxWeigth ??= _constructMaxWeigth();
+  late final GeneratedRealColumn maxWeigth = _constructMaxWeigth();
   GeneratedRealColumn _constructMaxWeigth() {
-    return GeneratedRealColumn(
-      'max_weigth',
-      $tableName,
-      false,
-    );
+    return GeneratedRealColumn('max_weigth', $tableName, true,
+        defaultValue: const Constant(0.0));
   }
 
   final VerificationMeta _maxWeigthSetIdMeta =
       const VerificationMeta('maxWeigthSetId');
-  GeneratedIntColumn _maxWeigthSetId;
   @override
-  GeneratedIntColumn get maxWeigthSetId =>
-      _maxWeigthSetId ??= _constructMaxWeigthSetId();
+  late final GeneratedIntColumn maxWeigthSetId = _constructMaxWeigthSetId();
   GeneratedIntColumn _constructMaxWeigthSetId() {
     return GeneratedIntColumn(
       'max_weigth_set_id',
@@ -424,10 +408,8 @@ class $ExercisesTable extends Exercises
 
   final VerificationMeta _maxVolumeSetIdMeta =
       const VerificationMeta('maxVolumeSetId');
-  GeneratedIntColumn _maxVolumeSetId;
   @override
-  GeneratedIntColumn get maxVolumeSetId =>
-      _maxVolumeSetId ??= _constructMaxVolumeSetId();
+  late final GeneratedIntColumn maxVolumeSetId = _constructMaxVolumeSetId();
   GeneratedIntColumn _constructMaxVolumeSetId() {
     return GeneratedIntColumn(
       'max_volume_set_id',
@@ -437,17 +419,15 @@ class $ExercisesTable extends Exercises
   }
 
   final VerificationMeta _notesMeta = const VerificationMeta('notes');
-  GeneratedTextColumn _notes;
   @override
-  GeneratedTextColumn get notes => _notes ??= _constructNotes();
+  late final GeneratedTextColumn notes = _constructNotes();
   GeneratedTextColumn _constructNotes() {
     return GeneratedTextColumn('notes', $tableName, true, maxTextLength: 200);
   }
 
   final VerificationMeta _difficultyMeta = const VerificationMeta('difficulty');
-  GeneratedIntColumn _difficulty;
   @override
-  GeneratedIntColumn get difficulty => _difficulty ??= _constructDifficulty();
+  late final GeneratedIntColumn difficulty = _constructDifficulty();
   GeneratedIntColumn _constructDifficulty() {
     return GeneratedIntColumn(
       'difficulty',
@@ -499,14 +479,10 @@ class $ExercisesTable extends Exercises
     if (data.containsKey('max_volume')) {
       context.handle(_maxVolumeMeta,
           maxVolume.isAcceptableOrUnknown(data['max_volume'], _maxVolumeMeta));
-    } else if (isInserting) {
-      context.missing(_maxVolumeMeta);
     }
     if (data.containsKey('max_weigth')) {
       context.handle(_maxWeigthMeta,
           maxWeigth.isAcceptableOrUnknown(data['max_weigth'], _maxWeigthMeta));
-    } else if (isInserting) {
-      context.missing(_maxWeigthMeta);
     }
     if (data.containsKey('max_weigth_set_id')) {
       context.handle(
@@ -531,7 +507,7 @@ class $ExercisesTable extends Exercises
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Exercise map(Map<String, dynamic> data, {String tablePrefix}) {
+  Exercise map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return Exercise.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -549,10 +525,10 @@ class ExerciseBodyPart extends DataClass
     implements Insertable<ExerciseBodyPart> {
   final int exerciseId;
   final BodyPartEnum bodyPart;
-  ExerciseBodyPart({@required this.exerciseId, @required this.bodyPart});
+  ExerciseBodyPart({required this.exerciseId, required this.bodyPart});
   factory ExerciseBodyPart.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     return ExerciseBodyPart(
@@ -587,7 +563,7 @@ class ExerciseBodyPart extends DataClass
   }
 
   factory ExerciseBodyPart.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return ExerciseBodyPart(
       exerciseId: serializer.fromJson<int>(json['exerciseId']),
@@ -595,7 +571,7 @@ class ExerciseBodyPart extends DataClass
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'exerciseId': serializer.toJson<int>(exerciseId),
@@ -603,7 +579,7 @@ class ExerciseBodyPart extends DataClass
     };
   }
 
-  ExerciseBodyPart copyWith({int exerciseId, BodyPartEnum bodyPart}) =>
+  ExerciseBodyPart copyWith({int? exerciseId, BodyPartEnum? bodyPart}) =>
       ExerciseBodyPart(
         exerciseId: exerciseId ?? this.exerciseId,
         bodyPart: bodyPart ?? this.bodyPart,
@@ -635,13 +611,13 @@ class ExerciseBodyPartsCompanion extends UpdateCompanion<ExerciseBodyPart> {
     this.bodyPart = const Value.absent(),
   });
   ExerciseBodyPartsCompanion.insert({
-    @required int exerciseId,
-    @required BodyPartEnum bodyPart,
-  })  : exerciseId = Value(exerciseId),
+    required int exerciseId,
+    required BodyPartEnum bodyPart,
+  })   : exerciseId = Value(exerciseId),
         bodyPart = Value(bodyPart);
   static Insertable<ExerciseBodyPart> custom({
-    Expression<int> exerciseId,
-    Expression<int> bodyPart,
+    Expression<int>? exerciseId,
+    Expression<int>? bodyPart,
   }) {
     return RawValuesInsertable({
       if (exerciseId != null) 'exercise_id': exerciseId,
@@ -650,7 +626,7 @@ class ExerciseBodyPartsCompanion extends UpdateCompanion<ExerciseBodyPart> {
   }
 
   ExerciseBodyPartsCompanion copyWith(
-      {Value<int> exerciseId, Value<BodyPartEnum> bodyPart}) {
+      {Value<int>? exerciseId, Value<BodyPartEnum>? bodyPart}) {
     return ExerciseBodyPartsCompanion(
       exerciseId: exerciseId ?? this.exerciseId,
       bodyPart: bodyPart ?? this.bodyPart,
@@ -683,21 +659,19 @@ class ExerciseBodyPartsCompanion extends UpdateCompanion<ExerciseBodyPart> {
 class $ExerciseBodyPartsTable extends ExerciseBodyParts
     with TableInfo<$ExerciseBodyPartsTable, ExerciseBodyPart> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $ExerciseBodyPartsTable(this._db, [this._alias]);
   final VerificationMeta _exerciseIdMeta = const VerificationMeta('exerciseId');
-  GeneratedIntColumn _exerciseId;
   @override
-  GeneratedIntColumn get exerciseId => _exerciseId ??= _constructExerciseId();
+  late final GeneratedIntColumn exerciseId = _constructExerciseId();
   GeneratedIntColumn _constructExerciseId() {
     return GeneratedIntColumn('exercise_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES exercises (id)');
   }
 
   final VerificationMeta _bodyPartMeta = const VerificationMeta('bodyPart');
-  GeneratedIntColumn _bodyPart;
   @override
-  GeneratedIntColumn get bodyPart => _bodyPart ??= _constructBodyPart();
+  late final GeneratedIntColumn bodyPart = _constructBodyPart();
   GeneratedIntColumn _constructBodyPart() {
     return GeneratedIntColumn(
       'body_part',
@@ -734,7 +708,7 @@ class $ExerciseBodyPartsTable extends ExerciseBodyParts
   @override
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
-  ExerciseBodyPart map(Map<String, dynamic> data, {String tablePrefix}) {
+  ExerciseBodyPart map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return ExerciseBodyPart.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -754,12 +728,12 @@ class Migration extends DataClass implements Insertable<Migration> {
   final String payload;
   final String verb;
   Migration(
-      {@required this.id,
-      @required this.endPoint,
-      @required this.payload,
-      @required this.verb});
+      {required this.id,
+      required this.endPoint,
+      required this.payload,
+      required this.verb});
   factory Migration.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
@@ -804,7 +778,7 @@ class Migration extends DataClass implements Insertable<Migration> {
   }
 
   factory Migration.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Migration(
       id: serializer.fromJson<int>(json['id']),
@@ -814,7 +788,7 @@ class Migration extends DataClass implements Insertable<Migration> {
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
@@ -824,7 +798,8 @@ class Migration extends DataClass implements Insertable<Migration> {
     };
   }
 
-  Migration copyWith({int id, String endPoint, String payload, String verb}) =>
+  Migration copyWith(
+          {int? id, String? endPoint, String? payload, String? verb}) =>
       Migration(
         id: id ?? this.id,
         endPoint: endPoint ?? this.endPoint,
@@ -868,17 +843,17 @@ class MigrationsCompanion extends UpdateCompanion<Migration> {
   });
   MigrationsCompanion.insert({
     this.id = const Value.absent(),
-    @required String endPoint,
-    @required String payload,
-    @required String verb,
-  })  : endPoint = Value(endPoint),
+    required String endPoint,
+    required String payload,
+    required String verb,
+  })   : endPoint = Value(endPoint),
         payload = Value(payload),
         verb = Value(verb);
   static Insertable<Migration> custom({
-    Expression<int> id,
-    Expression<String> endPoint,
-    Expression<String> payload,
-    Expression<String> verb,
+    Expression<int>? id,
+    Expression<String>? endPoint,
+    Expression<String>? payload,
+    Expression<String>? verb,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -889,10 +864,10 @@ class MigrationsCompanion extends UpdateCompanion<Migration> {
   }
 
   MigrationsCompanion copyWith(
-      {Value<int> id,
-      Value<String> endPoint,
-      Value<String> payload,
-      Value<String> verb}) {
+      {Value<int>? id,
+      Value<String>? endPoint,
+      Value<String>? payload,
+      Value<String>? verb}) {
     return MigrationsCompanion(
       id: id ?? this.id,
       endPoint: endPoint ?? this.endPoint,
@@ -934,21 +909,19 @@ class MigrationsCompanion extends UpdateCompanion<Migration> {
 class $MigrationsTable extends Migrations
     with TableInfo<$MigrationsTable, Migration> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $MigrationsTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _endPointMeta = const VerificationMeta('endPoint');
-  GeneratedTextColumn _endPoint;
   @override
-  GeneratedTextColumn get endPoint => _endPoint ??= _constructEndPoint();
+  late final GeneratedTextColumn endPoint = _constructEndPoint();
   GeneratedTextColumn _constructEndPoint() {
     return GeneratedTextColumn(
       'end_point',
@@ -958,9 +931,8 @@ class $MigrationsTable extends Migrations
   }
 
   final VerificationMeta _payloadMeta = const VerificationMeta('payload');
-  GeneratedTextColumn _payload;
   @override
-  GeneratedTextColumn get payload => _payload ??= _constructPayload();
+  late final GeneratedTextColumn payload = _constructPayload();
   GeneratedTextColumn _constructPayload() {
     return GeneratedTextColumn(
       'payload',
@@ -970,9 +942,8 @@ class $MigrationsTable extends Migrations
   }
 
   final VerificationMeta _verbMeta = const VerificationMeta('verb');
-  GeneratedTextColumn _verb;
   @override
-  GeneratedTextColumn get verb => _verb ??= _constructVerb();
+  late final GeneratedTextColumn verb = _constructVerb();
   GeneratedTextColumn _constructVerb() {
     return GeneratedTextColumn(
       'verb',
@@ -1021,7 +992,7 @@ class $MigrationsTable extends Migrations
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Migration map(Map<String, dynamic> data, {String tablePrefix}) {
+  Migration map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return Migration.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -1039,13 +1010,13 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
   final int workOutId;
   final int exerciseId;
   SetWorkout(
-      {@required this.id,
-      @required this.volume,
-      @required this.maxWeigth,
-      @required this.workOutId,
-      @required this.exerciseId});
+      {required this.id,
+      required this.volume,
+      required this.maxWeigth,
+      required this.workOutId,
+      required this.exerciseId});
   factory SetWorkout.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final doubleType = db.typeSystem.forDartType<double>();
@@ -1100,7 +1071,7 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
   }
 
   factory SetWorkout.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return SetWorkout(
       id: serializer.fromJson<int>(json['id']),
@@ -1111,7 +1082,7 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
@@ -1123,11 +1094,11 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
   }
 
   SetWorkout copyWith(
-          {int id,
-          double volume,
-          double maxWeigth,
-          int workOutId,
-          int exerciseId}) =>
+          {int? id,
+          double? volume,
+          double? maxWeigth,
+          int? workOutId,
+          int? exerciseId}) =>
       SetWorkout(
         id: id ?? this.id,
         volume: volume ?? this.volume,
@@ -1180,20 +1151,20 @@ class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
   });
   SetWorkoutsCompanion.insert({
     this.id = const Value.absent(),
-    @required double volume,
-    @required double maxWeigth,
-    @required int workOutId,
-    @required int exerciseId,
-  })  : volume = Value(volume),
+    required double volume,
+    required double maxWeigth,
+    required int workOutId,
+    required int exerciseId,
+  })   : volume = Value(volume),
         maxWeigth = Value(maxWeigth),
         workOutId = Value(workOutId),
         exerciseId = Value(exerciseId);
   static Insertable<SetWorkout> custom({
-    Expression<int> id,
-    Expression<double> volume,
-    Expression<double> maxWeigth,
-    Expression<int> workOutId,
-    Expression<int> exerciseId,
+    Expression<int>? id,
+    Expression<double>? volume,
+    Expression<double>? maxWeigth,
+    Expression<int>? workOutId,
+    Expression<int>? exerciseId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1205,11 +1176,11 @@ class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
   }
 
   SetWorkoutsCompanion copyWith(
-      {Value<int> id,
-      Value<double> volume,
-      Value<double> maxWeigth,
-      Value<int> workOutId,
-      Value<int> exerciseId}) {
+      {Value<int>? id,
+      Value<double>? volume,
+      Value<double>? maxWeigth,
+      Value<int>? workOutId,
+      Value<int>? exerciseId}) {
     return SetWorkoutsCompanion(
       id: id ?? this.id,
       volume: volume ?? this.volume,
@@ -1256,21 +1227,19 @@ class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
 class $SetWorkoutsTable extends SetWorkouts
     with TableInfo<$SetWorkoutsTable, SetWorkout> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $SetWorkoutsTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _volumeMeta = const VerificationMeta('volume');
-  GeneratedRealColumn _volume;
   @override
-  GeneratedRealColumn get volume => _volume ??= _constructVolume();
+  late final GeneratedRealColumn volume = _constructVolume();
   GeneratedRealColumn _constructVolume() {
     return GeneratedRealColumn(
       'volume',
@@ -1280,9 +1249,8 @@ class $SetWorkoutsTable extends SetWorkouts
   }
 
   final VerificationMeta _maxWeigthMeta = const VerificationMeta('maxWeigth');
-  GeneratedRealColumn _maxWeigth;
   @override
-  GeneratedRealColumn get maxWeigth => _maxWeigth ??= _constructMaxWeigth();
+  late final GeneratedRealColumn maxWeigth = _constructMaxWeigth();
   GeneratedRealColumn _constructMaxWeigth() {
     return GeneratedRealColumn(
       'max_weigth',
@@ -1292,18 +1260,16 @@ class $SetWorkoutsTable extends SetWorkouts
   }
 
   final VerificationMeta _workOutIdMeta = const VerificationMeta('workOutId');
-  GeneratedIntColumn _workOutId;
   @override
-  GeneratedIntColumn get workOutId => _workOutId ??= _constructWorkOutId();
+  late final GeneratedIntColumn workOutId = _constructWorkOutId();
   GeneratedIntColumn _constructWorkOutId() {
     return GeneratedIntColumn('work_out_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES workouts (id)');
   }
 
   final VerificationMeta _exerciseIdMeta = const VerificationMeta('exerciseId');
-  GeneratedIntColumn _exerciseId;
   @override
-  GeneratedIntColumn get exerciseId => _exerciseId ??= _constructExerciseId();
+  late final GeneratedIntColumn exerciseId = _constructExerciseId();
   GeneratedIntColumn _constructExerciseId() {
     return GeneratedIntColumn('exercise_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES exercises (id)');
@@ -1358,7 +1324,7 @@ class $SetWorkoutsTable extends SetWorkouts
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  SetWorkout map(Map<String, dynamic> data, {String tablePrefix}) {
+  SetWorkout map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return SetWorkout.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -1372,9 +1338,9 @@ class $SetWorkoutsTable extends SetWorkouts
 class Workout extends DataClass implements Insertable<Workout> {
   final int id;
   final DateTime date;
-  Workout({@required this.id, @required this.date});
+  Workout({required this.id, required this.date});
   factory Workout.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final dateTimeType = db.typeSystem.forDartType<DateTime>();
@@ -1404,7 +1370,7 @@ class Workout extends DataClass implements Insertable<Workout> {
   }
 
   factory Workout.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Workout(
       id: serializer.fromJson<int>(json['id']),
@@ -1412,7 +1378,7 @@ class Workout extends DataClass implements Insertable<Workout> {
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
@@ -1420,7 +1386,7 @@ class Workout extends DataClass implements Insertable<Workout> {
     };
   }
 
-  Workout copyWith({int id, DateTime date}) => Workout(
+  Workout copyWith({int? id, DateTime? date}) => Workout(
         id: id ?? this.id,
         date: date ?? this.date,
       );
@@ -1450,11 +1416,11 @@ class WorkoutsCompanion extends UpdateCompanion<Workout> {
   });
   WorkoutsCompanion.insert({
     this.id = const Value.absent(),
-    @required DateTime date,
+    required DateTime date,
   }) : date = Value(date);
   static Insertable<Workout> custom({
-    Expression<int> id,
-    Expression<DateTime> date,
+    Expression<int>? id,
+    Expression<DateTime>? date,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1462,7 +1428,7 @@ class WorkoutsCompanion extends UpdateCompanion<Workout> {
     });
   }
 
-  WorkoutsCompanion copyWith({Value<int> id, Value<DateTime> date}) {
+  WorkoutsCompanion copyWith({Value<int>? id, Value<DateTime>? date}) {
     return WorkoutsCompanion(
       id: id ?? this.id,
       date: date ?? this.date,
@@ -1493,21 +1459,19 @@ class WorkoutsCompanion extends UpdateCompanion<Workout> {
 
 class $WorkoutsTable extends Workouts with TableInfo<$WorkoutsTable, Workout> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $WorkoutsTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _dateMeta = const VerificationMeta('date');
-  GeneratedDateTimeColumn _date;
   @override
-  GeneratedDateTimeColumn get date => _date ??= _constructDate();
+  late final GeneratedDateTimeColumn date = _constructDate();
   GeneratedDateTimeColumn _constructDate() {
     return GeneratedDateTimeColumn(
       'date',
@@ -1544,7 +1508,7 @@ class $WorkoutsTable extends Workouts with TableInfo<$WorkoutsTable, Workout> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Workout map(Map<String, dynamic> data, {String tablePrefix}) {
+  Workout map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return Workout.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -1563,14 +1527,14 @@ class Rep extends DataClass implements Insertable<Rep> {
   final String note;
   final int setId;
   Rep(
-      {@required this.id,
-      @required this.weight,
-      @required this.reps,
-      @required this.rpe,
-      @required this.note,
-      @required this.setId});
+      {required this.id,
+      required this.weight,
+      required this.reps,
+      required this.rpe,
+      required this.note,
+      required this.setId});
   factory Rep.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final doubleType = db.typeSystem.forDartType<double>();
@@ -1623,7 +1587,7 @@ class Rep extends DataClass implements Insertable<Rep> {
   }
 
   factory Rep.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Rep(
       id: serializer.fromJson<int>(json['id']),
@@ -1635,7 +1599,7 @@ class Rep extends DataClass implements Insertable<Rep> {
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
@@ -1648,7 +1612,12 @@ class Rep extends DataClass implements Insertable<Rep> {
   }
 
   Rep copyWith(
-          {int id, double weight, int reps, int rpe, String note, int setId}) =>
+          {int? id,
+          double? weight,
+          int? reps,
+          int? rpe,
+          String? note,
+          int? setId}) =>
       Rep(
         id: id ?? this.id,
         weight: weight ?? this.weight,
@@ -1706,22 +1675,22 @@ class RepsCompanion extends UpdateCompanion<Rep> {
   });
   RepsCompanion.insert({
     this.id = const Value.absent(),
-    @required double weight,
-    @required int reps,
-    @required int rpe,
+    required double weight,
+    required int reps,
+    required int rpe,
     this.note = const Value.absent(),
-    @required int setId,
-  })  : weight = Value(weight),
+    required int setId,
+  })   : weight = Value(weight),
         reps = Value(reps),
         rpe = Value(rpe),
         setId = Value(setId);
   static Insertable<Rep> custom({
-    Expression<int> id,
-    Expression<double> weight,
-    Expression<int> reps,
-    Expression<int> rpe,
-    Expression<String> note,
-    Expression<int> setId,
+    Expression<int>? id,
+    Expression<double>? weight,
+    Expression<int>? reps,
+    Expression<int>? rpe,
+    Expression<String>? note,
+    Expression<int>? setId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1734,12 +1703,12 @@ class RepsCompanion extends UpdateCompanion<Rep> {
   }
 
   RepsCompanion copyWith(
-      {Value<int> id,
-      Value<double> weight,
-      Value<int> reps,
-      Value<int> rpe,
-      Value<String> note,
-      Value<int> setId}) {
+      {Value<int>? id,
+      Value<double>? weight,
+      Value<int>? reps,
+      Value<int>? rpe,
+      Value<String>? note,
+      Value<int>? setId}) {
     return RepsCompanion(
       id: id ?? this.id,
       weight: weight ?? this.weight,
@@ -1790,21 +1759,19 @@ class RepsCompanion extends UpdateCompanion<Rep> {
 
 class $RepsTable extends Reps with TableInfo<$RepsTable, Rep> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $RepsTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _weightMeta = const VerificationMeta('weight');
-  GeneratedRealColumn _weight;
   @override
-  GeneratedRealColumn get weight => _weight ??= _constructWeight();
+  late final GeneratedRealColumn weight = _constructWeight();
   GeneratedRealColumn _constructWeight() {
     return GeneratedRealColumn(
       'weight',
@@ -1814,9 +1781,8 @@ class $RepsTable extends Reps with TableInfo<$RepsTable, Rep> {
   }
 
   final VerificationMeta _repsMeta = const VerificationMeta('reps');
-  GeneratedIntColumn _reps;
   @override
-  GeneratedIntColumn get reps => _reps ??= _constructReps();
+  late final GeneratedIntColumn reps = _constructReps();
   GeneratedIntColumn _constructReps() {
     return GeneratedIntColumn(
       'reps',
@@ -1826,9 +1792,8 @@ class $RepsTable extends Reps with TableInfo<$RepsTable, Rep> {
   }
 
   final VerificationMeta _rpeMeta = const VerificationMeta('rpe');
-  GeneratedIntColumn _rpe;
   @override
-  GeneratedIntColumn get rpe => _rpe ??= _constructRpe();
+  late final GeneratedIntColumn rpe = _constructRpe();
   GeneratedIntColumn _constructRpe() {
     return GeneratedIntColumn(
       'rpe',
@@ -1838,18 +1803,16 @@ class $RepsTable extends Reps with TableInfo<$RepsTable, Rep> {
   }
 
   final VerificationMeta _noteMeta = const VerificationMeta('note');
-  GeneratedTextColumn _note;
   @override
-  GeneratedTextColumn get note => _note ??= _constructNote();
+  late final GeneratedTextColumn note = _constructNote();
   GeneratedTextColumn _constructNote() {
     return GeneratedTextColumn('note', $tableName, false,
         maxTextLength: 155, defaultValue: const Constant(""));
   }
 
   final VerificationMeta _setIdMeta = const VerificationMeta('setId');
-  GeneratedIntColumn _setId;
   @override
-  GeneratedIntColumn get setId => _setId ??= _constructSetId();
+  late final GeneratedIntColumn setId = _constructSetId();
   GeneratedIntColumn _constructSetId() {
     return GeneratedIntColumn('set_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES sets (id)');
@@ -1905,7 +1868,7 @@ class $RepsTable extends Reps with TableInfo<$RepsTable, Rep> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Rep map(Map<String, dynamic> data, {String tablePrefix}) {
+  Rep map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return Rep.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -1923,13 +1886,13 @@ class RoutineGroupData extends DataClass
   final String description;
   final Level level;
   RoutineGroupData(
-      {@required this.id,
-      @required this.name,
-      @required this.description,
-      @required this.level});
+      {required this.id,
+      required this.name,
+      required this.description,
+      required this.level});
   factory RoutineGroupData.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
@@ -1974,7 +1937,7 @@ class RoutineGroupData extends DataClass
   }
 
   factory RoutineGroupData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return RoutineGroupData(
       id: serializer.fromJson<int>(json['id']),
@@ -1984,7 +1947,7 @@ class RoutineGroupData extends DataClass
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
@@ -1995,7 +1958,7 @@ class RoutineGroupData extends DataClass
   }
 
   RoutineGroupData copyWith(
-          {int id, String name, String description, Level level}) =>
+          {int? id, String? name, String? description, Level? level}) =>
       RoutineGroupData(
         id: id ?? this.id,
         name: name ?? this.name,
@@ -2039,17 +2002,17 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
   });
   RoutineGroupCompanion.insert({
     this.id = const Value.absent(),
-    @required String name,
-    @required String description,
-    @required Level level,
-  })  : name = Value(name),
+    required String name,
+    required String description,
+    required Level level,
+  })   : name = Value(name),
         description = Value(description),
         level = Value(level);
   static Insertable<RoutineGroupData> custom({
-    Expression<int> id,
-    Expression<String> name,
-    Expression<String> description,
-    Expression<int> level,
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<String>? description,
+    Expression<int>? level,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2060,10 +2023,10 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
   }
 
   RoutineGroupCompanion copyWith(
-      {Value<int> id,
-      Value<String> name,
-      Value<String> description,
-      Value<Level> level}) {
+      {Value<int>? id,
+      Value<String>? name,
+      Value<String>? description,
+      Value<Level>? level}) {
     return RoutineGroupCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -2106,21 +2069,19 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
 class $RoutineGroupTable extends RoutineGroup
     with TableInfo<$RoutineGroupTable, RoutineGroupData> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $RoutineGroupTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _nameMeta = const VerificationMeta('name');
-  GeneratedTextColumn _name;
   @override
-  GeneratedTextColumn get name => _name ??= _constructName();
+  late final GeneratedTextColumn name = _constructName();
   GeneratedTextColumn _constructName() {
     return GeneratedTextColumn(
       'name',
@@ -2131,19 +2092,16 @@ class $RoutineGroupTable extends RoutineGroup
 
   final VerificationMeta _descriptionMeta =
       const VerificationMeta('description');
-  GeneratedTextColumn _description;
   @override
-  GeneratedTextColumn get description =>
-      _description ??= _constructDescription();
+  late final GeneratedTextColumn description = _constructDescription();
   GeneratedTextColumn _constructDescription() {
     return GeneratedTextColumn('description', $tableName, false,
         minTextLength: 0, maxTextLength: 250);
   }
 
   final VerificationMeta _levelMeta = const VerificationMeta('level');
-  GeneratedIntColumn _level;
   @override
-  GeneratedIntColumn get level => _level ??= _constructLevel();
+  late final GeneratedIntColumn level = _constructLevel();
   GeneratedIntColumn _constructLevel() {
     return GeneratedIntColumn(
       'level',
@@ -2189,7 +2147,7 @@ class $RoutineGroupTable extends RoutineGroup
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  RoutineGroupData map(Map<String, dynamic> data, {String tablePrefix}) {
+  RoutineGroupData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return RoutineGroupData.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -2209,12 +2167,12 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
   final String name;
   final String notes;
   RoutineData(
-      {@required this.id,
-      @required this.groupId,
-      @required this.name,
-      @required this.notes});
+      {required this.id,
+      required this.groupId,
+      required this.name,
+      required this.notes});
   factory RoutineData.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
@@ -2258,7 +2216,7 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
   }
 
   factory RoutineData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return RoutineData(
       id: serializer.fromJson<int>(json['id']),
@@ -2268,7 +2226,7 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
@@ -2278,7 +2236,7 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
     };
   }
 
-  RoutineData copyWith({int id, int groupId, String name, String notes}) =>
+  RoutineData copyWith({int? id, int? groupId, String? name, String? notes}) =>
       RoutineData(
         id: id ?? this.id,
         groupId: groupId ?? this.groupId,
@@ -2322,16 +2280,16 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
   });
   RoutineCompanion.insert({
     this.id = const Value.absent(),
-    @required int groupId,
-    @required String name,
+    required int groupId,
+    required String name,
     this.notes = const Value.absent(),
   })  : groupId = Value(groupId),
         name = Value(name);
   static Insertable<RoutineData> custom({
-    Expression<int> id,
-    Expression<int> groupId,
-    Expression<String> name,
-    Expression<String> notes,
+    Expression<int>? id,
+    Expression<int>? groupId,
+    Expression<String>? name,
+    Expression<String>? notes,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2342,10 +2300,10 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
   }
 
   RoutineCompanion copyWith(
-      {Value<int> id,
-      Value<int> groupId,
-      Value<String> name,
-      Value<String> notes}) {
+      {Value<int>? id,
+      Value<int>? groupId,
+      Value<String>? name,
+      Value<String>? notes}) {
     return RoutineCompanion(
       id: id ?? this.id,
       groupId: groupId ?? this.groupId,
@@ -2386,30 +2344,27 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
 
 class $RoutineTable extends Routine with TableInfo<$RoutineTable, RoutineData> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $RoutineTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
   final VerificationMeta _groupIdMeta = const VerificationMeta('groupId');
-  GeneratedIntColumn _groupId;
   @override
-  GeneratedIntColumn get groupId => _groupId ??= _constructGroupId();
+  late final GeneratedIntColumn groupId = _constructGroupId();
   GeneratedIntColumn _constructGroupId() {
     return GeneratedIntColumn('group_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES grouproutines (id)');
   }
 
   final VerificationMeta _nameMeta = const VerificationMeta('name');
-  GeneratedTextColumn _name;
   @override
-  GeneratedTextColumn get name => _name ??= _constructName();
+  late final GeneratedTextColumn name = _constructName();
   GeneratedTextColumn _constructName() {
     return GeneratedTextColumn(
       'name',
@@ -2419,9 +2374,8 @@ class $RoutineTable extends Routine with TableInfo<$RoutineTable, RoutineData> {
   }
 
   final VerificationMeta _notesMeta = const VerificationMeta('notes');
-  GeneratedTextColumn _notes;
   @override
-  GeneratedTextColumn get notes => _notes ??= _constructNotes();
+  late final GeneratedTextColumn notes = _constructNotes();
   GeneratedTextColumn _constructNotes() {
     return GeneratedTextColumn('notes', $tableName, false,
         maxTextLength: 155, defaultValue: const Constant(""));
@@ -2465,7 +2419,7 @@ class $RoutineTable extends Routine with TableInfo<$RoutineTable, RoutineData> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  RoutineData map(Map<String, dynamic> data, {String tablePrefix}) {
+  RoutineData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return RoutineData.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -2486,17 +2440,17 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
   final int targetRpe;
   final String notes;
   RoutineSetData(
-      {@required this.id,
-      @required this.exerciseName,
-      @required this.exerciseId,
-      @required this.routineId,
-      @required this.reps,
-      @required this.copyMethod,
-      @required this.targetRpe,
-      @required this.notes});
+      {required this.id,
+      required this.exerciseName,
+      required this.exerciseId,
+      required this.routineId,
+      required this.reps,
+      required this.copyMethod,
+      required this.targetRpe,
+      required this.notes});
   factory RoutineSetData.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
@@ -2573,7 +2527,7 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
   }
 
   factory RoutineSetData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return RoutineSetData(
       id: serializer.fromJson<int>(json['id']),
@@ -2587,7 +2541,7 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
@@ -2602,14 +2556,14 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
   }
 
   RoutineSetData copyWith(
-          {int id,
-          String exerciseName,
-          int exerciseId,
-          int routineId,
-          int reps,
-          CopyMethod copyMethod,
-          int targetRpe,
-          String notes}) =>
+          {int? id,
+          String? exerciseName,
+          int? exerciseId,
+          int? routineId,
+          int? reps,
+          CopyMethod? copyMethod,
+          int? targetRpe,
+          String? notes}) =>
       RoutineSetData(
         id: id ?? this.id,
         exerciseName: exerciseName ?? this.exerciseName,
@@ -2683,12 +2637,12 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
   });
   RoutineSetCompanion.insert({
     this.id = const Value.absent(),
-    @required String exerciseName,
-    @required int exerciseId,
-    @required int routineId,
-    @required int reps,
-    @required CopyMethod copyMethod,
-    @required int targetRpe,
+    required String exerciseName,
+    required int exerciseId,
+    required int routineId,
+    required int reps,
+    required CopyMethod copyMethod,
+    required int targetRpe,
     this.notes = const Value.absent(),
   })  : exerciseName = Value(exerciseName),
         exerciseId = Value(exerciseId),
@@ -2697,14 +2651,14 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
         copyMethod = Value(copyMethod),
         targetRpe = Value(targetRpe);
   static Insertable<RoutineSetData> custom({
-    Expression<int> id,
-    Expression<String> exerciseName,
-    Expression<int> exerciseId,
-    Expression<int> routineId,
-    Expression<int> reps,
-    Expression<int> copyMethod,
-    Expression<int> targetRpe,
-    Expression<String> notes,
+    Expression<int>? id,
+    Expression<String>? exerciseName,
+    Expression<int>? exerciseId,
+    Expression<int>? routineId,
+    Expression<int>? reps,
+    Expression<int>? copyMethod,
+    Expression<int>? targetRpe,
+    Expression<String>? notes,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2719,14 +2673,14 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
   }
 
   RoutineSetCompanion copyWith(
-      {Value<int> id,
-      Value<String> exerciseName,
-      Value<int> exerciseId,
-      Value<int> routineId,
-      Value<int> reps,
-      Value<CopyMethod> copyMethod,
-      Value<int> targetRpe,
-      Value<String> notes}) {
+      {Value<int>? id,
+      Value<String>? exerciseName,
+      Value<int>? exerciseId,
+      Value<int>? routineId,
+      Value<int>? reps,
+      Value<CopyMethod>? copyMethod,
+      Value<int>? targetRpe,
+      Value<String>? notes}) {
     return RoutineSetCompanion(
       id: id ?? this.id,
       exerciseName: exerciseName ?? this.exerciseName,
@@ -2789,12 +2743,11 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
 class $RoutineSetTable extends RoutineSet
     with TableInfo<$RoutineSetTable, RoutineSetData> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $RoutineSetTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
+  late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
     return GeneratedIntColumn('id', $tableName, false,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
@@ -2802,10 +2755,8 @@ class $RoutineSetTable extends RoutineSet
 
   final VerificationMeta _exerciseNameMeta =
       const VerificationMeta('exerciseName');
-  GeneratedTextColumn _exerciseName;
   @override
-  GeneratedTextColumn get exerciseName =>
-      _exerciseName ??= _constructExerciseName();
+  late final GeneratedTextColumn exerciseName = _constructExerciseName();
   GeneratedTextColumn _constructExerciseName() {
     return GeneratedTextColumn(
       'exercise_name',
@@ -2815,27 +2766,24 @@ class $RoutineSetTable extends RoutineSet
   }
 
   final VerificationMeta _exerciseIdMeta = const VerificationMeta('exerciseId');
-  GeneratedIntColumn _exerciseId;
   @override
-  GeneratedIntColumn get exerciseId => _exerciseId ??= _constructExerciseId();
+  late final GeneratedIntColumn exerciseId = _constructExerciseId();
   GeneratedIntColumn _constructExerciseId() {
     return GeneratedIntColumn('exercise_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES exercises (id)');
   }
 
   final VerificationMeta _routineIdMeta = const VerificationMeta('routineId');
-  GeneratedIntColumn _routineId;
   @override
-  GeneratedIntColumn get routineId => _routineId ??= _constructRoutineId();
+  late final GeneratedIntColumn routineId = _constructRoutineId();
   GeneratedIntColumn _constructRoutineId() {
     return GeneratedIntColumn('routine_id', $tableName, false,
         $customConstraints: 'NOT NULL REFERENCES routines (id)');
   }
 
   final VerificationMeta _repsMeta = const VerificationMeta('reps');
-  GeneratedIntColumn _reps;
   @override
-  GeneratedIntColumn get reps => _reps ??= _constructReps();
+  late final GeneratedIntColumn reps = _constructReps();
   GeneratedIntColumn _constructReps() {
     return GeneratedIntColumn(
       'reps',
@@ -2845,9 +2793,8 @@ class $RoutineSetTable extends RoutineSet
   }
 
   final VerificationMeta _copyMethodMeta = const VerificationMeta('copyMethod');
-  GeneratedIntColumn _copyMethod;
   @override
-  GeneratedIntColumn get copyMethod => _copyMethod ??= _constructCopyMethod();
+  late final GeneratedIntColumn copyMethod = _constructCopyMethod();
   GeneratedIntColumn _constructCopyMethod() {
     return GeneratedIntColumn(
       'copy_method',
@@ -2857,9 +2804,8 @@ class $RoutineSetTable extends RoutineSet
   }
 
   final VerificationMeta _targetRpeMeta = const VerificationMeta('targetRpe');
-  GeneratedIntColumn _targetRpe;
   @override
-  GeneratedIntColumn get targetRpe => _targetRpe ??= _constructTargetRpe();
+  late final GeneratedIntColumn targetRpe = _constructTargetRpe();
   GeneratedIntColumn _constructTargetRpe() {
     return GeneratedIntColumn(
       'target_rpe',
@@ -2869,9 +2815,8 @@ class $RoutineSetTable extends RoutineSet
   }
 
   final VerificationMeta _notesMeta = const VerificationMeta('notes');
-  GeneratedTextColumn _notes;
   @override
-  GeneratedTextColumn get notes => _notes ??= _constructNotes();
+  late final GeneratedTextColumn notes = _constructNotes();
   GeneratedTextColumn _constructNotes() {
     return GeneratedTextColumn('notes', $tableName, false,
         maxTextLength: 155, defaultValue: const Constant(""));
@@ -2947,7 +2892,7 @@ class $RoutineSetTable extends RoutineSet
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  RoutineSetData map(Map<String, dynamic> data, {String tablePrefix}) {
+  RoutineSetData map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return RoutineSetData.fromData(data, _db, prefix: effectivePrefix);
   }
@@ -2963,26 +2908,16 @@ class $RoutineSetTable extends RoutineSet
 
 abstract class _$SQLDatabase extends GeneratedDatabase {
   _$SQLDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
-  $ExercisesTable _exercises;
-  $ExercisesTable get exercises => _exercises ??= $ExercisesTable(this);
-  $ExerciseBodyPartsTable _exerciseBodyParts;
-  $ExerciseBodyPartsTable get exerciseBodyParts =>
-      _exerciseBodyParts ??= $ExerciseBodyPartsTable(this);
-  $MigrationsTable _migrations;
-  $MigrationsTable get migrations => _migrations ??= $MigrationsTable(this);
-  $SetWorkoutsTable _setWorkouts;
-  $SetWorkoutsTable get setWorkouts => _setWorkouts ??= $SetWorkoutsTable(this);
-  $WorkoutsTable _workouts;
-  $WorkoutsTable get workouts => _workouts ??= $WorkoutsTable(this);
-  $RepsTable _reps;
-  $RepsTable get reps => _reps ??= $RepsTable(this);
-  $RoutineGroupTable _routineGroup;
-  $RoutineGroupTable get routineGroup =>
-      _routineGroup ??= $RoutineGroupTable(this);
-  $RoutineTable _routine;
-  $RoutineTable get routine => _routine ??= $RoutineTable(this);
-  $RoutineSetTable _routineSet;
-  $RoutineSetTable get routineSet => _routineSet ??= $RoutineSetTable(this);
+  late final $ExercisesTable exercises = $ExercisesTable(this);
+  late final $ExerciseBodyPartsTable exerciseBodyParts =
+      $ExerciseBodyPartsTable(this);
+  late final $MigrationsTable migrations = $MigrationsTable(this);
+  late final $SetWorkoutsTable setWorkouts = $SetWorkoutsTable(this);
+  late final $WorkoutsTable workouts = $WorkoutsTable(this);
+  late final $RepsTable reps = $RepsTable(this);
+  late final $RoutineGroupTable routineGroup = $RoutineGroupTable(this);
+  late final $RoutineTable routine = $RoutineTable(this);
+  late final $RoutineSetTable routineSet = $RoutineSetTable(this);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override

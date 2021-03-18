@@ -44,7 +44,7 @@ class SQLDatabase extends _$SQLDatabase {
       },
       onUpgrade: (Migrator m, int from, int to) async {});
 
-  Stream<modelsApp.Exercise> findExerciseStream(int exerciseId) {
+  Stream<modelsApp.Exercise?> findExerciseStream(int exerciseId) {
     final query = select(exercises).join([
       leftOuterJoin(exerciseBodyParts,
           exerciseBodyParts.exerciseId.equalsExp(exercises.id)),
@@ -59,6 +59,7 @@ class SQLDatabase extends _$SQLDatabase {
           return mergeTableExercise(exercise, bodyPart, exes);
         }).first;
       } catch (e) {
+        print(e);
         return null;
       }
     });
@@ -121,8 +122,8 @@ class SQLDatabase extends _$SQLDatabase {
           maxWeigthSetId: exe.maxWeigthSetId,
           lastWorkouts:
               modelsApp.Exercise.stringToLastWorkouts(exe.lastWorkouts),
-          maxVolume: exe.maxVolume,
-          maxWeigth: exe.maxWeigth,
+          maxVolume: exe.maxVolume?? 0.0,
+          maxWeigth: exe.maxWeigth ?? 0.0,
           name: exe.name,
           difficulty: exe.difficulty,
           notes: exe.notes,
@@ -169,8 +170,8 @@ class SQLDatabase extends _$SQLDatabase {
           maxWeigthSetId: exercise.maxWeigthSetId,
           lastWorkouts:
               modelsApp.Exercise.stringToLastWorkouts(exercise.lastWorkouts),
-          maxVolume: exercise.maxVolume,
-          maxWeigth: exercise.maxWeigth,
+          maxVolume: exercise.maxVolume ?? 0.0,
+          maxWeigth: exercise.maxWeigth ?? 0.0,
           name: exercise.name,
           bodyParts: [bodyPart],
           difficulty: exercise.difficulty,
@@ -209,7 +210,6 @@ class SQLDatabase extends _$SQLDatabase {
     return query.map((row) {
       final _id = row.read(id);
       final _max = row.read(max);
-      if (_id == null || _max == null) return null;
       return [_id, _max];
     }).getSingle();
   }
@@ -226,7 +226,6 @@ class SQLDatabase extends _$SQLDatabase {
     return query.map((row) {
       final _id = row.read(id);
       final _max = row.read(max);
-      if (_id == null || _max == null) return null;
       return [_id, _max];
     }).getSingle();
   }
@@ -251,16 +250,18 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
-  Future<int> saveSet(modelsApp.SetWorkout set, int workoutId) {
+  Future<int?> saveSet(modelsApp.SetWorkout set, int workoutId) {
     return transaction(() async {
       final exeId = set.exercise.id;
       final repsSet = set.reps;
 
+      if (exeId == null) return null;
+
       final setId = await into(setWorkouts).insert(
-          SetWorkout(
+          SetWorkoutsCompanion.insert(
               maxWeigth: set.maxWeigth,
               volume: set.volume,
-              id: set.id,
+              id: Value(set.id),
               workOutId: workoutId,
               exerciseId: exeId),
           mode: InsertMode.replace);
@@ -273,7 +274,7 @@ class SQLDatabase extends _$SQLDatabase {
       for (final rep in repsSet) {
         await into(reps).insert(
             RepsCompanion.insert(
-                note: rep.notes == null ? "" : Value(rep.notes),
+                note: Value(rep.notes),
                 reps: rep.reps,
                 weight: rep.weight,
                 rpe: rep.rpe,
@@ -346,10 +347,10 @@ class SQLDatabase extends _$SQLDatabase {
       into(migrations).insert(migration);
   Future deleteMigration(Migration migration) =>
       delete(migrations).delete(migration);
-  Future saveRep(Rep rep) => into(reps).insert(rep, mode: InsertMode.replace);
+  Future saveRep(RepsCompanion rep) => into(reps).insert(rep, mode: InsertMode.replace);
   Future deleteRep(Rep rep) => delete(reps).delete(rep);
 
-  Future insertExercise(Exercise exe) =>
+  Future insertExercise(ExercisesCompanion exe) =>
       into(exercises).insert(exe, mode: InsertMode.replace);
   Future<void> saveGroupRoutine(RoutineGroupCompanion group) =>
       into(routineGroup).insert(group, mode: InsertMode.replace);
@@ -367,5 +368,5 @@ class SQLDatabase extends _$SQLDatabase {
 class ExerciseWithBodyParts {
   final Exercise exe;
   final List<BodyPartEnum> bodyParts;
-  ExerciseWithBodyParts({this.exe, this.bodyParts});
+  ExerciseWithBodyParts({required this.exe, required this.bodyParts});
 }

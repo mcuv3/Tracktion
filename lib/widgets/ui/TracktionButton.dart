@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import '../../colors/custom_colors.dart';
 
 class TracktionButton extends StatelessWidget {
-  final Function onPress;
+  final Function() onPress;
 
-  const TracktionButton({Key key, @required this.onPress}) : super(key: key);
+  const TracktionButton({Key? key, required this.onPress}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
