@@ -11,14 +11,15 @@ dependencies:
     sdk: flutter
   flutter_svg: 0.21.0-nullsafety.0
   flutter_bloc: 7.0.0-nullsafety.6
-  http: ^0.13.0
+  http: ^0.12.2
   cupertino_icons: ^1.0.2
   shared_preferences: ^2.0.5
   connectivity: ^3.0.2
-  # moor: ^3.0.0
-  moor: ^4.0.0-nullsafety.1
+  moor: ^3.0.0
+  # moor: ^4.0.0-nullsafety.1
   path_provider: ^2.0.1
-  moor_flutter: ^4.0.0-nullsafety
+  # moor_flutter: ^4.0.0-nullsafety
+  moor_flutter: ^3.1.0
   fl_chart: ^0.20.1
   font_awesome_flutter: ^9.0.0-nullsafety
   modal_bottom_sheet: ^2.0.0-nullsafety.1

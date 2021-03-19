@@ -21,9 +21,11 @@ class ExerciseStreamWidget extends StatelessWidget {
           return StreamBuilder(
             stream: state.exe,
             builder: (context, stream) {
-              Exercise? exs = stream.data != null ? stream.data;
-              if (onLoadExercise != null) onLoadExercise!(exs);
-              if (stream.connectionState == ConnectionState.active) {
+              var exs = stream.data as Exercise?;
+
+              if (onLoadExercise != null && stream.hasData) onLoadExercise!(exs);
+
+              if (stream.connectionState == ConnectionState.active && stream.hasData) {
                 if (exs == null)
                   return Center(
                     child: CircularProgressIndicator(),

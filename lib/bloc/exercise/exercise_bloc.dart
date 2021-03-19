@@ -79,9 +79,9 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     try {
       final exe = event.exe;
 
-      await db.insertMigration(MigrationsCompanion.insert(
-          verb: "post", endPoint: '/api/exercise/v1/', payload: exe.toJson()));
-      print(exe);
+      // await db.insertMigration(MigrationsCompanion.insert(
+      //     verb: "post", endPoint: '/api/exercise/v1/', payload: exe.toJson()));
+      // print(exe);
       final exeDb = Exercise(
           id: exe.id,
           difficulty: exe.difficulty,

@@ -108,19 +108,15 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
           volume: volume,
           reps: event.set.reps.length);
 
-      if (event.isEdit && setId !=null) {
+      if (event.isEdit && setId != null) {
         var indexLastWorkout =
             exe.lastWorkouts.indexWhere((set) => set.setId == event.set.id);
         if (indexLastWorkout != -1)
           exe.lastWorkouts[indexLastWorkout] = newOrUpdatedSet;
         exe = await _verifyMaxVolume(
-            exe: exe,
-            newSetVolume: newOrUpdatedSet.volume,
-            setId: setId);
+            exe: exe, newSetVolume: newOrUpdatedSet.volume, setId: setId);
         exe = await _verifyMaxWeigth(
-            exe: exe,
-            newSetWeigth: newOrUpdatedSet.maxWeigth,
-            setId: setId);
+            exe: exe, newSetWeigth: newOrUpdatedSet.maxWeigth, setId: setId);
       } else {
         if (exe.lastWorkouts.length >= 12) exe.lastWorkouts.removeAt(11);
         exe.lastWorkouts.insert(0, newOrUpdatedSet);
@@ -139,9 +135,9 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
               volume: volume,
               maxWeigth: maxWeigth,
               reps: event.set.reps),
-          workout.id);
+          workout.id!);
 
-      if (isCreation && setIdSaved!=null) {
+      if (isCreation && setIdSaved != null) {
         exe.lastWorkouts[0].setId = setIdSaved;
         if (exe.lastWorkouts.length == 1) {
           exe.maxVolumeSetId = setIdSaved;
@@ -151,6 +147,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
 
       await _saveExercise(exe);
     } catch (e) {
+      print("ERROR:");
       print(e);
     }
   }

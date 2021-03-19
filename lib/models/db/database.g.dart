@@ -723,12 +723,12 @@ class $ExerciseBodyPartsTable extends ExerciseBodyParts
 }
 
 class Migration extends DataClass implements Insertable<Migration> {
-  final int id;
+  final int? id;
   final String endPoint;
   final String payload;
   final String verb;
   Migration(
-      {required this.id,
+      {this.id,
       required this.endPoint,
       required this.payload,
       required this.verb});
@@ -781,7 +781,7 @@ class Migration extends DataClass implements Insertable<Migration> {
       {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Migration(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<int?>(json['id']),
       endPoint: serializer.fromJson<String>(json['endPoint']),
       payload: serializer.fromJson<String>(json['payload']),
       verb: serializer.fromJson<String>(json['verb']),
@@ -791,7 +791,7 @@ class Migration extends DataClass implements Insertable<Migration> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<int?>(id),
       'endPoint': serializer.toJson<String>(endPoint),
       'payload': serializer.toJson<String>(payload),
       'verb': serializer.toJson<String>(verb),
@@ -831,7 +831,7 @@ class Migration extends DataClass implements Insertable<Migration> {
 }
 
 class MigrationsCompanion extends UpdateCompanion<Migration> {
-  final Value<int> id;
+  final Value<int?> id;
   final Value<String> endPoint;
   final Value<String> payload;
   final Value<String> verb;
@@ -864,7 +864,7 @@ class MigrationsCompanion extends UpdateCompanion<Migration> {
   }
 
   MigrationsCompanion copyWith(
-      {Value<int>? id,
+      {Value<int?>? id,
       Value<String>? endPoint,
       Value<String>? payload,
       Value<String>? verb}) {
@@ -915,7 +915,7 @@ class $MigrationsTable extends Migrations
   @override
   late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
+    return GeneratedIntColumn('id', $tableName, true,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
@@ -1004,13 +1004,13 @@ class $MigrationsTable extends Migrations
 }
 
 class SetWorkout extends DataClass implements Insertable<SetWorkout> {
-  final int id;
+  final int? id;
   final double volume;
   final double maxWeigth;
   final int workOutId;
   final int exerciseId;
   SetWorkout(
-      {required this.id,
+      {this.id,
       required this.volume,
       required this.maxWeigth,
       required this.workOutId,
@@ -1074,7 +1074,7 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
       {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return SetWorkout(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<int?>(json['id']),
       volume: serializer.fromJson<double>(json['volume']),
       maxWeigth: serializer.fromJson<double>(json['maxWeigth']),
       workOutId: serializer.fromJson<int>(json['workOutId']),
@@ -1085,7 +1085,7 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<int?>(id),
       'volume': serializer.toJson<double>(volume),
       'maxWeigth': serializer.toJson<double>(maxWeigth),
       'workOutId': serializer.toJson<int>(workOutId),
@@ -1137,7 +1137,7 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
 }
 
 class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
-  final Value<int> id;
+  final Value<int?> id;
   final Value<double> volume;
   final Value<double> maxWeigth;
   final Value<int> workOutId;
@@ -1176,7 +1176,7 @@ class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
   }
 
   SetWorkoutsCompanion copyWith(
-      {Value<int>? id,
+      {Value<int?>? id,
       Value<double>? volume,
       Value<double>? maxWeigth,
       Value<int>? workOutId,
@@ -1233,7 +1233,7 @@ class $SetWorkoutsTable extends SetWorkouts
   @override
   late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
+    return GeneratedIntColumn('id', $tableName, true,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
@@ -1336,9 +1336,9 @@ class $SetWorkoutsTable extends SetWorkouts
 }
 
 class Workout extends DataClass implements Insertable<Workout> {
-  final int id;
+  final int? id;
   final DateTime date;
-  Workout({required this.id, required this.date});
+  Workout({this.id, required this.date});
   factory Workout.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -1373,7 +1373,7 @@ class Workout extends DataClass implements Insertable<Workout> {
       {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Workout(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<int?>(json['id']),
       date: serializer.fromJson<DateTime>(json['date']),
     );
   }
@@ -1381,7 +1381,7 @@ class Workout extends DataClass implements Insertable<Workout> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<int?>(id),
       'date': serializer.toJson<DateTime>(date),
     };
   }
@@ -1408,7 +1408,7 @@ class Workout extends DataClass implements Insertable<Workout> {
 }
 
 class WorkoutsCompanion extends UpdateCompanion<Workout> {
-  final Value<int> id;
+  final Value<int?> id;
   final Value<DateTime> date;
   const WorkoutsCompanion({
     this.id = const Value.absent(),
@@ -1428,7 +1428,7 @@ class WorkoutsCompanion extends UpdateCompanion<Workout> {
     });
   }
 
-  WorkoutsCompanion copyWith({Value<int>? id, Value<DateTime>? date}) {
+  WorkoutsCompanion copyWith({Value<int?>? id, Value<DateTime>? date}) {
     return WorkoutsCompanion(
       id: id ?? this.id,
       date: date ?? this.date,
@@ -1465,7 +1465,7 @@ class $WorkoutsTable extends Workouts with TableInfo<$WorkoutsTable, Workout> {
   @override
   late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
+    return GeneratedIntColumn('id', $tableName, true,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
@@ -1520,14 +1520,14 @@ class $WorkoutsTable extends Workouts with TableInfo<$WorkoutsTable, Workout> {
 }
 
 class Rep extends DataClass implements Insertable<Rep> {
-  final int id;
+  final int? id;
   final double weight;
   final int reps;
   final int rpe;
   final String note;
   final int setId;
   Rep(
-      {required this.id,
+      {this.id,
       required this.weight,
       required this.reps,
       required this.rpe,
@@ -1590,7 +1590,7 @@ class Rep extends DataClass implements Insertable<Rep> {
       {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Rep(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<int?>(json['id']),
       weight: serializer.fromJson<double>(json['weight']),
       reps: serializer.fromJson<int>(json['reps']),
       rpe: serializer.fromJson<int>(json['rpe']),
@@ -1602,7 +1602,7 @@ class Rep extends DataClass implements Insertable<Rep> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<int?>(id),
       'weight': serializer.toJson<double>(weight),
       'reps': serializer.toJson<int>(reps),
       'rpe': serializer.toJson<int>(rpe),
@@ -1659,7 +1659,7 @@ class Rep extends DataClass implements Insertable<Rep> {
 }
 
 class RepsCompanion extends UpdateCompanion<Rep> {
-  final Value<int> id;
+  final Value<int?> id;
   final Value<double> weight;
   final Value<int> reps;
   final Value<int> rpe;
@@ -1703,7 +1703,7 @@ class RepsCompanion extends UpdateCompanion<Rep> {
   }
 
   RepsCompanion copyWith(
-      {Value<int>? id,
+      {Value<int?>? id,
       Value<double>? weight,
       Value<int>? reps,
       Value<int>? rpe,
@@ -1765,7 +1765,7 @@ class $RepsTable extends Reps with TableInfo<$RepsTable, Rep> {
   @override
   late final GeneratedIntColumn id = _constructId();
   GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
+    return GeneratedIntColumn('id', $tableName, true,
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 

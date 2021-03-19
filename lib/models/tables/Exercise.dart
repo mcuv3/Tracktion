@@ -4,7 +4,7 @@ import 'package:tracktion/models/app/body-parts.dart';
 import 'package:tracktion/models/app/difficulties.dart';
 
 class Migrations extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  IntColumn get id => integer().nullable().autoIncrement()();
   TextColumn get endPoint => text()();
   TextColumn get payload => text()();
   TextColumn get verb => text()();

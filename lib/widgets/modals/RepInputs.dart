@@ -110,6 +110,7 @@ class _RepInputState extends State<RepInput> {
   void changeValueHandler({required String value, num? increment}) {
     final val = widget.isFloat ? double.tryParse(value) : int.tryParse(value);
 
+    print(val);
     var finalValue;
     if (val == null || val < 0) {
       finalValue = widget.isFloat ? 0.0 : 0;
@@ -149,7 +150,8 @@ class _RepInputState extends State<RepInput> {
             color: Colors.white,
           ),
           onPressed: () {
-            if (controller != null) return;
+          
+            if (controller == null) return;
             changeValueHandler(
                 value: controller!.text, increment: widget.isFloat ? -2.5 : -1);
           },
@@ -185,7 +187,7 @@ class _RepInputState extends State<RepInput> {
             color: Colors.white,
           ),
           onPressed: () {
-            if (controller != null) return;
+            if (controller == null) return;
             changeValueHandler(
                 value: controller!.text, increment: widget.isFloat ? 2.5 : 1);
           },
