@@ -1922,13 +1922,13 @@ class RoutineGroupData extends DataClass
   final String name;
   final String description;
   final String imageUrl;
-  final ThemeGroup theme;
+  final Level level;
   RoutineGroupData(
       {@required this.id,
       @required this.name,
       @required this.description,
       @required this.imageUrl,
-      @required this.theme});
+      @required this.level});
   factory RoutineGroupData.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
@@ -1942,8 +1942,8 @@ class RoutineGroupData extends DataClass
           .mapFromDatabaseResponse(data['${effectivePrefix}description']),
       imageUrl: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}image_url']),
-      theme: $RoutineGroupTable.$converter0.mapToDart(
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}theme'])),
+      level: $RoutineGroupTable.$converter0.mapToDart(
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}level'])),
     );
   }
   @override
@@ -1961,9 +1961,9 @@ class RoutineGroupData extends DataClass
     if (!nullToAbsent || imageUrl != null) {
       map['image_url'] = Variable<String>(imageUrl);
     }
-    if (!nullToAbsent || theme != null) {
+    if (!nullToAbsent || level != null) {
       final converter = $RoutineGroupTable.$converter0;
-      map['theme'] = Variable<int>(converter.mapToSql(theme));
+      map['level'] = Variable<int>(converter.mapToSql(level));
     }
     return map;
   }
@@ -1978,8 +1978,8 @@ class RoutineGroupData extends DataClass
       imageUrl: imageUrl == null && nullToAbsent
           ? const Value.absent()
           : Value(imageUrl),
-      theme:
-          theme == null && nullToAbsent ? const Value.absent() : Value(theme),
+      level:
+          level == null && nullToAbsent ? const Value.absent() : Value(level),
     );
   }
 
@@ -1991,7 +1991,7 @@ class RoutineGroupData extends DataClass
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String>(json['description']),
       imageUrl: serializer.fromJson<String>(json['imageUrl']),
-      theme: serializer.fromJson<ThemeGroup>(json['theme']),
+      level: serializer.fromJson<Level>(json['level']),
     );
   }
   @override
@@ -2002,7 +2002,7 @@ class RoutineGroupData extends DataClass
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String>(description),
       'imageUrl': serializer.toJson<String>(imageUrl),
-      'theme': serializer.toJson<ThemeGroup>(theme),
+      'level': serializer.toJson<Level>(level),
     };
   }
 
@@ -2011,13 +2011,13 @@ class RoutineGroupData extends DataClass
           String name,
           String description,
           String imageUrl,
-          ThemeGroup theme}) =>
+          Level level}) =>
       RoutineGroupData(
         id: id ?? this.id,
         name: name ?? this.name,
         description: description ?? this.description,
         imageUrl: imageUrl ?? this.imageUrl,
-        theme: theme ?? this.theme,
+        level: level ?? this.level,
       );
   @override
   String toString() {
@@ -2026,7 +2026,7 @@ class RoutineGroupData extends DataClass
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('imageUrl: $imageUrl, ')
-          ..write('theme: $theme')
+          ..write('level: $level')
           ..write(')'))
         .toString();
   }
@@ -2037,7 +2037,7 @@ class RoutineGroupData extends DataClass
       $mrjc(
           name.hashCode,
           $mrjc(description.hashCode,
-              $mrjc(imageUrl.hashCode, theme.hashCode)))));
+              $mrjc(imageUrl.hashCode, level.hashCode)))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -2046,7 +2046,7 @@ class RoutineGroupData extends DataClass
           other.name == this.name &&
           other.description == this.description &&
           other.imageUrl == this.imageUrl &&
-          other.theme == this.theme);
+          other.level == this.level);
 }
 
 class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
@@ -2054,37 +2054,37 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
   final Value<String> name;
   final Value<String> description;
   final Value<String> imageUrl;
-  final Value<ThemeGroup> theme;
+  final Value<Level> level;
   const RoutineGroupCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.imageUrl = const Value.absent(),
-    this.theme = const Value.absent(),
+    this.level = const Value.absent(),
   });
   RoutineGroupCompanion.insert({
     this.id = const Value.absent(),
     @required String name,
     @required String description,
     @required String imageUrl,
-    @required ThemeGroup theme,
+    @required Level level,
   })  : name = Value(name),
         description = Value(description),
         imageUrl = Value(imageUrl),
-        theme = Value(theme);
+        level = Value(level);
   static Insertable<RoutineGroupData> custom({
     Expression<int> id,
     Expression<String> name,
     Expression<String> description,
     Expression<String> imageUrl,
-    Expression<int> theme,
+    Expression<int> level,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (imageUrl != null) 'image_url': imageUrl,
-      if (theme != null) 'theme': theme,
+      if (level != null) 'level': level,
     });
   }
 
@@ -2093,13 +2093,13 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
       Value<String> name,
       Value<String> description,
       Value<String> imageUrl,
-      Value<ThemeGroup> theme}) {
+      Value<Level> level}) {
     return RoutineGroupCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
       imageUrl: imageUrl ?? this.imageUrl,
-      theme: theme ?? this.theme,
+      level: level ?? this.level,
     );
   }
 
@@ -2118,9 +2118,9 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
     if (imageUrl.present) {
       map['image_url'] = Variable<String>(imageUrl.value);
     }
-    if (theme.present) {
+    if (level.present) {
       final converter = $RoutineGroupTable.$converter0;
-      map['theme'] = Variable<int>(converter.mapToSql(theme.value));
+      map['level'] = Variable<int>(converter.mapToSql(level.value));
     }
     return map;
   }
@@ -2132,7 +2132,7 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('imageUrl: $imageUrl, ')
-          ..write('theme: $theme')
+          ..write('level: $level')
           ..write(')'))
         .toString();
   }
@@ -2187,13 +2187,13 @@ class $RoutineGroupTable extends RoutineGroup
     );
   }
 
-  final VerificationMeta _themeMeta = const VerificationMeta('theme');
-  GeneratedIntColumn _theme;
+  final VerificationMeta _levelMeta = const VerificationMeta('level');
+  GeneratedIntColumn _level;
   @override
-  GeneratedIntColumn get theme => _theme ??= _constructTheme();
-  GeneratedIntColumn _constructTheme() {
+  GeneratedIntColumn get level => _level ??= _constructLevel();
+  GeneratedIntColumn _constructLevel() {
     return GeneratedIntColumn(
-      'theme',
+      'level',
       $tableName,
       false,
     );
@@ -2201,7 +2201,7 @@ class $RoutineGroupTable extends RoutineGroup
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, name, description, imageUrl, theme];
+      [id, name, description, imageUrl, level];
   @override
   $RoutineGroupTable get asDslTable => this;
   @override
@@ -2236,7 +2236,7 @@ class $RoutineGroupTable extends RoutineGroup
     } else if (isInserting) {
       context.missing(_imageUrlMeta);
     }
-    context.handle(_themeMeta, const VerificationResult.success());
+    context.handle(_levelMeta, const VerificationResult.success());
     return context;
   }
 
@@ -2253,8 +2253,8 @@ class $RoutineGroupTable extends RoutineGroup
     return $RoutineGroupTable(_db, alias);
   }
 
-  static TypeConverter<ThemeGroup, int> $converter0 =
-      const EnumIndexConverter<ThemeGroup>(ThemeGroup.values);
+  static TypeConverter<Level, int> $converter0 =
+      const EnumIndexConverter<Level>(Level.values);
 }
 
 class RoutineData extends DataClass implements Insertable<RoutineData> {

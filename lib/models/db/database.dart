@@ -35,7 +35,7 @@ class SQLDatabase extends _$SQLDatabase {
     SQLDatabase(QueryExecutor e) : super(e);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(

@@ -4,6 +4,7 @@ import 'package:tracktion/bloc/routine-group/routine_bloc.dart';
 import 'package:tracktion/colors/custom_colors.dart';
 import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/models/tables/Routines.dart';
+import 'package:tracktion/widgets/inputs/Select.dart';
 import 'package:tracktion/widgets/inputs/input.dart';
 
 class SaveRoutineForm extends StatefulWidget {
@@ -15,6 +16,7 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
   final form = GlobalKey<FormState>();
 
   final fields = {};
+  var level = Level.Normal;
 
   String isRequired(String value) {
     if (value == "") return "Field must be set.";
@@ -32,7 +34,7 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
               name: fields["name"],
               description: fields["description"],
               imageUrl: "test",
-              theme: ThemeGroup.Blue)));
+              level: level)));
     }
   }
 
@@ -84,6 +86,25 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
                 change: (val) => changeHandler("description", val),
                 hint: "No pain no gain.",
                 maxlines: 5,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Text(
+                "Level",
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.analysis,
+                    fontSize: 23),
+              ),
+              Select(
+                onSelect: (val) {
+                  setState(() {
+                    level = val;
+                  });
+                },
+                value: level,
+                options: Level.values,
               ),
               SizedBox(
                 height: 10,
