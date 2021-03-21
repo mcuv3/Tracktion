@@ -1,10 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tracktion/colors/custom_colors.dart';
+import 'package:tracktion/models/tables/Routines.dart';
+import 'package:tracktion/screens/routine/routines-screen.dart';
+import 'package:tracktion/widgets/ui/IconDetail.dart';
 
-class RoutineItem extends StatelessWidget {
+class RoutineItem extends StatefulWidget {
   final Function onTap;
-  RoutineItem({this.onTap});
+  final Key key;
+  RoutineItem({@required this.key, @required this.onTap});
+
+  @override
+  _RoutineItemState createState() => _RoutineItemState();
+}
+
+class _RoutineItemState extends State<RoutineItem>
+    with TickerProviderStateMixin {
+  var isExpanded = false;
+
+  List<RoutineSet> sets = [
+    RoutineSet(),
+    RoutineSet(),
+    RoutineSet(),
+    RoutineSet(),
+    RoutineSet(),
+    RoutineSet(),
+    RoutineSet(),
+  ];
+
+  void expand() {
+    setState(() {
+      isExpanded = !isExpanded;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,81 +52,224 @@ class RoutineItem extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-              color: Theme.of(context).colorScheme.analysis,
+          RoutineHeader(
+            onNotes: () => expand(),
+          ),
+          RoutineDetails(),
+          if (isExpanded)
+            Divider(
+              thickness: 1,
+              height: 1,
             ),
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Push Day #1",
-                  style: TextStyle(color: Colors.white, fontSize: 18),
+          AnimatedSize(
+              key: widget.key,
+              duration: Duration(milliseconds: 400),
+              curve: Curves.easeOut,
+              vsync: this,
+              child: Container(
+                height: isExpanded ? ((sets.length) * 70.0) : null,
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    if (isExpanded)
+                      Expanded(
+                          child: SetsRoutineItem(
+                        sets: sets,
+                      )),
+                    Material(
+                        color: Colors.white,
+                        child: Column(
+                          children: [
+                            Divider(
+                              thickness: 1,
+                              height: 1,
+                            ),
+                            InkWell(
+                              onTap: expand,
+                              highlightColor: Colors.white,
+                              child: Center(
+                                child: FaIcon(
+                                  isExpanded
+                                      ? FontAwesomeIcons.chevronUp
+                                      : FontAwesomeIcons.chevronDown,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )),
+                  ],
                 ),
-                IconButton(
+              ))
+        ],
+      ),
+    );
+  }
+}
+
+class SetsRoutineItem extends StatelessWidget {
+  final List<RoutineSet> sets;
+
+  const SetsRoutineItem({
+    this.sets,
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final editMode = RoutinesService.of(context).editMode;
+    return sets.length == 0
+        ? Center(child: Text("No sets added"))
+        : ListView(
+            shrinkWrap: true,
+            physics: ClampingScrollPhysics(),
+            children: ListTile.divideTiles(
+                color: Colors.red,
+                context: context,
+                tiles: sets.map((e) => ListTile(
                     visualDensity: VisualDensity.compact,
-                    icon: FaIcon(FontAwesomeIcons.infoCircle,
-                        color: Colors.white),
-                    onPressed: () {}),
-              ],
+                    leading: FaIcon(FontAwesomeIcons.dumbbell,
+                        color: Theme.of(context).colorScheme.analysisLight),
+                    title: Text("Deadlift"),
+                    subtitle: Text("Type: Smart - RPE:8"),
+                    trailing: AnimatedOpacity(
+                      opacity: editMode ? 1.0 : 0.0,
+                      duration: Duration(milliseconds: 400),
+                      child: Container(
+                        width: 50,
+                        child: Row(
+                          children: [
+                            IconButton(
+                                icon: FaIcon(FontAwesomeIcons.times,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .routinesLight),
+                                onPressed: editMode ? () {} : null)
+                          ],
+                        ),
+                      ),
+                    )))).toList());
+  }
+}
+
+class SetRoutineItem extends StatelessWidget {
+  const SetRoutineItem({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text("Set 1");
+  }
+}
+
+class RoutineDetails extends StatelessWidget {
+  const RoutineDetails({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          IconDetail(
+            icon: FaIcon(
+              FontAwesomeIcons.dumbbell,
+              size: 14,
             ),
+            lead: "23",
+            secondary: "set",
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              RichText(
-                  text: TextSpan(
-                      style: TextStyle(fontFamily: "CarterOne"),
-                      children: <TextSpan>[
-                    TextSpan(
-                        text: "32",
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.routinesLight,
-                            fontWeight: FontWeight.bold)),
-                    TextSpan(
-                        text: " sets",
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.exercise,
-                            fontWeight: FontWeight.w100)),
-                  ])),
-              RichText(
-                  text: TextSpan(
-                      style: TextStyle(fontFamily: "CarterOne"),
-                      children: <TextSpan>[
-                    TextSpan(
-                        text: "6",
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.routinesLight,
-                            fontWeight: FontWeight.bold)),
-                    TextSpan(
-                        text: " exercises",
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.exercise,
-                            fontWeight: FontWeight.w100)),
-                  ])),
-              Row(
+          IconDetail(
+            icon: FaIcon(
+              FontAwesomeIcons.running,
+              size: 16,
+            ),
+            lead: "5",
+            secondary: "exercise",
+          ),
+          IconDetail(
+            icon: FaIcon(
+              FontAwesomeIcons.hourglassHalf,
+              size: 14,
+            ),
+            lead: "60",
+            secondary: "min",
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class RoutineHeader extends StatelessWidget {
+  final Function() onNotes;
+
+  const RoutineHeader({Key key, this.onNotes}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final editMode = RoutinesService.of(context).editMode;
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+        color: Theme.of(context).colorScheme.analysis,
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Push Day #1",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          AnimatedOpacity(
+            duration: Duration(milliseconds: 400),
+            opacity: editMode ? 1.0 : 0.0,
+            child: Container(
+              height: 45,
+              child: Row(
                 children: [
+                  IconButton(
+                      visualDensity: VisualDensity.compact,
+                      icon: FaIcon(
+                        FontAwesomeIcons.trash,
+                        color: Colors.white,
+                      ),
+                      onPressed: editMode ? () {} : null),
                   SizedBox(
-                    width: 15,
+                    width: 5,
                   ),
                   IconButton(
                       visualDensity: VisualDensity.compact,
-                      icon: FaIcon(FontAwesomeIcons.trash),
-                      onPressed: () {}),
+                      icon: FaIcon(
+                        FontAwesomeIcons.edit,
+                        color: Colors.white,
+                      ),
+                      onPressed: editMode ? () {} : null),
                   SizedBox(
-                    width: 15,
+                    width: 5,
                   ),
                   IconButton(
                       visualDensity: VisualDensity.compact,
-                      icon: FaIcon(FontAwesomeIcons.edit),
-                      onPressed: () {}),
+                      icon: FaIcon(FontAwesomeIcons.commentDots,
+                          color: Colors.white),
+                      onPressed: editMode ? () {} : null),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  IconButton(
+                      visualDensity: VisualDensity.compact,
+                      icon: FaIcon(FontAwesomeIcons.plusCircle,
+                          color: Colors.white),
+                      onPressed: editMode ? () {} : null),
                 ],
-              )
-            ],
-          ),
+              ),
+            ),
+          )
         ],
       ),
     );
