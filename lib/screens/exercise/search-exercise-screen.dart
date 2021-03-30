@@ -23,7 +23,10 @@ class SearchExercise extends StatefulWidget {
 
 class _SearchExerciseState extends State<SearchExercise> {
   final _controller = TextEditingController();
+  var initialization = false;
   var search = '';
+  var bodyPart = BodyPartEnum.Arms;
+  var readOnly = false;
 
   void searchHandler(String val) {
     setState(() {
@@ -34,8 +37,9 @@ class _SearchExerciseState extends State<SearchExercise> {
   @override
   void initState() {
     Future.delayed(Duration.zero).then((_) {
-      final bd = ModalRoute.of(context).settings.arguments as BodyPartEnum;
-      BlocProvider.of<ExerciseBloc>(context).add(FetchExers(bd));
+      Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
+      bodyPart = args["body"];
+      BlocProvider.of<ExerciseBloc>(context).add(FetchExers(bodyPart));
     });
     super.initState();
   }
@@ -43,8 +47,9 @@ class _SearchExerciseState extends State<SearchExercise> {
   @override
   Widget build(BuildContext context) {
     final query = MediaQuery.of(context);
-    final bodyPart = ModalRoute.of(context).settings.arguments as BodyPartEnum ?? BodyPartEnum.Arms;
-    print(bodyPart);
+    Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
+    bodyPart = args["body"] ?? BodyPartEnum.Arms;
+    readOnly = args["readOnly"] != null;
     return Scaffold(
       appBar: AppBar(
           elevation: 0,
@@ -53,7 +58,7 @@ class _SearchExerciseState extends State<SearchExercise> {
           ),
           titleSpacing: 0,
           backgroundColor: Colors.white,
-          title: Text( bodyPart.toString()?.split('.')[1],
+          title: Text(bodyPart.toString()?.split('.')[1],
               style: TextStyle(
                   color: Theme.of(context).colorScheme.exercise, fontSize: 25)),
           centerTitle: true),
@@ -102,6 +107,11 @@ class _SearchExerciseState extends State<SearchExercise> {
                                 reverse: true,
                                 itemBuilder: (ctx, i) => GestureDetector(
                                     onTap: () {
+                                      if (readOnly) {
+                                        return Navigator.of(context)
+                                            .pop(exes[i]);
+                                      }
+
                                       Navigator.of(context).pushNamed(
                                           ExerciseWorkOut.routeName,
                                           arguments: {"exercise": exes[i]});

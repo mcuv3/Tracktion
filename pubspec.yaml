@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_svg: ^0.19.3
-  flutter_bloc: ^6.1.0
+  flutter_bloc: ^7.0.0
   http: ^0.12.2
   cupertino_icons: ^1.0.0
   shared_preferences: ^0.5.12+4

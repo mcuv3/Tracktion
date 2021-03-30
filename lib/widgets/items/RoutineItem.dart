@@ -5,6 +5,7 @@ import 'package:tracktion/models/tables/Routines.dart';
 import 'package:tracktion/screens/routine/routines-screen.dart';
 import 'package:tracktion/widgets/ui/IconDetail.dart';
 
+//TODO: needs implementation on querys as well the whole CRUD
 class RoutineItem extends StatefulWidget {
   final Function onTap;
   final Key key;

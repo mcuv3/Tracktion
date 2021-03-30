@@ -1,7 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tracktion/models/app/index.dart';
+import 'package:tracktion/screens/exercise/body-parts-screen.dart';
+import 'package:tracktion/widgets/forms/SaveSetRoutine.dart';
 import 'package:tracktion/widgets/items/RoutineItem.dart';
+import 'package:tracktion/widgets/modals/showAnimatedModal.dart';
 
 class RoutinesService extends InheritedWidget {
   RoutinesService({Key key, this.child, this.editMode})
@@ -32,6 +36,20 @@ class RoutinesScreen extends StatefulWidget {
 class _RoutinesScreenState extends State<RoutinesScreen> {
   var editMode = false;
 
+  void saveSetRoutineHandler() async {
+    final exercise = await Navigator.of(context)
+            .pushNamed(BodyPartsScreen.routeName, arguments: {"readOnly": true})
+        as Exercise;
+
+    if (exercise == null) return;
+
+    final setRoutine = await showAnimatedModal(
+        context,
+        SaveSetRoutineForm(
+          exercise: exercise,
+        ));
+  }
+
   @override
   Widget build(BuildContext rootContext) {
     return RoutinesService(
@@ -41,9 +59,10 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
           title: Text('Modal Page'),
           actions: [
             IconButton(
-                visualDensity: VisualDensity.compact,
-                icon: FaIcon(FontAwesomeIcons.plusCircle),
-                onPressed: () {}),
+              visualDensity: VisualDensity.compact,
+              icon: FaIcon(FontAwesomeIcons.plusCircle),
+              onPressed: saveSetRoutineHandler,
+            ),
             IconButton(
                 visualDensity: VisualDensity.compact,
                 icon: FaIcon(FontAwesomeIcons.edit),
