@@ -9,11 +9,13 @@ class TracktionInput extends StatelessWidget {
   final TextEditingController controller;
   final int maxLength;
   final bool autoFocus;
+  final TextAlign align;
 
   TracktionInput(
       {this.initialValue,
       this.hint,
       this.controller,
+      this.align = TextAlign.start,
       this.maxlines = 1,
       this.validator,
       this.change,
@@ -31,9 +33,11 @@ class TracktionInput extends StatelessWidget {
         onFieldSubmitted: change,
         autofocus: autoFocus,
         onSaved: change,
+        textAlign: align,
         maxLength: maxLength,
         decoration: InputDecoration(
-            errorStyle: TextStyle(color: Colors.black),
+            isCollapsed: true,
+            errorStyle: TextStyle(color: Colors.black, fontSize: 14),
             fillColor: Colors.white,
             filled: true,
             border: OutlineInputBorder(
@@ -41,7 +45,7 @@ class TracktionInput extends StatelessWidget {
                 borderSide: BorderSide(
                     color: Theme.of(context).primaryColor, width: 2.0)),
             isDense: true,
-            contentPadding: EdgeInsets.all(8),
+            contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             hintText: hint));
   }
 }
