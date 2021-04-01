@@ -6,7 +6,7 @@ abstract class RoutinesState {}
 class RoutinesLoading extends RoutinesState {}
 
 class Routines extends RoutinesState {
-  final Stream<List<RoutineData>> routines;
+  final Stream<List<modelsApp.RoutineDay>> routines;
   Routines(this.routines);
 }
 

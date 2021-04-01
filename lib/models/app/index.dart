@@ -1,3 +1,4 @@
+export './RoutineDay.dart';
 export './body-parts.dart';
 export './difficulties.dart';
 export './exercise.dart';

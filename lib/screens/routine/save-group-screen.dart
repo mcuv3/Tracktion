@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tracktion/widgets/forms/SaveRoutine.dart';
+import 'package:tracktion/widgets/forms/SaveGroupRoutine.dart';
 
 class SaveRoutineGroupScreen extends StatelessWidget {
   const SaveRoutineGroupScreen({Key key}) : super(key: key);
@@ -7,7 +7,7 @@ class SaveRoutineGroupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SaveRoutineForm(),
+      body: SaveGroupRoutineForm(),
     );
   }
 }

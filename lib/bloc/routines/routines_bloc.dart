@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:tracktion/models/app/index.dart' as modelsApp;
 import 'package:tracktion/models/db/database.dart';
 
 part 'routines_event.dart';
@@ -11,7 +12,6 @@ class RoutinesBloc extends Bloc<RoutinesEvent, RoutinesState> {
   final SQLDatabase db;
 
   RoutinesBloc(this.db) : super(RoutinesLoading());
-
   @override
   Stream<RoutinesState> mapEventToState(
     RoutinesEvent event,
@@ -42,7 +42,6 @@ class RoutinesBloc extends Bloc<RoutinesEvent, RoutinesState> {
     yield RoutinesLoading();
     final stream = (state as Routines).routines;
     try {
-
       await this.db.deleteRoutine(event.id);
       yield RoutinesSuccess();
       yield Routines(stream);

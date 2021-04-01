@@ -10,10 +10,12 @@ class TracktionInput extends StatelessWidget {
   final int maxLength;
   final bool autoFocus;
   final TextAlign align;
+  final TextInputType keyboardType;
 
   TracktionInput(
       {this.initialValue,
       this.hint,
+      this.keyboardType = TextInputType.text,
       this.controller,
       this.align = TextAlign.start,
       this.maxlines = 1,
@@ -35,6 +37,7 @@ class TracktionInput extends StatelessWidget {
         onSaved: change,
         textAlign: align,
         maxLength: maxLength,
+        keyboardType: keyboardType,
         decoration: InputDecoration(
             isCollapsed: true,
             errorStyle: TextStyle(color: Colors.black, fontSize: 14),

@@ -6,6 +6,8 @@ import 'package:tracktion/models/tables/Routines.dart';
 import 'package:tracktion/util/enumToString.dart';
 import 'package:tracktion/widgets/inputs/input.dart';
 import 'package:tracktion/widgets/modals/showAnimatedModal.dart';
+import 'package:tracktion/widgets/ui/Divided.dart';
+import 'package:tracktion/widgets/ui/SaveFormActions.dart';
 
 class SaveSetRoutineForm extends StatefulWidget {
   final Exercise exercise;
@@ -15,9 +17,12 @@ class SaveSetRoutineForm extends StatefulWidget {
   _SaveSetRoutineFormState createState() => _SaveSetRoutineFormState();
 }
 
-class _SaveSetRoutineFormState extends State<SaveSetRoutineForm> {
+class _SaveSetRoutineFormState extends State<SaveSetRoutineForm>
+    with TickerProviderStateMixin {
   CopyMethod method = CopyMethod.Previus;
-
+  final controller = TextEditingController(text: "0.0");
+  var numSeries = 3;
+  var rpe = 8;
   final Map<String, String> copyMethods = {
     "Smart":
         "Base of your prevous workouts with this exercise we provide al list of sets of reps intelligentlly selected for to make progress week by week."
@@ -54,33 +59,17 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm> {
         ));
   }
 
-  Widget buildDivided(Widget a, Widget b) {
-    return IntrinsicHeight(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Align(
-                alignment: Alignment.center,
-                child: a,
-              ),
-            ),
-            VerticalDivider(
-              width: 1,
-              color: Colors.black,
-            ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.center,
-                child: b,
-              ),
-            )
-          ],
-        ),
-      ),
-    );
+  void submit() {
+    final mr = double.tryParse(controller.text);
+
+    switch (method) {
+      case CopyMethod.Percentage:
+        break;
+      case CopyMethod.Previus:
+        break;
+      case CopyMethod.Smart:
+        break;
+    }
   }
 
   Widget buildNumericSelector(dynamic value, Function(String) onPress) {
@@ -157,76 +146,84 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm> {
                       ))
                   .toList()),
           buildHeader("Configuration"),
-          buildDivided(
-              Text("RPE",
-                  style: TextStyle(
-                      fontSize: 14,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .exercise
-                          .withOpacity(0.7))),
-              buildNumericSelector("8", (direction) {})),
-          buildDivided(
-              Text("# Series",
-                  style: TextStyle(
-                      fontSize: 14,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .exercise
-                          .withOpacity(0.7))),
-              buildNumericSelector("3", (direction) {})),
-          buildDivided(
-              Text("1 MR",
-                  style: TextStyle(
-                      fontSize: 14,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .exercise
-                          .withOpacity(0.7))),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: TracktionInput(
-                  initialValue: "0.0",
-                  hint: "0.0",
-                  align: TextAlign.center,
-                ),
-              )),
-          Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-                border: Border(
-                    top: BorderSide(
-                        color: Colors.black.withOpacity(0.2), width: 0.5))),
-            child: IntrinsicHeight(
-              child: Row(
-                children: [
-                  Expanded(
-                      child: TextButton(
-                    child: Text("Cancel"),
-                    onPressed: () {},
-                  )),
-                  VerticalDivider(
-                    width: 1,
-                    color: Colors.black,
-                  ),
-                  Expanded(
-                      child: TextButton(
-                          style: ButtonStyle(
-                              overlayColor: MaterialStateProperty.all(
-                                  Theme.of(context)
-                                      .colorScheme
-                                      .analysis
-                                      .withOpacity(0.2))),
-                          onPressed: () {},
-                          child: Text("Save",
+          AnimatedSize(
+            vsync: this,
+            duration: Duration(milliseconds: 300),
+            child: Container(
+              height: method == CopyMethod.Smart || method == CopyMethod.Previus
+                  ? 60
+                  : 120,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Divided(
+                        leftWidget: Text("RPE",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .exercise
+                                    .withOpacity(0.7))),
+                        rightWidget:
+                            buildNumericSelector(rpe.toString(), (direction) {
+                          setState(() {
+                            if (rpe < 0 || rpe > 10) return;
+                            rpe = direction == "left" ? rpe - 1 : rpe + 1;
+                          });
+                        })),
+                    if (method == CopyMethod.Static)
+                      Divided(
+                          leftWidget: Text("# Series",
                               style: TextStyle(
+                                  fontSize: 14,
                                   color: Theme.of(context)
                                       .colorScheme
-                                      .analysis)))),
-                ],
-                mainAxisAlignment: MainAxisAlignment.center,
+                                      .exercise
+                                      .withOpacity(0.7))),
+                          rightWidget: buildNumericSelector(
+                              numSeries.toString(), (direction) {
+                            setState(() {
+                              if (numSeries < 0) return;
+                              numSeries = direction == "left"
+                                  ? numSeries - 1
+                                  : numSeries + 1;
+                            });
+                          })),
+                    if (method == CopyMethod.Percentage)
+                      Divided(
+                          leftWidget: Text("1 MR",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .exercise
+                                      .withOpacity(0.7))),
+                          rightWidget: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: TracktionInput(
+                              initialValue: "0.0",
+                              keyboardType: TextInputType.number,
+                              controller: controller,
+                              validator: (v) {
+                                final value = double.tryParse(v);
+                                if (value == null || value < 0.0)
+                                  return "Ivalid number.";
+
+                                return null;
+                              },
+                              hint: "0.0",
+                              align: TextAlign.center,
+                            ),
+                          )),
+                  ],
+                  mainAxisSize: MainAxisSize.min,
+                ),
               ),
             ),
+          ),
+          SaveFormActions(
+            onCancel: () {},
+            onSave: () {},
           ),
         ],
       ),

@@ -4,8 +4,9 @@ import 'package:tracktion/bloc/routine-group/routine_bloc.dart';
 import 'package:tracktion/colors/custom_colors.dart';
 import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/models/tables/Routines.dart';
-import 'package:tracktion/widgets/inputs/Select.dart';
 import 'package:tracktion/widgets/inputs/input.dart';
+import 'package:tracktion/widgets/ui/Divided.dart';
+import 'package:tracktion/widgets/ui/SaveFormActions.dart';
 
 class SaveRoutineForm extends StatefulWidget {
   @override
@@ -44,82 +45,26 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<RoutineGroupBloc, RoutineGroupState>(
-      listener: (context, state) {
-        if (state is RoutinesGroupSuccess) {
-          Navigator.of(context).pop();
-        }
-        if (state is RoutineGroupFailure) {}
-      },
-      child: Form(
-        key: form,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Name",
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.analysis,
-                    fontSize: 23),
-              ),
-              TracktionInput(
-                validator: isRequired,
-                autoFocus: true,
-                hint: "Push Pull Legs",
-                change: (val) => changeHandler("name", val),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                "Description",
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.analysis,
-                    fontSize: 23),
-              ),
-              TracktionInput(
-                validator: isRequired,
-                change: (val) => changeHandler("description", val),
-                hint: "No pain no gain.",
-                maxlines: 5,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                "Level",
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.analysis,
-                    fontSize: 23),
-              ),
-              Select(
-                onSelect: (val) {
-                  setState(() {
-                    level = val;
-                  });
-                },
-                value: level,
-                options: Level.values,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Align(
-                alignment: Alignment.topRight,
-                child: TextButton(
-                    onPressed: onSubmit,
-                    style: TextButton.styleFrom(
-                        primary: Colors.white, backgroundColor: Colors.black),
-                    child: Text("Save")),
-              )
-            ],
-          ),
-        ),
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration:
+                  BoxDecoration(color: Theme.of(context).colorScheme.analysis),
+              child: Text("What about pull.",
+                  style: TextStyle(fontSize: 18, color: Colors.white))),
+          Divided(
+              leftWidget: Text("Name"),
+              rightWidget: TracktionInput(
+                initialValue: "...",
+                hint: "",
+              )),
+          SaveFormActions(onCancel: () {}, onSave: () {})
+        ],
       ),
     );
   }

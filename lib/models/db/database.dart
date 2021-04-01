@@ -1,4 +1,3 @@
-
 import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tracktion/models/app/body-parts.dart';
@@ -13,7 +12,6 @@ import '../tables/Exercise.dart';
 export 'instance/shared.dart';
 
 part 'database.g.dart';
-
 
 @UseMoor(tables: [
   Exercises,
@@ -32,7 +30,7 @@ class SQLDatabase extends _$SQLDatabase {
   //           path: "tracktion.sqlite",
   //           logStatements: false,
   //           singleInstance: true));
-    SQLDatabase(QueryExecutor e) : super(e);
+  SQLDatabase(QueryExecutor e) : super(e);
 
   @override
   int get schemaVersion => 2;
@@ -83,8 +81,30 @@ class SQLDatabase extends _$SQLDatabase {
   Stream<List<RoutineGroupData>> findRoutineGroups() =>
       select(routineGroup).watch();
 
-  Stream<List<RoutineData>> findRoutines(int groupId) =>
-      (select(routine)..where((t) => t.groupId.equals(groupId))).watch();
+  // Stream<List<RoutineData>> findRoutines(int groupId) =>
+  //     (select(routine)..where((t) => t.groupId.equals(groupId))).watch();
+  //
+  Stream<List<modelsApp.RoutineDay>> findRoutines(int groupId) {
+    final query = select(routine).join(
+        [leftOuterJoin(routineSet, routineSet.routineId.equalsExp(routine.id))])
+      ..where(routine.groupId.equals(groupId));
+
+    return query.watch().map((row) {
+      return row.fold<List<modelsApp.RoutineDay>>([], (routineDays, tuple) {
+        final _routine = tuple.readTable(routine);
+        final set = tuple.readTable(routineSet);
+        final indexRoutine =
+            routineDays.indexWhere((r) => r.routine.id == _routine.id);
+
+        if (indexRoutine == -1)
+          routineDays.add(modelsApp.RoutineDay(routine: _routine, sets: [set]));
+        else
+          routineDays[indexRoutine].add(set);
+
+        return routineDays;
+      });
+    });
+  }
 
   Stream<List<RoutineSetData>> findRoutinesSet(int routineId) =>
       (select(routineSet)..where((t) => t.routineId.equals(routineId))).watch();
