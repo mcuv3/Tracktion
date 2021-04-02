@@ -57,15 +57,21 @@ class _RoutineMainScreenState extends State<RoutineMainScreen> {
                                     childAspectRatio: 3 / 2,
                                     crossAxisSpacing: 20,
                                     mainAxisSpacing: 20),
-                            itemBuilder: (context, i) => i + 1 > (res.data as List<RoutineGroupData>).length
-                                ? AddGroupRoutine(addRoutineGroupHanlder)
-                                : GroupRoutineItem(
-                                    onTap: () {
-                                      Navigator.of(context)
-                                          .pushNamed(RoutinesScreen.routeName);
-                                    },
-                                    index: i,
-                                  ))
+                            itemBuilder: (context, i) {
+                              List<RoutineGroupData> groups = res.data;
+                              if (i + 1 > groups.length) {
+                                return AddGroupRoutine(addRoutineGroupHanlder);
+                              }
+
+                              return GroupRoutineItem(
+                                onTap: () {
+                                  Navigator.of(context).pushNamed(
+                                      RoutinesScreen.routeName,
+                                      arguments: groups[i].id);
+                                },
+                                index: i,
+                              );
+                            })
                         : AddGroupRoutine(() {}),
                     stream: groups,
                   );

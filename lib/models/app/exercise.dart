@@ -1,9 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:tracktion/models/tables/Routines.dart';
 
 import 'body-parts.dart';
-import 'difficulties.dart';
+// import 'difficulties.dart';
 
 class Exercise {
   final int id;
@@ -44,7 +45,7 @@ class Exercise {
 
   String toJson() => json.encode({
         'name': name,
-        'difficulty': difficultyToInt(difficulty),
+        'difficulty': difficulty.index,
         'body_part': bodyPartToInt(bodyParts),
         'notes': notes == null ? "" : notes,
       });

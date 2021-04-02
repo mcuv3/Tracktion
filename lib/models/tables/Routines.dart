@@ -3,6 +3,7 @@ import 'package:moor_flutter/moor_flutter.dart';
 
 enum CopyMethod { Previus, Static, Smart, Percentage }
 enum Level { Pro, Advance, Normal, Beginner }
+enum Difficulty { Easy, Normal, Hard, Pro }
 
 class RoutineGroup extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -18,6 +19,7 @@ class Routine extends Table {
       integer().customConstraint("NOT NULL REFERENCES grouproutines (id)")();
   TextColumn get name => text()();
   IntColumn get duration => integer()();
+  IntColumn get difficulty => intEnum<Difficulty>()();
   TextColumn get notes =>
       text().withLength(max: 155).withDefault(const Constant(""))();
 }

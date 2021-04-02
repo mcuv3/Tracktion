@@ -2261,11 +2261,15 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
   final int id;
   final int groupId;
   final String name;
+  final int duration;
+  final Difficulty difficulty;
   final String notes;
   RoutineData(
       {@required this.id,
       @required this.groupId,
       @required this.name,
+      @required this.duration,
+      @required this.difficulty,
       @required this.notes});
   factory RoutineData.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
@@ -2277,6 +2281,10 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
       groupId:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}group_id']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
+      duration:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}duration']),
+      difficulty: $RoutineTable.$converter0.mapToDart(intType
+          .mapFromDatabaseResponse(data['${effectivePrefix}difficulty'])),
       notes:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}notes']),
     );
@@ -2293,6 +2301,13 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
     if (!nullToAbsent || name != null) {
       map['name'] = Variable<String>(name);
     }
+    if (!nullToAbsent || duration != null) {
+      map['duration'] = Variable<int>(duration);
+    }
+    if (!nullToAbsent || difficulty != null) {
+      final converter = $RoutineTable.$converter0;
+      map['difficulty'] = Variable<int>(converter.mapToSql(difficulty));
+    }
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
@@ -2306,6 +2321,12 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
           ? const Value.absent()
           : Value(groupId),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      duration: duration == null && nullToAbsent
+          ? const Value.absent()
+          : Value(duration),
+      difficulty: difficulty == null && nullToAbsent
+          ? const Value.absent()
+          : Value(difficulty),
       notes:
           notes == null && nullToAbsent ? const Value.absent() : Value(notes),
     );
@@ -2318,6 +2339,8 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
       id: serializer.fromJson<int>(json['id']),
       groupId: serializer.fromJson<int>(json['groupId']),
       name: serializer.fromJson<String>(json['name']),
+      duration: serializer.fromJson<int>(json['duration']),
+      difficulty: serializer.fromJson<Difficulty>(json['difficulty']),
       notes: serializer.fromJson<String>(json['notes']),
     );
   }
@@ -2328,15 +2351,25 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
       'id': serializer.toJson<int>(id),
       'groupId': serializer.toJson<int>(groupId),
       'name': serializer.toJson<String>(name),
+      'duration': serializer.toJson<int>(duration),
+      'difficulty': serializer.toJson<Difficulty>(difficulty),
       'notes': serializer.toJson<String>(notes),
     };
   }
 
-  RoutineData copyWith({int id, int groupId, String name, String notes}) =>
+  RoutineData copyWith(
+          {int id,
+          int groupId,
+          String name,
+          int duration,
+          Difficulty difficulty,
+          String notes}) =>
       RoutineData(
         id: id ?? this.id,
         groupId: groupId ?? this.groupId,
         name: name ?? this.name,
+        duration: duration ?? this.duration,
+        difficulty: difficulty ?? this.difficulty,
         notes: notes ?? this.notes,
       );
   @override
@@ -2345,14 +2378,22 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
           ..write('id: $id, ')
           ..write('groupId: $groupId, ')
           ..write('name: $name, ')
+          ..write('duration: $duration, ')
+          ..write('difficulty: $difficulty, ')
           ..write('notes: $notes')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(groupId.hashCode, $mrjc(name.hashCode, notes.hashCode))));
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(
+          groupId.hashCode,
+          $mrjc(
+              name.hashCode,
+              $mrjc(duration.hashCode,
+                  $mrjc(difficulty.hashCode, notes.hashCode))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -2360,6 +2401,8 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
           other.id == this.id &&
           other.groupId == this.groupId &&
           other.name == this.name &&
+          other.duration == this.duration &&
+          other.difficulty == this.difficulty &&
           other.notes == this.notes);
 }
 
@@ -2367,30 +2410,42 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
   final Value<int> id;
   final Value<int> groupId;
   final Value<String> name;
+  final Value<int> duration;
+  final Value<Difficulty> difficulty;
   final Value<String> notes;
   const RoutineCompanion({
     this.id = const Value.absent(),
     this.groupId = const Value.absent(),
     this.name = const Value.absent(),
+    this.duration = const Value.absent(),
+    this.difficulty = const Value.absent(),
     this.notes = const Value.absent(),
   });
   RoutineCompanion.insert({
     this.id = const Value.absent(),
     @required int groupId,
     @required String name,
+    @required int duration,
+    @required Difficulty difficulty,
     this.notes = const Value.absent(),
   })  : groupId = Value(groupId),
-        name = Value(name);
+        name = Value(name),
+        duration = Value(duration),
+        difficulty = Value(difficulty);
   static Insertable<RoutineData> custom({
     Expression<int> id,
     Expression<int> groupId,
     Expression<String> name,
+    Expression<int> duration,
+    Expression<int> difficulty,
     Expression<String> notes,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (groupId != null) 'group_id': groupId,
       if (name != null) 'name': name,
+      if (duration != null) 'duration': duration,
+      if (difficulty != null) 'difficulty': difficulty,
       if (notes != null) 'notes': notes,
     });
   }
@@ -2399,11 +2454,15 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
       {Value<int> id,
       Value<int> groupId,
       Value<String> name,
+      Value<int> duration,
+      Value<Difficulty> difficulty,
       Value<String> notes}) {
     return RoutineCompanion(
       id: id ?? this.id,
       groupId: groupId ?? this.groupId,
       name: name ?? this.name,
+      duration: duration ?? this.duration,
+      difficulty: difficulty ?? this.difficulty,
       notes: notes ?? this.notes,
     );
   }
@@ -2420,6 +2479,13 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
+    if (duration.present) {
+      map['duration'] = Variable<int>(duration.value);
+    }
+    if (difficulty.present) {
+      final converter = $RoutineTable.$converter0;
+      map['difficulty'] = Variable<int>(converter.mapToSql(difficulty.value));
+    }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
@@ -2432,6 +2498,8 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
           ..write('id: $id, ')
           ..write('groupId: $groupId, ')
           ..write('name: $name, ')
+          ..write('duration: $duration, ')
+          ..write('difficulty: $difficulty, ')
           ..write('notes: $notes')
           ..write(')'))
         .toString();
@@ -2472,6 +2540,30 @@ class $RoutineTable extends Routine with TableInfo<$RoutineTable, RoutineData> {
     );
   }
 
+  final VerificationMeta _durationMeta = const VerificationMeta('duration');
+  GeneratedIntColumn _duration;
+  @override
+  GeneratedIntColumn get duration => _duration ??= _constructDuration();
+  GeneratedIntColumn _constructDuration() {
+    return GeneratedIntColumn(
+      'duration',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _difficultyMeta = const VerificationMeta('difficulty');
+  GeneratedIntColumn _difficulty;
+  @override
+  GeneratedIntColumn get difficulty => _difficulty ??= _constructDifficulty();
+  GeneratedIntColumn _constructDifficulty() {
+    return GeneratedIntColumn(
+      'difficulty',
+      $tableName,
+      false,
+    );
+  }
+
   final VerificationMeta _notesMeta = const VerificationMeta('notes');
   GeneratedTextColumn _notes;
   @override
@@ -2482,7 +2574,8 @@ class $RoutineTable extends Routine with TableInfo<$RoutineTable, RoutineData> {
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, groupId, name, notes];
+  List<GeneratedColumn> get $columns =>
+      [id, groupId, name, duration, difficulty, notes];
   @override
   $RoutineTable get asDslTable => this;
   @override
@@ -2509,6 +2602,13 @@ class $RoutineTable extends Routine with TableInfo<$RoutineTable, RoutineData> {
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
+    if (data.containsKey('duration')) {
+      context.handle(_durationMeta,
+          duration.isAcceptableOrUnknown(data['duration'], _durationMeta));
+    } else if (isInserting) {
+      context.missing(_durationMeta);
+    }
+    context.handle(_difficultyMeta, const VerificationResult.success());
     if (data.containsKey('notes')) {
       context.handle(
           _notesMeta, notes.isAcceptableOrUnknown(data['notes'], _notesMeta));
@@ -2528,6 +2628,9 @@ class $RoutineTable extends Routine with TableInfo<$RoutineTable, RoutineData> {
   $RoutineTable createAlias(String alias) {
     return $RoutineTable(_db, alias);
   }
+
+  static TypeConverter<Difficulty, int> $converter0 =
+      const EnumIndexConverter<Difficulty>(Difficulty.values);
 }
 
 class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
@@ -2535,7 +2638,8 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
   final String exerciseName;
   final int exerciseId;
   final int routineId;
-  final int reps;
+  final int series;
+  final double repmax;
   final CopyMethod copyMethod;
   final int targetRpe;
   final String notes;
@@ -2544,7 +2648,8 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
       @required this.exerciseName,
       @required this.exerciseId,
       @required this.routineId,
-      @required this.reps,
+      @required this.series,
+      this.repmax,
       @required this.copyMethod,
       @required this.targetRpe,
       @required this.notes});
@@ -2554,6 +2659,7 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
+    final doubleType = db.typeSystem.forDartType<double>();
     return RoutineSetData(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       exerciseName: stringType
@@ -2562,7 +2668,9 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
           .mapFromDatabaseResponse(data['${effectivePrefix}exercise_id']),
       routineId:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}routine_id']),
-      reps: intType.mapFromDatabaseResponse(data['${effectivePrefix}reps']),
+      series: intType.mapFromDatabaseResponse(data['${effectivePrefix}series']),
+      repmax:
+          doubleType.mapFromDatabaseResponse(data['${effectivePrefix}repmax']),
       copyMethod: $RoutineSetTable.$converter0.mapToDart(intType
           .mapFromDatabaseResponse(data['${effectivePrefix}copy_method'])),
       targetRpe:
@@ -2586,8 +2694,11 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
     if (!nullToAbsent || routineId != null) {
       map['routine_id'] = Variable<int>(routineId);
     }
-    if (!nullToAbsent || reps != null) {
-      map['reps'] = Variable<int>(reps);
+    if (!nullToAbsent || series != null) {
+      map['series'] = Variable<int>(series);
+    }
+    if (!nullToAbsent || repmax != null) {
+      map['repmax'] = Variable<double>(repmax);
     }
     if (!nullToAbsent || copyMethod != null) {
       final converter = $RoutineSetTable.$converter0;
@@ -2614,7 +2725,10 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
       routineId: routineId == null && nullToAbsent
           ? const Value.absent()
           : Value(routineId),
-      reps: reps == null && nullToAbsent ? const Value.absent() : Value(reps),
+      series:
+          series == null && nullToAbsent ? const Value.absent() : Value(series),
+      repmax:
+          repmax == null && nullToAbsent ? const Value.absent() : Value(repmax),
       copyMethod: copyMethod == null && nullToAbsent
           ? const Value.absent()
           : Value(copyMethod),
@@ -2634,7 +2748,8 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
       exerciseName: serializer.fromJson<String>(json['exerciseName']),
       exerciseId: serializer.fromJson<int>(json['exerciseId']),
       routineId: serializer.fromJson<int>(json['routineId']),
-      reps: serializer.fromJson<int>(json['reps']),
+      series: serializer.fromJson<int>(json['series']),
+      repmax: serializer.fromJson<double>(json['repmax']),
       copyMethod: serializer.fromJson<CopyMethod>(json['copyMethod']),
       targetRpe: serializer.fromJson<int>(json['targetRpe']),
       notes: serializer.fromJson<String>(json['notes']),
@@ -2648,7 +2763,8 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
       'exerciseName': serializer.toJson<String>(exerciseName),
       'exerciseId': serializer.toJson<int>(exerciseId),
       'routineId': serializer.toJson<int>(routineId),
-      'reps': serializer.toJson<int>(reps),
+      'series': serializer.toJson<int>(series),
+      'repmax': serializer.toJson<double>(repmax),
       'copyMethod': serializer.toJson<CopyMethod>(copyMethod),
       'targetRpe': serializer.toJson<int>(targetRpe),
       'notes': serializer.toJson<String>(notes),
@@ -2660,7 +2776,8 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
           String exerciseName,
           int exerciseId,
           int routineId,
-          int reps,
+          int series,
+          double repmax,
           CopyMethod copyMethod,
           int targetRpe,
           String notes}) =>
@@ -2669,7 +2786,8 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
         exerciseName: exerciseName ?? this.exerciseName,
         exerciseId: exerciseId ?? this.exerciseId,
         routineId: routineId ?? this.routineId,
-        reps: reps ?? this.reps,
+        series: series ?? this.series,
+        repmax: repmax ?? this.repmax,
         copyMethod: copyMethod ?? this.copyMethod,
         targetRpe: targetRpe ?? this.targetRpe,
         notes: notes ?? this.notes,
@@ -2681,7 +2799,8 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
           ..write('exerciseName: $exerciseName, ')
           ..write('exerciseId: $exerciseId, ')
           ..write('routineId: $routineId, ')
-          ..write('reps: $reps, ')
+          ..write('series: $series, ')
+          ..write('repmax: $repmax, ')
           ..write('copyMethod: $copyMethod, ')
           ..write('targetRpe: $targetRpe, ')
           ..write('notes: $notes')
@@ -2699,9 +2818,11 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
               $mrjc(
                   routineId.hashCode,
                   $mrjc(
-                      reps.hashCode,
-                      $mrjc(copyMethod.hashCode,
-                          $mrjc(targetRpe.hashCode, notes.hashCode))))))));
+                      series.hashCode,
+                      $mrjc(
+                          repmax.hashCode,
+                          $mrjc(copyMethod.hashCode,
+                              $mrjc(targetRpe.hashCode, notes.hashCode)))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -2710,7 +2831,8 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
           other.exerciseName == this.exerciseName &&
           other.exerciseId == this.exerciseId &&
           other.routineId == this.routineId &&
-          other.reps == this.reps &&
+          other.series == this.series &&
+          other.repmax == this.repmax &&
           other.copyMethod == this.copyMethod &&
           other.targetRpe == this.targetRpe &&
           other.notes == this.notes);
@@ -2721,7 +2843,8 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
   final Value<String> exerciseName;
   final Value<int> exerciseId;
   final Value<int> routineId;
-  final Value<int> reps;
+  final Value<int> series;
+  final Value<double> repmax;
   final Value<CopyMethod> copyMethod;
   final Value<int> targetRpe;
   final Value<String> notes;
@@ -2730,7 +2853,8 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
     this.exerciseName = const Value.absent(),
     this.exerciseId = const Value.absent(),
     this.routineId = const Value.absent(),
-    this.reps = const Value.absent(),
+    this.series = const Value.absent(),
+    this.repmax = const Value.absent(),
     this.copyMethod = const Value.absent(),
     this.targetRpe = const Value.absent(),
     this.notes = const Value.absent(),
@@ -2740,14 +2864,14 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
     @required String exerciseName,
     @required int exerciseId,
     @required int routineId,
-    @required int reps,
+    this.series = const Value.absent(),
+    this.repmax = const Value.absent(),
     @required CopyMethod copyMethod,
     @required int targetRpe,
     this.notes = const Value.absent(),
   })  : exerciseName = Value(exerciseName),
         exerciseId = Value(exerciseId),
         routineId = Value(routineId),
-        reps = Value(reps),
         copyMethod = Value(copyMethod),
         targetRpe = Value(targetRpe);
   static Insertable<RoutineSetData> custom({
@@ -2755,7 +2879,8 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
     Expression<String> exerciseName,
     Expression<int> exerciseId,
     Expression<int> routineId,
-    Expression<int> reps,
+    Expression<int> series,
+    Expression<double> repmax,
     Expression<int> copyMethod,
     Expression<int> targetRpe,
     Expression<String> notes,
@@ -2765,7 +2890,8 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
       if (exerciseName != null) 'exercise_name': exerciseName,
       if (exerciseId != null) 'exercise_id': exerciseId,
       if (routineId != null) 'routine_id': routineId,
-      if (reps != null) 'reps': reps,
+      if (series != null) 'series': series,
+      if (repmax != null) 'repmax': repmax,
       if (copyMethod != null) 'copy_method': copyMethod,
       if (targetRpe != null) 'target_rpe': targetRpe,
       if (notes != null) 'notes': notes,
@@ -2777,7 +2903,8 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
       Value<String> exerciseName,
       Value<int> exerciseId,
       Value<int> routineId,
-      Value<int> reps,
+      Value<int> series,
+      Value<double> repmax,
       Value<CopyMethod> copyMethod,
       Value<int> targetRpe,
       Value<String> notes}) {
@@ -2786,7 +2913,8 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
       exerciseName: exerciseName ?? this.exerciseName,
       exerciseId: exerciseId ?? this.exerciseId,
       routineId: routineId ?? this.routineId,
-      reps: reps ?? this.reps,
+      series: series ?? this.series,
+      repmax: repmax ?? this.repmax,
       copyMethod: copyMethod ?? this.copyMethod,
       targetRpe: targetRpe ?? this.targetRpe,
       notes: notes ?? this.notes,
@@ -2808,8 +2936,11 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
     if (routineId.present) {
       map['routine_id'] = Variable<int>(routineId.value);
     }
-    if (reps.present) {
-      map['reps'] = Variable<int>(reps.value);
+    if (series.present) {
+      map['series'] = Variable<int>(series.value);
+    }
+    if (repmax.present) {
+      map['repmax'] = Variable<double>(repmax.value);
     }
     if (copyMethod.present) {
       final converter = $RoutineSetTable.$converter0;
@@ -2831,7 +2962,8 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
           ..write('exerciseName: $exerciseName, ')
           ..write('exerciseId: $exerciseId, ')
           ..write('routineId: $routineId, ')
-          ..write('reps: $reps, ')
+          ..write('series: $series, ')
+          ..write('repmax: $repmax, ')
           ..write('copyMethod: $copyMethod, ')
           ..write('targetRpe: $targetRpe, ')
           ..write('notes: $notes')
@@ -2886,15 +3018,24 @@ class $RoutineSetTable extends RoutineSet
         $customConstraints: 'NOT NULL REFERENCES routines (id)');
   }
 
-  final VerificationMeta _repsMeta = const VerificationMeta('reps');
-  GeneratedIntColumn _reps;
+  final VerificationMeta _seriesMeta = const VerificationMeta('series');
+  GeneratedIntColumn _series;
   @override
-  GeneratedIntColumn get reps => _reps ??= _constructReps();
-  GeneratedIntColumn _constructReps() {
-    return GeneratedIntColumn(
-      'reps',
+  GeneratedIntColumn get series => _series ??= _constructSeries();
+  GeneratedIntColumn _constructSeries() {
+    return GeneratedIntColumn('series', $tableName, false,
+        defaultValue: const Constant(3));
+  }
+
+  final VerificationMeta _repmaxMeta = const VerificationMeta('repmax');
+  GeneratedRealColumn _repmax;
+  @override
+  GeneratedRealColumn get repmax => _repmax ??= _constructRepmax();
+  GeneratedRealColumn _constructRepmax() {
+    return GeneratedRealColumn(
+      'repmax',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -2937,7 +3078,8 @@ class $RoutineSetTable extends RoutineSet
         exerciseName,
         exerciseId,
         routineId,
-        reps,
+        series,
+        repmax,
         copyMethod,
         targetRpe,
         notes
@@ -2978,11 +3120,13 @@ class $RoutineSetTable extends RoutineSet
     } else if (isInserting) {
       context.missing(_routineIdMeta);
     }
-    if (data.containsKey('reps')) {
-      context.handle(
-          _repsMeta, reps.isAcceptableOrUnknown(data['reps'], _repsMeta));
-    } else if (isInserting) {
-      context.missing(_repsMeta);
+    if (data.containsKey('series')) {
+      context.handle(_seriesMeta,
+          series.isAcceptableOrUnknown(data['series'], _seriesMeta));
+    }
+    if (data.containsKey('repmax')) {
+      context.handle(_repmaxMeta,
+          repmax.isAcceptableOrUnknown(data['repmax'], _repmaxMeta));
     }
     context.handle(_copyMethodMeta, const VerificationResult.success());
     if (data.containsKey('target_rpe')) {

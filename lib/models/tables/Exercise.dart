@@ -1,7 +1,7 @@
 import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tracktion/models/app/body-parts.dart';
-import 'package:tracktion/models/app/difficulties.dart';
+import 'package:tracktion/models/tables/Routines.dart';
 
 class Migrations extends Table {
   IntColumn get id => integer().autoIncrement()();

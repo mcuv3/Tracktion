@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tracktion/colors/custom_colors.dart';
+import 'package:tracktion/models/app/index.dart';
+import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/models/tables/Routines.dart';
 import 'package:tracktion/screens/routine/routines-screen.dart';
+import 'package:tracktion/util/enumToString.dart';
 import 'package:tracktion/widgets/ui/IconDetail.dart';
 
 //TODO: needs implementation on querys as well the whole CRUD
 class RoutineItem extends StatefulWidget {
   final Function onTap;
   final Key key;
-  RoutineItem({@required this.key, @required this.onTap});
+  final RoutineDay routineDay;
+  RoutineItem(
+      {@required this.key, @required this.onTap, @required this.routineDay});
 
   @override
   _RoutineItemState createState() => _RoutineItemState();
@@ -19,16 +24,6 @@ class _RoutineItemState extends State<RoutineItem>
     with TickerProviderStateMixin {
   var isExpanded = false;
 
-  List<RoutineSet> sets = [
-    RoutineSet(),
-    RoutineSet(),
-    RoutineSet(),
-    RoutineSet(),
-    RoutineSet(),
-    RoutineSet(),
-    RoutineSet(),
-  ];
-
   void expand() {
     setState(() {
       isExpanded = !isExpanded;
@@ -37,6 +32,7 @@ class _RoutineItemState extends State<RoutineItem>
 
   @override
   Widget build(BuildContext context) {
+    final sets = widget.routineDay.sets;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -55,8 +51,15 @@ class _RoutineItemState extends State<RoutineItem>
         children: [
           RoutineHeader(
             onNotes: () => expand(),
+            difficulty: widget.routineDay.routine.difficulty,
+            routineName: widget.routineDay.routine.name,
+            routineId: widget.routineDay.routine.id,
           ),
-          RoutineDetails(),
+          RoutineDetails(
+            duration: widget.routineDay.routine.duration,
+            exercises: widget.routineDay.numExercises,
+            series: widget.routineDay.numSeries,
+          ),
           if (isExpanded)
             Divider(
               thickness: 1,
@@ -68,14 +71,19 @@ class _RoutineItemState extends State<RoutineItem>
               curve: Curves.easeOut,
               vsync: this,
               child: Container(
-                height: isExpanded ? ((sets.length) * 70.0) : null,
+                height: isExpanded
+                    ? sets.length == 0
+                        ? 100
+                        : ((sets.length) * 70.0 + 15)
+                    : null,
                 width: double.infinity,
                 child: Column(
                   children: [
                     if (isExpanded)
                       Expanded(
                           child: SetsRoutineItem(
-                        sets: sets,
+                        sets: widget.routineDay.sets,
+                        routineId: widget.routineDay.routine.id,
                       )),
                     Material(
                         color: Colors.white,
@@ -108,30 +116,34 @@ class _RoutineItemState extends State<RoutineItem>
 }
 
 class SetsRoutineItem extends StatelessWidget {
-  final List<RoutineSet> sets;
-
-  const SetsRoutineItem({
-    this.sets,
-    Key key,
-  }) : super(key: key);
+  final List<RoutineSetData> sets;
+  final int routineId;
+  const SetsRoutineItem({this.sets, Key key, @required this.routineId})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final editMode = RoutinesService.of(context).editMode;
+
     return sets.length == 0
-        ? Center(child: Text("No sets added"))
+        ? Container(height: 100, child: Center(child: Text("No sets added")))
         : ListView(
             shrinkWrap: true,
             physics: ClampingScrollPhysics(),
             children: ListTile.divideTiles(
                 color: Colors.red,
                 context: context,
-                tiles: sets.map((e) => ListTile(
+                tiles: sets.map((set) => ListTile(
+                    onTap: () {
+                      RoutinesService.of(context)
+                          .saveSetRoutineHandler(context, routineId, set);
+                    },
                     visualDensity: VisualDensity.compact,
                     leading: FaIcon(FontAwesomeIcons.dumbbell,
                         color: Theme.of(context).colorScheme.analysisLight),
-                    title: Text("Deadlift"),
-                    subtitle: Text("Type: Smart - RPE:8"),
+                    title: Text(set.exerciseName.toString()),
+                    subtitle: Text(
+                        "Type: ${enumToString(set.copyMethod)} - RPE:${set.targetRpe.toString()}"),
                     trailing: AnimatedOpacity(
                       opacity: editMode ? 1.0 : 0.0,
                       duration: Duration(milliseconds: 400),
@@ -144,7 +156,12 @@ class SetsRoutineItem extends StatelessWidget {
                                     color: Theme.of(context)
                                         .colorScheme
                                         .routinesLight),
-                                onPressed: editMode ? () {} : null)
+                                onPressed: editMode
+                                    ? () {
+                                        RoutinesService.of(context)
+                                            .deleteSetRoutine(context, set.id);
+                                      }
+                                    : null)
                           ],
                         ),
                       ),
@@ -164,9 +181,16 @@ class SetRoutineItem extends StatelessWidget {
 }
 
 class RoutineDetails extends StatelessWidget {
-  const RoutineDetails({
-    Key key,
-  }) : super(key: key);
+  final int series;
+  final int exercises;
+  final int duration;
+
+  const RoutineDetails(
+      {Key key,
+      @required this.series,
+      @required this.exercises,
+      @required this.duration})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -180,15 +204,15 @@ class RoutineDetails extends StatelessWidget {
               FontAwesomeIcons.dumbbell,
               size: 14,
             ),
-            lead: "23",
-            secondary: "set",
+            lead: series.toString(),
+            secondary: "series",
           ),
           IconDetail(
             icon: FaIcon(
               FontAwesomeIcons.running,
               size: 16,
             ),
-            lead: "5",
+            lead: exercises.toString(),
             secondary: "exercise",
           ),
           IconDetail(
@@ -196,7 +220,7 @@ class RoutineDetails extends StatelessWidget {
               FontAwesomeIcons.hourglassHalf,
               size: 14,
             ),
-            lead: "60",
+            lead: duration.toString(),
             secondary: "min",
           ),
         ],
@@ -207,12 +231,22 @@ class RoutineDetails extends StatelessWidget {
 
 class RoutineHeader extends StatelessWidget {
   final Function() onNotes;
+  final Difficulty difficulty;
+  final String routineName;
+  final int routineId;
 
-  const RoutineHeader({Key key, this.onNotes}) : super(key: key);
+  const RoutineHeader(
+      {Key key,
+      @required this.onNotes,
+      @required this.difficulty,
+      @required this.routineName,
+      @required this.routineId})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final editMode = RoutinesService.of(context).editMode;
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
@@ -224,7 +258,7 @@ class RoutineHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "Push Day #1",
+            routineName,
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
           AnimatedOpacity(
@@ -266,7 +300,12 @@ class RoutineHeader extends StatelessWidget {
                       visualDensity: VisualDensity.compact,
                       icon: FaIcon(FontAwesomeIcons.plusCircle,
                           color: Colors.white),
-                      onPressed: editMode ? () {} : null),
+                      onPressed: editMode
+                          ? () {
+                              RoutinesService.of(context)
+                                  .saveSetRoutineHandler(context, routineId);
+                            }
+                          : null),
                 ],
               ),
             ),

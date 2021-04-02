@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracktion/colors/custom_colors.dart';
 
 Future<bool> showModalConfirmation({
   @required BuildContext context,
@@ -13,7 +14,9 @@ Future<bool> showModalConfirmation({
             content: Text(contentText),
             actions: <Widget>[
               TextButton(
-                // color: Theme.of(context).colorScheme.exercise,
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        Theme.of(context).colorScheme.routines)),
                 child: Text(
                   cancelText,
                   style: TextStyle(color: Colors.white),
@@ -23,7 +26,9 @@ Future<bool> showModalConfirmation({
                 },
               ),
               TextButton(
-                // color: Theme.of(context).colorScheme.routines,
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(
+                        Theme.of(context).colorScheme.exercise)),
                 child: Text(
                   confirmText,
                   style: TextStyle(color: Colors.white),

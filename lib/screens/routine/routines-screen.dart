@@ -7,6 +7,7 @@ import 'package:tracktion/bloc/routines/routines_bloc.dart';
 import 'package:tracktion/models/app/index.dart' as app;
 import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/screens/exercise/body-parts-screen.dart';
+import 'package:tracktion/util/showModalConfirmation.dart';
 import 'package:tracktion/widgets/forms/SaveRoutine.dart';
 import 'package:tracktion/widgets/forms/SaveSetRoutine.dart';
 import 'package:tracktion/widgets/items/RoutineItem.dart';
@@ -21,6 +22,41 @@ class RoutinesService extends InheritedWidget {
 
   static RoutinesService of(BuildContext context) {
     return context.dependOnInheritedWidgetOfExactType<RoutinesService>();
+  }
+
+  void saveSetRoutineHandler(BuildContext context, int routineId,
+      [RoutineSetData set]) async {
+    app.Exercise exercise;
+
+    print(set);
+    if (set == null) {
+      exercise = await Navigator.of(context).pushNamed(
+          BodyPartsScreen.routeName,
+          arguments: {"readOnly": true}) as app.Exercise;
+
+      if (exercise == null) return;
+    }
+
+    RoutineSetData setRoutine = await showAnimatedModal(
+        context,
+        SaveSetRoutineForm(
+          exercise: exercise,
+          routineId: routineId,
+          set: set,
+        ));
+
+    print(setRoutine);
+    if (setRoutine == null) return;
+
+    BlocProvider.of<RoutineBloc>(context).add(SaveSet(setRoutine));
+  }
+
+  void deleteSetRoutine(BuildContext context, int setId) async {
+    final shouldDelete = await showModalConfirmation(
+        context: context,
+        contentText: "Are you sure you want to delete this set?");
+    if (shouldDelete == null || !shouldDelete) return;
+    BlocProvider.of<RoutineBloc>(context).add(DeleteSet(setId));
   }
 
   @override
@@ -40,25 +76,26 @@ class RoutinesScreen extends StatefulWidget {
 
 class _RoutinesScreenState extends State<RoutinesScreen> {
   var editMode = false;
-
-  void saveSetRoutineHandler() async {
-    final exercise = await Navigator.of(context)
-            .pushNamed(BodyPartsScreen.routeName, arguments: {"readOnly": true})
-        as app.Exercise;
-
-    if (exercise == null) return;
-
-    RoutineSetData setRoutine = await showAnimatedModal(
-        context,
-        SaveSetRoutineForm(
-          exercise: exercise,
-        ));
-
-    BlocProvider.of<RoutineBloc>(context).add(SaveSet(setRoutine));
+  int groupId;
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero).then((_) {
+      groupId = ModalRoute.of(context).settings.arguments as int;
+      BlocProvider.of<RoutinesBloc>(context).add(StreamRoutines(groupId));
+    });
   }
 
   void saveRoutineHandler() async {
-    await showAnimatedModal(context, SaveRoutineForm());
+    RoutineData routine = await showAnimatedModal(
+        context,
+        SaveRoutineForm(
+          groupId: groupId,
+        ));
+
+    if (routine == null) return;
+
+    BlocProvider.of<RoutinesBloc>(context).add(SaveRoutine(routine));
   }
 
   @override
@@ -91,15 +128,24 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
             child: BlocBuilder<RoutinesBloc, RoutinesState>(
               builder: (context, state) {
                 if (state is Routines) {
-                  return ListView.separated(
-                      itemBuilder: (context, i) => RoutineItem(
-                            key: Key(i.toString()),
-                            onTap: () {},
-                          ),
-                      separatorBuilder: (context, i) => SizedBox(
-                            height: 15,
-                          ),
-                      itemCount: 6);
+                  return StreamBuilder(
+                      stream: state.routines,
+                      builder: (context, streamState) {
+                        List<app.RoutineDay> routines = streamState.data ?? [];
+                        if (routines.isEmpty)
+                          return Center(child: Text("No Routines here :("));
+
+                        return ListView.separated(
+                            itemBuilder: (context, i) => RoutineItem(
+                                  key: Key(i.toString()),
+                                  onTap: () {},
+                                  routineDay: routines[i],
+                                ),
+                            separatorBuilder: (context, i) => SizedBox(
+                                  height: 15,
+                                ),
+                            itemCount: routines.length);
+                      });
                 }
 
                 return Center(child: Text("No Routines here :("));

@@ -20,8 +20,6 @@ import 'bloc/routine-group/routine_bloc.dart';
 import 'bloc/routine/routine_bloc.dart';
 import 'bloc/routines/routines_bloc.dart';
 import 'plugins/desktop/desktop.dart';
-import 'screens/routine/routine-screen.dart';
-
 
 void main() {
   setTargetPlatformForDesktop();
@@ -90,36 +88,41 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return 
-     RepositoryProvider<SQLDatabase>(
-          create: (context) => constructDb(),
+    return RepositoryProvider<SQLDatabase>(
+      create: (context) => constructDb(),
       child: BlocProvider(
           create: (BuildContext context) => AuthCubit(),
-          child: 
-          MultiBlocProvider(
+          child: MultiBlocProvider(
             providers: [
               BlocProvider<ExerciseBloc>(
-                create: (BuildContext context) =>
-                    ExerciseBloc(db: RepositoryProvider.of<SQLDatabase>(context), common: common),
+                create: (BuildContext context) => ExerciseBloc(
+                    db: RepositoryProvider.of<SQLDatabase>(context),
+                    common: common),
               ),
               BlocProvider<WorkoutBloc>(
-                create: (context) => WorkoutBloc(db: RepositoryProvider.of<SQLDatabase>(context), common: common),
+                create: (context) => WorkoutBloc(
+                    db: RepositoryProvider.of<SQLDatabase>(context),
+                    common: common),
               ),
               BlocProvider<WorkoutpickerBloc>(
-                create: (context) => WorkoutpickerBloc(db: RepositoryProvider.of<SQLDatabase>(context)),
+                create: (context) => WorkoutpickerBloc(
+                    db: RepositoryProvider.of<SQLDatabase>(context)),
               ),
               BlocProvider<RoutineBloc>(
-                create: (context) => RoutineBloc(RepositoryProvider.of<SQLDatabase>(context)),
+                create: (context) =>
+                    RoutineBloc(RepositoryProvider.of<SQLDatabase>(context)),
               ),
               BlocProvider<RoutinesBloc>(
-                create: (context) => RoutinesBloc(RepositoryProvider.of<SQLDatabase>(context)),
+                create: (context) =>
+                    RoutinesBloc(RepositoryProvider.of<SQLDatabase>(context)),
               ),
               BlocProvider<RoutineGroupBloc>(
-                create: (context) => RoutineGroupBloc(RepositoryProvider.of<SQLDatabase>(context)),
+                create: (context) => RoutineGroupBloc(
+                    RepositoryProvider.of<SQLDatabase>(context)),
               ),
               BlocProvider(
-                  create: (BuildContext context) =>
-                      ExerciseStreamCubit(db: RepositoryProvider.of<SQLDatabase>(context))),
+                  create: (BuildContext context) => ExerciseStreamCubit(
+                      db: RepositoryProvider.of<SQLDatabase>(context))),
             ],
             child: InitApp(changeAuthStatus: (auth) {
               setState(() {
@@ -204,7 +207,6 @@ class _InitAppState extends State<InitApp> {
         WorkOutScreen.routeName: (ctx) => WorkOutScreen(),
         RoutineMainScreen.routeName: (ctx) => RoutineMainScreen(),
         RoutinesScreen.routeName: (ctx) => RoutinesScreen(),
-        RoutineScreen.routeName: (ctx) => RoutineScreen(),
       },
     );
   }

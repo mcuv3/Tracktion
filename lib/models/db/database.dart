@@ -1,7 +1,6 @@
 import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tracktion/models/app/body-parts.dart';
-import 'package:tracktion/models/app/difficulties.dart';
 import 'package:tracktion/models/tables/Routines.dart';
 import 'package:tracktion/models/tables/WorkOut.dart';
 
@@ -97,7 +96,8 @@ class SQLDatabase extends _$SQLDatabase {
             routineDays.indexWhere((r) => r.routine.id == _routine.id);
 
         if (indexRoutine == -1)
-          routineDays.add(modelsApp.RoutineDay(routine: _routine, sets: [set]));
+          routineDays.add(modelsApp.RoutineDay(
+              routine: _routine, sets: set != null ? [set] : []));
         else
           routineDays[indexRoutine].add(set);
 

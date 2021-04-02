@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/models/app/body-parts.dart';
-import 'package:tracktion/models/app/difficulties.dart';
 import 'package:tracktion/models/app/exercise.dart';
+import 'package:tracktion/models/tables/Routines.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/create-exercise.dart';
 import 'package:tracktion/util/showMessage.dart';
@@ -113,7 +113,7 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
       if (b["active"]) parts.add(b["body"]);
     });
 
-    if (parts.length == 0 ) {
+    if (parts.length == 0) {
       showErrorMessage(
           context: ctx, message: 'Body parts or difficulty missing.');
       return;

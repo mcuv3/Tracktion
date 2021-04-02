@@ -18,10 +18,12 @@ class RoutinesBloc extends Bloc<RoutinesEvent, RoutinesState> {
   ) async* {
     if (event is StreamRoutines) {
       yield* _streamRoutines(event);
-    } else if (event is SaveRoutine) {
-      yield* _saveRoutine(event);
+    } else if (event is SaveFullRoutine) {
+      yield* _savefullRoutine(event);
     } else if (event is DeleteRoutine) {
       yield* _deleteRoutine(event);
+    } else if (event is SaveRoutine) {
+      yield* _saveRoutine(event);
     }
   }
 
@@ -51,12 +53,24 @@ class RoutinesBloc extends Bloc<RoutinesEvent, RoutinesState> {
     }
   }
 
-  Stream<RoutinesState> _saveRoutine(SaveRoutine event) async* {
+  Stream<RoutinesState> _savefullRoutine(SaveFullRoutine event) async* {
     final stream = (state as Routines).routines;
     try {
       final sets = event.sets;
       for (final set in sets)
         await this.db.saveSetRoutine(set.toCompanion(true));
+      await this.db.saveRoutine(event.routine.toCompanion(true));
+      yield RoutinesSuccess();
+      yield Routines(stream);
+    } catch (e) {
+      print(e);
+      yield RoutinesFailure("Cannot create the Routine");
+    }
+  }
+
+  Stream<RoutinesState> _saveRoutine(SaveRoutine event) async* {
+    final stream = (state as Routines).routines;
+    try {
       await this.db.saveRoutine(event.routine.toCompanion(true));
       yield RoutinesSuccess();
       yield Routines(stream);

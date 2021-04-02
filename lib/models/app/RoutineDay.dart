@@ -7,7 +7,7 @@ class RoutineDay {
   RoutineDay({this.routine, this.sets});
 
   int get numSeries =>
-      sets.fold(0, (previousValue, s) => previousValue += s.reps);
+      sets.fold(0, (previousValue, s) => previousValue += s.series);
 
   int get numExercises => sets.length;
 
