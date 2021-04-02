@@ -326,7 +326,7 @@ class SQLDatabase extends _$SQLDatabase {
     return transaction(() async {
       await (delete(routineSet)..where((t) => t.routineId.equals(routineId)))
           .go();
-      await (delete(routine)..where((t) => t.groupId.equals(routineId))).go();
+      await (delete(routine)..where((t) => t.id.equals(routineId))).go();
     });
   }
 

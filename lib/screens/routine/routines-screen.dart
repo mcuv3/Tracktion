@@ -28,7 +28,6 @@ class RoutinesService extends InheritedWidget {
       [RoutineSetData set]) async {
     app.Exercise exercise;
 
-    print(set);
     if (set == null) {
       exercise = await Navigator.of(context).pushNamed(
           BodyPartsScreen.routeName,
@@ -59,6 +58,28 @@ class RoutinesService extends InheritedWidget {
     BlocProvider.of<RoutineBloc>(context).add(DeleteSet(setId));
   }
 
+  void deleteRoutine(BuildContext context, int routineId) async {
+    final shouldDelete = await showModalConfirmation(
+        context: context,
+        contentText: "Are you sure you want to delete this routine?");
+    if (shouldDelete == null || !shouldDelete) return;
+    BlocProvider.of<RoutinesBloc>(context).add(DeleteRoutine(routineId));
+  }
+
+  void saveRoutineHandler(BuildContext context, int groupId,
+      [RoutineData routine]) async {
+    RoutineData newRoutine = await showAnimatedModal(
+        context,
+        SaveRoutineForm(
+          groupId: groupId,
+          routine: routine,
+        ));
+
+    if (newRoutine == null) return;
+
+    BlocProvider.of<RoutinesBloc>(context).add(SaveRoutine(newRoutine));
+  }
+
   @override
   bool updateShouldNotify(RoutinesService oldWidget) {
     return true;
@@ -86,16 +107,16 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
     });
   }
 
-  void saveRoutineHandler() async {
-    RoutineData routine = await showAnimatedModal(
+  void addRoutineHandler() async {
+    RoutineData newRoutine = await showAnimatedModal(
         context,
         SaveRoutineForm(
           groupId: groupId,
         ));
 
-    if (routine == null) return;
+    if (newRoutine == null) return;
 
-    BlocProvider.of<RoutinesBloc>(context).add(SaveRoutine(routine));
+    BlocProvider.of<RoutinesBloc>(context).add(SaveRoutine(newRoutine));
   }
 
   @override
@@ -109,7 +130,7 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
             IconButton(
               visualDensity: VisualDensity.compact,
               icon: FaIcon(FontAwesomeIcons.plusCircle),
-              onPressed: saveRoutineHandler,
+              onPressed: addRoutineHandler,
             ),
             IconButton(
                 visualDensity: VisualDensity.compact,
@@ -132,8 +153,12 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
                       stream: state.routines,
                       builder: (context, streamState) {
                         List<app.RoutineDay> routines = streamState.data ?? [];
-                        if (routines.isEmpty)
+                        if (routines.isEmpty ||
+                            streamState.hasError ||
+                            !streamState.hasData)
                           return Center(child: Text("No Routines here :("));
+                        routines.sort(
+                            (r1, r2) => r1.routine.id.compareTo(r2.routine.id));
 
                         return ListView.separated(
                             itemBuilder: (context, i) => RoutineItem(

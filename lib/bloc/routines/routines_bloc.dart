@@ -41,8 +41,8 @@ class RoutinesBloc extends Bloc<RoutinesEvent, RoutinesState> {
   }
 
   Stream<RoutinesState> _deleteRoutine(DeleteRoutine event) async* {
-    yield RoutinesLoading();
     final stream = (state as Routines).routines;
+    yield RoutinesLoading();
     try {
       await this.db.deleteRoutine(event.id);
       yield RoutinesSuccess();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tracktion/colors/custom_colors.dart';
+import 'package:tracktion/widgets/modals/showAnimatedModal.dart';
 
 Future<bool> showModalConfirmation({
   @required BuildContext context,
@@ -7,36 +8,51 @@ Future<bool> showModalConfirmation({
   String cancelText = 'Cancel',
   String confirmText = 'Ok',
 }) {
-  return showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-            contentPadding: EdgeInsets.all(20),
-            content: Text(contentText),
-            actions: <Widget>[
-              TextButton(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        Theme.of(context).colorScheme.routines)),
-                child: Text(
-                  cancelText,
-                  style: TextStyle(color: Colors.white),
+  return showAnimatedModal<bool>(
+      context,
+      Container(
+        padding: EdgeInsets.all(10),
+        width: double.maxFinite,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(contentText),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          Theme.of(context).colorScheme.routines)),
+                  child: Text(
+                    cancelText,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop(false);
+                  },
                 ),
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-              ),
-              TextButton(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(
-                        Theme.of(context).colorScheme.exercise)),
-                child: Text(
-                  confirmText,
-                  style: TextStyle(color: Colors.white),
+                SizedBox(
+                  width: 5,
                 ),
-                onPressed: () {
-                  Navigator.of(context).pop(true);
-                },
-              ),
-            ],
-          ));
+                TextButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                          Theme.of(context).colorScheme.exercise)),
+                  child: Text(
+                    confirmText,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                ),
+              ],
+            )
+          ],
+        ),
+      ));
 }

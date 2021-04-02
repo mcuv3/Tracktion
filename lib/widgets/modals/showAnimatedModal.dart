@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-Future<dynamic> showAnimatedModal(BuildContext context, Widget widget) {
-  return showGeneralDialog(
+Future<dynamic> showAnimatedModal<T>(BuildContext context, Widget widget) {
+  return showGeneralDialog<T>(
       context: context,
       barrierDismissible: true,
       barrierLabel: "",

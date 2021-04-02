@@ -3,12 +3,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tracktion/colors/custom_colors.dart';
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/db/database.dart';
-import 'package:tracktion/models/tables/Routines.dart';
 import 'package:tracktion/screens/routine/routines-screen.dart';
 import 'package:tracktion/util/enumToString.dart';
 import 'package:tracktion/widgets/ui/IconDetail.dart';
 
-//TODO: needs implementation on querys as well the whole CRUD
 class RoutineItem extends StatefulWidget {
   final Function onTap;
   final Key key;
@@ -51,9 +49,7 @@ class _RoutineItemState extends State<RoutineItem>
         children: [
           RoutineHeader(
             onNotes: () => expand(),
-            difficulty: widget.routineDay.routine.difficulty,
-            routineName: widget.routineDay.routine.name,
-            routineId: widget.routineDay.routine.id,
+            routine: widget.routineDay.routine,
           ),
           RoutineDetails(
             duration: widget.routineDay.routine.duration,
@@ -231,16 +227,10 @@ class RoutineDetails extends StatelessWidget {
 
 class RoutineHeader extends StatelessWidget {
   final Function() onNotes;
-  final Difficulty difficulty;
-  final String routineName;
-  final int routineId;
 
-  const RoutineHeader(
-      {Key key,
-      @required this.onNotes,
-      @required this.difficulty,
-      @required this.routineName,
-      @required this.routineId})
+  final RoutineData routine;
+
+  const RoutineHeader({Key key, @required this.onNotes, @required this.routine})
       : super(key: key);
 
   @override
@@ -258,58 +248,81 @@ class RoutineHeader extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            routineName,
+            routine.name,
             style: TextStyle(color: Colors.white, fontSize: 18),
           ),
-          AnimatedOpacity(
-            duration: Duration(milliseconds: 400),
-            opacity: editMode ? 1.0 : 0.0,
-            child: Container(
-              height: 45,
-              child: Row(
-                children: [
-                  IconButton(
-                      visualDensity: VisualDensity.compact,
-                      icon: FaIcon(
-                        FontAwesomeIcons.trash,
-                        color: Colors.white,
+          Row(
+            children: [
+              AnimatedOpacity(
+                curve: Curves.easeIn,
+                duration: Duration(milliseconds: 300),
+                opacity: editMode ? 1.0 : 0.0,
+                child: Container(
+                  height: 45,
+                  child: Row(
+                    children: [
+                      IconButton(
+                          visualDensity: VisualDensity.compact,
+                          icon: FaIcon(
+                            FontAwesomeIcons.trash,
+                            color: Colors.white,
+                          ),
+                          onPressed: editMode
+                              ? () {
+                                  RoutinesService.of(context)
+                                      .deleteRoutine(context, routine.id);
+                                }
+                              : null),
+                      SizedBox(
+                        width: 5,
                       ),
-                      onPressed: editMode ? () {} : null),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  IconButton(
-                      visualDensity: VisualDensity.compact,
-                      icon: FaIcon(
-                        FontAwesomeIcons.edit,
-                        color: Colors.white,
+                      IconButton(
+                          visualDensity: VisualDensity.compact,
+                          icon: FaIcon(
+                            FontAwesomeIcons.edit,
+                            color: Colors.white,
+                          ),
+                          onPressed: editMode
+                              ? () {
+                                  RoutinesService.of(context)
+                                      .saveRoutineHandler(
+                                          context, routine.groupId, routine);
+                                }
+                              : null),
+                      SizedBox(
+                        width: 5,
                       ),
-                      onPressed: editMode ? () {} : null),
-                  SizedBox(
-                    width: 5,
+                      SizedBox(
+                        width: 5,
+                      ),
+                      IconButton(
+                          visualDensity: VisualDensity.compact,
+                          icon: FaIcon(FontAwesomeIcons.plusCircle,
+                              color: Colors.white),
+                          onPressed: editMode
+                              ? () {
+                                  RoutinesService.of(context)
+                                      .saveSetRoutineHandler(
+                                          context, routine.id);
+                                }
+                              : null),
+                    ],
                   ),
-                  IconButton(
-                      visualDensity: VisualDensity.compact,
-                      icon: FaIcon(FontAwesomeIcons.commentDots,
-                          color: Colors.white),
-                      onPressed: editMode ? () {} : null),
-                  SizedBox(
-                    width: 5,
-                  ),
-                  IconButton(
-                      visualDensity: VisualDensity.compact,
-                      icon: FaIcon(FontAwesomeIcons.plusCircle,
-                          color: Colors.white),
-                      onPressed: editMode
-                          ? () {
-                              RoutinesService.of(context)
-                                  .saveSetRoutineHandler(context, routineId);
-                            }
-                          : null),
-                ],
+                ),
               ),
-            ),
-          )
+              if (!editMode)
+                AnimatedOpacity(
+                  curve: Curves.easeIn,
+                  duration: Duration(milliseconds: 400),
+                  opacity: editMode ? 0.0 : 1.0,
+                  child: IconButton(
+                      visualDensity: VisualDensity.compact,
+                      icon: FaIcon(FontAwesomeIcons.infoCircle,
+                          color: Colors.white),
+                      onPressed: () {}),
+                )
+            ],
+          ),
         ],
       ),
     );

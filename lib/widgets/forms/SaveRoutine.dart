@@ -9,10 +9,10 @@ import 'package:tracktion/widgets/ui/NumericSelector.dart';
 import 'package:tracktion/widgets/ui/SaveFormActions.dart';
 
 class SaveRoutineForm extends StatefulWidget {
-  final int id;
   final int groupId;
+  final RoutineData routine;
 
-  SaveRoutineForm({this.id, this.groupId});
+  SaveRoutineForm({@required this.groupId, this.routine});
 
   @override
   _SaveRoutineFormState createState() => _SaveRoutineFormState();
@@ -24,6 +24,17 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
   var form = GlobalKey<FormState>();
   var difficultyRequired = false;
   Difficulty difficulty;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.routine == null) return;
+
+    fields["name"] = widget.routine.name;
+    fields["notes"] = widget.routine.notes;
+    duration = widget.routine.duration;
+    difficulty = widget.routine.difficulty;
+  }
 
   String isRequired(String value) {
     if (value == "") return "Field must be set.";
@@ -41,7 +52,7 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
     }
 
     final routine = RoutineData(
-        id: widget.id,
+        id: widget.routine == null ? null : widget.routine.id,
         groupId: widget.groupId,
         difficulty: difficulty,
         name: fields["name"],
@@ -56,6 +67,7 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.routine);
     return Container(
       padding: EdgeInsets.only(top: 10),
       width: double.maxFinite,
@@ -78,6 +90,7 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: TracktionInput(
                       align: TextAlign.center,
+                      initialValue: fields["name"],
                       errorColor: Theme.of(context).colorScheme.routines,
                       validator: (value) {
                         if (value.isEmpty) return "Name is required";
@@ -170,6 +183,7 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
                   change: (v) => setState(() {
                     fields["notes"] = v;
                   }),
+                  initialValue: fields["notes"],
                 ),
               ),
               SaveFormActions(
