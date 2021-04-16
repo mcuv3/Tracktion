@@ -8,7 +8,7 @@ class Ht {
 
   static Map<String, String> headers = {'Content-type': 'application/json'};
 
-  static final host = 'http://192.168.1.20:8000';
+  static final host = 'http://192.168.1.25:8000';
 
   static final verbs = {
     'post': (String path, dynamic body) =>

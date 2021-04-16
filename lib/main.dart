@@ -185,6 +185,7 @@ class _InitAppState extends State<InitApp> {
           )),
       home: BlocConsumer<AuthCubit, AuthState>(
         builder: (ctx, state) {
+          print(state);
           if (state is AuthSuccess) return MainScreen();
           if (state is AuthFailed) return AuthScreen();
           return LoadingScreen();

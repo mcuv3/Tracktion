@@ -6,8 +6,9 @@ import 'package:tracktion/bloc/routine-group/routine_bloc.dart';
 import 'package:tracktion/colors/custom_colors.dart';
 import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/screens/routine/routines-screen.dart';
-import 'package:tracktion/screens/routine/save-group-screen.dart';
+import 'package:tracktion/widgets/forms/SaveGroupRoutine.dart';
 import 'package:tracktion/widgets/items/GroupRoutineItem.dart';
+import 'package:tracktion/widgets/modals/showAnimatedModal.dart';
 import 'package:tracktion/widgets/ui/CardInkwell.dart';
 
 class RoutineMainScreen extends StatefulWidget {
@@ -29,7 +30,62 @@ class _RoutineMainScreenState extends State<RoutineMainScreen> {
       expand: false,
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => SaveRoutineGroupScreen(),
+      builder: (context) => Scaffold(body: SaveGroupRoutineForm()),
+    );
+  }
+
+  void groupRoutineActions(RoutineGroupData group) async {
+    final shouldDelete = await showAnimatedModal<bool>(
+        context,
+        Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: double.infinity,
+                child: TextButton(
+                    style: TextButton.styleFrom(
+                        visualDensity: VisualDensity.compact),
+                    onPressed: () {
+                      Navigator.of(context).pop(false);
+                    },
+                    child: Text(
+                      "Edit",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.exercise),
+                    )),
+              ),
+              Divider(
+                height: 0,
+                thickness: 1,
+              ),
+              Container(
+                width: double.infinity,
+                child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    child: Text(
+                      "Delete",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.routines),
+                    )),
+              ),
+            ],
+          ),
+        ));
+
+    if (!(shouldDelete is bool)) return;
+
+    if (shouldDelete)
+      return BlocProvider.of<RoutineGroupBloc>(context)
+          .add(DeleteGroupRoutine(group.id));
+
+    showCupertinoModalBottomSheet(
+      expand: false,
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Scaffold(body: SaveGroupRoutineForm(group)),
     );
   }
 
@@ -69,7 +125,10 @@ class _RoutineMainScreenState extends State<RoutineMainScreen> {
                                       RoutinesScreen.routeName,
                                       arguments: groups[i].id);
                                 },
+                                onLongPress: () =>
+                                    groupRoutineActions(groups[i]),
                                 index: i,
+                                group: groups[i],
                               );
                             })
                         : AddGroupRoutine(() {}),

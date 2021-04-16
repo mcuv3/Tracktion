@@ -2,14 +2,17 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import "package:tracktion/models/db/database.dart";
 import 'package:tracktion/widgets/ui/CardInkwell.dart';
 
 const vectorsPath = "assets/vectors/routines";
 
 class GroupRoutineItem extends StatelessWidget {
   final Function onTap;
+  final Function onLongPress;
+  final RoutineGroupData group;
   final int index;
-  GroupRoutineItem({this.onTap, this.index});
+  GroupRoutineItem({this.onTap, this.index, this.onLongPress, this.group});
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +20,13 @@ class GroupRoutineItem extends StatelessWidget {
       ClipRRect(
         child: Column(
           children: <Widget>[
-            Text('Push Pull Legs'),
+            Text(group.name),
             buildVector(),
           ],
         ),
       ),
       onTap: onTap,
+      onLongPress: onLongPress,
     );
   }
 

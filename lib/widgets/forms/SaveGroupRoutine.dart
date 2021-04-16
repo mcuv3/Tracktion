@@ -8,15 +8,29 @@ import 'package:tracktion/widgets/inputs/Select.dart';
 import 'package:tracktion/widgets/inputs/input.dart';
 
 class SaveGroupRoutineForm extends StatefulWidget {
+  final RoutineGroupData group;
+
+  SaveGroupRoutineForm([this.group]);
   @override
   _SaveGroupRoutineFormState createState() => _SaveGroupRoutineFormState();
 }
 
 class _SaveGroupRoutineFormState extends State<SaveGroupRoutineForm> {
   final form = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final descriptionController = TextEditingController();
 
-  final fields = {};
   var level = Level.Normal;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero).then((_) {
+      level = widget.group.level;
+      nameController.text = widget.group.name;
+      descriptionController.text = widget.group.description;
+    });
+  }
 
   String isRequired(String value) {
     if (value == "") return "Field must be set.";
@@ -27,19 +41,14 @@ class _SaveGroupRoutineFormState extends State<SaveGroupRoutineForm> {
     var isValid = form.currentState.validate();
 
     if (isValid) {
-      print(fields);
       BlocProvider.of<RoutineGroupBloc>(context).add(SaveGroupRoutine(
           RoutineGroupData(
-              id: null,
-              name: fields["name"],
-              description: fields["description"],
+              id: widget.group != null ? widget.group.id : null,
+              name: nameController.text,
+              description: descriptionController.text,
               imageUrl: "test",
               level: level)));
     }
-  }
-
-  void changeHandler(String key, String value) {
-    fields[key] = value;
   }
 
   @override
@@ -67,9 +76,9 @@ class _SaveGroupRoutineFormState extends State<SaveGroupRoutineForm> {
               ),
               TracktionInput(
                 validator: isRequired,
+                controller: nameController,
                 autoFocus: true,
                 hint: "Push Pull Legs",
-                change: (val) => changeHandler("name", val),
               ),
               SizedBox(
                 height: 10,
@@ -83,7 +92,7 @@ class _SaveGroupRoutineFormState extends State<SaveGroupRoutineForm> {
               ),
               TracktionInput(
                 validator: isRequired,
-                change: (val) => changeHandler("description", val),
+                controller: descriptionController,
                 hint: "No pain no gain.",
                 maxlines: 5,
               ),
