@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:tracktion/bloc/exercise-stream/exercisestream_cubit.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
@@ -159,15 +158,16 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                     }
                     return GestureDetector(
                       onTap: () {
-                        DatePicker.showDatePicker(context,
-                            initialDateTime: date, onConfirm: (date, ints) {
-                          setState(() {
-                            date = date;
-                          });
-                        },
-                            pickerTheme: DateTimePickerTheme(
-                                itemTextStyle:
-                                    TextStyle(fontFamily: "CarterOne")));
+                         // TODO: change to a different library date time picker
+                        // DatePicker.showDatePicker(context,
+                        //     initialDateTime: date, onConfirm: (date, ints) {
+                        //   setState(() {
+                        //     date = date;
+                        //   });
+                        // },
+                        //     pickerTheme: DateTimePickerTheme(
+                        //         itemTextStyle:
+                        //             TextStyle(fontFamily: "CarterOne")));
                       },
                       child: Container(
                           margin:

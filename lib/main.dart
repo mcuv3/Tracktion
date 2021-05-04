@@ -13,6 +13,7 @@ import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/screens/routine/routine-main-screen.dart';
 import 'package:tracktion/screens/routine/routines-screen.dart';
+import 'package:tracktion/screens/workout/workout-routine-picker-screen.dart';
 
 import './screens/index.dart';
 import 'bloc/exercise-stream/exercisestream_cubit.dart';
@@ -208,6 +209,7 @@ class _InitAppState extends State<InitApp> {
         WorkOutScreen.routeName: (ctx) => WorkOutScreen(),
         RoutineMainScreen.routeName: (ctx) => RoutineMainScreen(),
         RoutinesScreen.routeName: (ctx) => RoutinesScreen(),
+        WorkoutRoutinePicker.routeName:(ctx)=>WorkoutRoutinePicker()
       },
     );
   }

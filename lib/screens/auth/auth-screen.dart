@@ -6,6 +6,9 @@ import 'package:tracktion/widgets/forms/AuthForm.dart';
 
 import '../../colors/custom_colors.dart';
 
+
+// TODO: refactor all the login page to be more frendly with OAuth implmentation
+
 class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

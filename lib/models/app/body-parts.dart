@@ -6,7 +6,7 @@ enum BodyPartEnum {
   Abs,
   Quadriceps,
   Shoulders,
-  GLUTEUS,
+  Gluteus,
   Arms,
   Calfs,
 }
@@ -19,7 +19,7 @@ enum BodyPartEnum {
 //     (5, 'QUADRICEPS'),
 //     (6, 'FEMORALS'),
 //     (7, 'SHOULDERS'),
-//     (8, 'GLUTEUS'),
+//     (8, 'Gluteus'),
 //     (9, 'BACK'),
 // )
 
@@ -47,7 +47,7 @@ List<BodyPartEnum> toBodyPart(List<dynamic> bodyParts) => bodyParts.map((i) {
           return BodyPartEnum.Shoulders;
           break;
         case 8:
-          return BodyPartEnum.GLUTEUS;
+          return BodyPartEnum.Gluteus;
           break;
         case 9:
           return BodyPartEnum.Back;
@@ -80,7 +80,7 @@ List<int> bodyPartToInt(List<BodyPartEnum> bodyParts) => bodyParts.map((e) {
         case BodyPartEnum.Shoulders:
           return 7;
           break;
-        case BodyPartEnum.GLUTEUS:
+        case BodyPartEnum.Gluteus:
           return 8;
           break;
         case BodyPartEnum.Back:

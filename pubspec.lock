@@ -279,15 +279,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2+1"
-  flutter_cupertino_date_picker:
-    dependency: "direct main"
-    description:
-      path: "."
-      ref: master
-      resolved-ref: "3a6b1513d77636976794b6c64630b7ae219fb371"
-      url: "https://github.com/imshashank/flutter-cupertino-date-picker"
-    source: git
-    version: "1.0.26+2"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -722,7 +713,7 @@ packages:
       name: sqlite3_flutter_libs
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.2.0"
+    version: "0.4.1"
   sqlparser:
     dependency: transitive
     description:
@@ -857,5 +848,5 @@ packages:
     source: hosted
     version: "2.2.1"
 sdks:
-  dart: ">=2.12.0-0.0 <3.0.0"
+  dart: ">=2.12.0 <3.0.0"
   flutter: ">=1.24.0-10.1.pre"

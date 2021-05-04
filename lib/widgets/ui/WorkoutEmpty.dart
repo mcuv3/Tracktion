@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import "package:tracktion/colors/custom_colors.dart";
 import 'package:tracktion/screens/index.dart';
 import 'package:tracktion/screens/workout/calendar-picker-screen.dart';
+import 'package:tracktion/screens/workout/workout-routine-picker-screen.dart';
 
+// TODO: option to copy a workout from routines
 class WorkoutEmpty extends StatelessWidget {
   final DateTime currentDate;
   const WorkoutEmpty({
@@ -62,7 +65,17 @@ class WorkoutEmpty extends StatelessWidget {
                   ),
                   label: Text('Copy Workout')),
             ],
-          )
+          ),
+           TextButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(WorkoutRoutinePicker.routeName);
+                  },
+                  icon: FaIcon(
+                    FontAwesomeIcons.route,
+                    size: 25,
+                    color: Theme.of(context).colorScheme.analysis.withOpacity(0.7),
+                  ),
+                  label: Text('Start Routine',style: TextStyle(color:Theme.of(context).colorScheme.analysis)))
         ],
       )),
     );
