@@ -36,6 +36,10 @@ class RoutineBloc extends Bloc<RoutineEvent, RoutineState> {
     }
   }
 
+  Stream<RoutineState> _streamRoutines() async* {
+    try {} catch (e) {}
+  }
+
   Stream<RoutineState> _deleteSet(DeleteSet event) async* {
     try {
       yield RoutineLoading();

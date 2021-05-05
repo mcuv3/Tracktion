@@ -49,7 +49,7 @@ class _SearchExerciseState extends State<SearchExercise> {
     final query = MediaQuery.of(context);
     Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
     bodyPart = args["body"] ?? BodyPartEnum.Arms;
-    readOnly = args["readOnly"] != null;
+    readOnly = !!args["readOnly"];
     return Scaffold(
       appBar: AppBar(
           elevation: 0,
@@ -111,6 +111,7 @@ class _SearchExerciseState extends State<SearchExercise> {
                                         return Navigator.of(context)
                                             .pop(exes[i]);
                                       }
+                                      print(exes[i]);
 
                                       Navigator.of(context).pushNamed(
                                           ExerciseWorkOut.routeName,

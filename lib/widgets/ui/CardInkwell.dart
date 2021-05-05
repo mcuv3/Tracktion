@@ -5,7 +5,7 @@ class CardInkwell extends StatelessWidget {
   final Function onLongPress;
   final Widget child;
 
-  CardInkwell(this.child, {this.onTap,this.onLongPress});
+  CardInkwell(this.child, {this.onTap, this.onLongPress});
 
   @override
   Widget build(BuildContext context) {

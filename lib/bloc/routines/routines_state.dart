@@ -10,6 +10,11 @@ class Routines extends RoutinesState {
   Routines(this.routines);
 }
 
+class AllRoutines extends RoutinesState {
+  final List<modelsApp.RoutineSlim> routines;
+  AllRoutines(this.routines);
+}
+
 class RoutinesSuccess extends RoutinesState {}
 
 class RoutinesFailure extends RoutinesState {

@@ -1,5 +1,6 @@
 import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:tracktion/models/app/RoutineSlim.dart';
 import 'package:tracktion/models/app/body-parts.dart';
 import 'package:tracktion/models/tables/Routines.dart';
 import 'package:tracktion/models/tables/WorkOut.dart';
@@ -83,7 +84,25 @@ class SQLDatabase extends _$SQLDatabase {
   // Stream<List<RoutineData>> findRoutines(int groupId) =>
   //     (select(routine)..where((t) => t.groupId.equals(groupId))).watch();
   //
-  Stream<List<modelsApp.RoutineDay>> findRoutines(int groupId) {
+
+  Future<List<RoutineSlim>> findRoutines() async {
+    final res = await (select(routine).join([
+      leftOuterJoin(routineGroup, routineGroup.id.equalsExp(routine.groupId))
+    ])).get();
+
+    return res.map((row) {
+      final group = row.readTable(routineGroup);
+      final rt = row.readTable(routine);
+      return RoutineSlim(
+          id: rt.id,
+          difficulty: rt.difficulty,
+          groupName: group.name,
+          routineName: rt.name,
+          topBodyParts: []);
+    }).toList();
+  }
+
+  Stream<List<modelsApp.RoutineDay>> findRoutinesByGroup(int groupId) {
     final query = select(routine).join(
         [leftOuterJoin(routineSet, routineSet.routineId.equalsExp(routine.id))])
       ..where(routine.groupId.equals(groupId));

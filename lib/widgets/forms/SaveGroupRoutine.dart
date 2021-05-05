@@ -60,73 +60,75 @@ class _SaveGroupRoutineFormState extends State<SaveGroupRoutineForm> {
         }
         if (state is RoutineGroupFailure) {}
       },
-      child: Form(
-        key: form,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Name",
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.analysis,
-                    fontSize: 23),
-              ),
-              TracktionInput(
-                validator: isRequired,
-                controller: nameController,
-                autoFocus: true,
-                hint: "Push Pull Legs",
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                "Description",
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.analysis,
-                    fontSize: 23),
-              ),
-              TracktionInput(
-                validator: isRequired,
-                controller: descriptionController,
-                hint: "No pain no gain.",
-                maxlines: 5,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                "Level",
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.analysis,
-                    fontSize: 23),
-              ),
-              Select(
-                onSelect: (val) {
-                  setState(() {
-                    level = val;
-                  });
-                },
-                value: level,
-                options: Level.values,
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Align(
-                alignment: Alignment.topRight,
-                child: TextButton(
-                    onPressed: onSubmit,
-                    style: TextButton.styleFrom(
-                        primary: Colors.white, backgroundColor: Colors.black),
-                    child: Text("Save")),
-              )
-            ],
+      child: SingleChildScrollView(
+        child: Form(
+          key: form,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Name",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.analysis,
+                      fontSize: 23),
+                ),
+                TracktionInput(
+                  validator: isRequired,
+                  controller: nameController,
+                  autoFocus: true,
+                  hint: "Push Pull Legs",
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "Description",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.analysis,
+                      fontSize: 23),
+                ),
+                TracktionInput(
+                  validator: isRequired,
+                  controller: descriptionController,
+                  hint: "No pain no gain.",
+                  maxlines: 5,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  "Level",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.analysis,
+                      fontSize: 23),
+                ),
+                Select(
+                  onSelect: (val) {
+                    setState(() {
+                      level = val;
+                    });
+                  },
+                  value: level,
+                  options: Level.values,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: TextButton(
+                      onPressed: onSubmit,
+                      style: TextButton.styleFrom(
+                          primary: Colors.white, backgroundColor: Colors.black),
+                      child: Text("Save")),
+                )
+              ],
+            ),
           ),
         ),
       ),

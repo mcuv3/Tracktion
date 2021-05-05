@@ -8,6 +8,8 @@ class StreamRoutines extends RoutinesEvent {
   StreamRoutines(this.groupId);
 }
 
+class FetchRoutines extends RoutinesEvent {}
+
 class SaveFullRoutine extends RoutinesEvent {
   final RoutineData routine;
   final List<RoutineSetData> sets;

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:tracktion/bloc/routines/routines_bloc.dart';
+import "package:tracktion/colors/custom_colors.dart";
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/util/enumToString.dart';
 
@@ -11,6 +15,18 @@ class WorkoutRoutinePicker extends StatefulWidget {
 }
 
 class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
+  final searchController = TextEditingController(text: "");
+
+  final List<bool> filters = BodyPartEnum.values.map((e) => false).toList();
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero).then((_) {
+      BlocProvider.of<RoutinesBloc>(context).add(FetchRoutines());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,6 +36,7 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
         backgroundColor: Colors.white,
         actions: <Widget>[
           IconButton(
+            visualDensity: VisualDensity.compact,
             icon: Icon(
               Icons.cancel,
             ),
@@ -30,6 +47,7 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
           margin: EdgeInsets.symmetric(vertical: 10),
           child: TextFormField(
             autofocus: false,
+            controller: searchController,
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
               prefixIcon: Icon(
@@ -69,20 +87,29 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
                 alignment: WrapAlignment.center,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: BodyPartEnum.values
+                    .asMap()
+                    .entries
                     .map((body) => GestureDetector(
                         onTap: () async {},
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Checkbox(
-                              value: true,
+                              value: filters[body.key],
                               checkColor: Colors.black,
                               visualDensity: VisualDensity.compact,
                               activeColor: Colors.white,
-                              onChanged: (v) {},
+                              focusColor: Colors.white,
+                              fillColor: MaterialStateProperty.resolveWith(
+                                  (states) => Colors.white),
+                              onChanged: (v) {
+                                setState(() {
+                                  filters[body.key] = v;
+                                });
+                              },
                             ),
                             Text(
-                              enumToString(body),
+                              enumToString(body.value),
                               style: TextStyle(color: Colors.white),
                             )
                           ],
@@ -92,14 +119,76 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemBuilder: (conext, i) => ListTile(
-                title: Text("Push #1 - Push Pull Legs Advance"),
-              ),
-              itemCount: 10,
-            ),
+            child: BlocBuilder<RoutinesBloc, RoutinesState>(
+                builder: (context, state) {
+              if (state is AllRoutines) {
+                print(state.routines);
+                final routines = state.routines;
+                return ListView.builder(
+                  padding: EdgeInsets.all(10),
+                  itemBuilder: (conext, i) => RoutineSlimWidget(
+                    routine: routines[i],
+                    key: Key("RoutineWidget $i"),
+                  ),
+                  itemCount: routines.length,
+                );
+              }
+
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class RoutineSlimWidget extends StatelessWidget {
+  final RoutineSlim routine;
+
+  const RoutineSlimWidget({Key key, @required this.routine}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 6),
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.analysisLight,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 7,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      child: ListTile(
+        title: Column(
+          children: [
+            Text(routine.routineName,
+                style: TextStyle(color: Colors.white, fontSize: 18)),
+            Text(routine.groupName,
+                style: TextStyle(
+                    color: Colors.white.withOpacity(0.5), fontSize: 12)),
+          ],
+        ),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FaIcon(
+              FontAwesomeIcons.gamepad,
+              color: Theme.of(context).colorScheme.routines.withOpacity(0.8),
+            ),
+            Text(enumToString(routine.difficulty),
+                style: TextStyle(
+                    color: Colors.white.withOpacity(0.5), fontSize: 12)),
+          ],
+        ),
       ),
     );
   }

@@ -24,6 +24,8 @@ class RoutinesBloc extends Bloc<RoutinesEvent, RoutinesState> {
       yield* _deleteRoutine(event);
     } else if (event is SaveRoutine) {
       yield* _saveRoutine(event);
+    } else if (event is FetchRoutines) {
+      yield* _streamAllRoutines(event);
     }
   }
 
@@ -31,9 +33,20 @@ class RoutinesBloc extends Bloc<RoutinesEvent, RoutinesState> {
     yield RoutinesLoading();
     try {
       final groupId = event.groupId;
-      final routines = this.db.findRoutines(groupId);
+      final routines = this.db.findRoutinesByGroup(groupId);
 
       yield Routines(routines);
+    } catch (e) {
+      print(e);
+      yield RoutinesFailure("Something went wrong fetching routines.");
+    }
+  }
+
+  Stream<RoutinesState> _streamAllRoutines(FetchRoutines event) async* {
+    yield RoutinesLoading();
+    try {
+      final routines = await this.db.findRoutines();
+      yield AllRoutines(routines);
     } catch (e) {
       print(e);
       yield RoutinesFailure("Something went wrong fetching routines.");
