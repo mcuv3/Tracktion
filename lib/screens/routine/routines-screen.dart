@@ -44,18 +44,17 @@ class RoutinesService extends InheritedWidget {
           set: set,
         ));
 
-    print(setRoutine);
     if (setRoutine == null) return;
 
     BlocProvider.of<RoutineBloc>(context).add(SaveSet(setRoutine));
   }
 
-  void deleteSetRoutine(BuildContext context, int setId) async {
+  void deleteSetRoutine(BuildContext context, RoutineSetData set) async {
     final shouldDelete = await showModalConfirmation(
         context: context,
         contentText: "Are you sure you want to delete this set?");
     if (shouldDelete == null || !shouldDelete) return;
-    BlocProvider.of<RoutineBloc>(context).add(DeleteSet(setId));
+    BlocProvider.of<RoutineBloc>(context).add(DeleteSet(set));
   }
 
   void deleteRoutine(BuildContext context, int routineId) async {

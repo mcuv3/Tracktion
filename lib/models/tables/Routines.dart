@@ -1,5 +1,6 @@
 import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:tracktion/models/tables/Converts.dart';
 
 enum CopyMethod { Previus, Static, Smart, Percentage }
 enum Level { Pro, Advance, Normal, Beginner }
@@ -22,6 +23,9 @@ class Routine extends Table {
   IntColumn get difficulty => intEnum<Difficulty>()();
   TextColumn get notes =>
       text().withLength(max: 155).withDefault(const Constant(""))();
+  IntColumn get timesCopied => integer().withDefault(const Constant(0))();
+  TextColumn get bodyParts =>
+      text().map(const RoutineBodyPartsConverter()).nullable()();
 }
 
 class RoutineSet extends Table {

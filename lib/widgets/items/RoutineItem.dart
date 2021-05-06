@@ -155,7 +155,7 @@ class SetsRoutineItem extends StatelessWidget {
                                 onPressed: editMode
                                     ? () {
                                         RoutinesService.of(context)
-                                            .deleteSetRoutine(context, set.id);
+                                            .deleteSetRoutine(context, set);
                                       }
                                     : null)
                           ],

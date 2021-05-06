@@ -2264,13 +2264,17 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
   final int duration;
   final Difficulty difficulty;
   final String notes;
+  final int timesCopied;
+  final RoutineBodyParts bodyParts;
   RoutineData(
       {@required this.id,
       @required this.groupId,
       @required this.name,
       @required this.duration,
       @required this.difficulty,
-      @required this.notes});
+      @required this.notes,
+      @required this.timesCopied,
+      this.bodyParts});
   factory RoutineData.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -2287,6 +2291,10 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
           .mapFromDatabaseResponse(data['${effectivePrefix}difficulty'])),
       notes:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}notes']),
+      timesCopied: intType
+          .mapFromDatabaseResponse(data['${effectivePrefix}times_copied']),
+      bodyParts: $RoutineTable.$converter1.mapToDart(stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}body_parts'])),
     );
   }
   @override
@@ -2311,6 +2319,13 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
+    if (!nullToAbsent || timesCopied != null) {
+      map['times_copied'] = Variable<int>(timesCopied);
+    }
+    if (!nullToAbsent || bodyParts != null) {
+      final converter = $RoutineTable.$converter1;
+      map['body_parts'] = Variable<String>(converter.mapToSql(bodyParts));
+    }
     return map;
   }
 
@@ -2329,6 +2344,12 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
           : Value(difficulty),
       notes:
           notes == null && nullToAbsent ? const Value.absent() : Value(notes),
+      timesCopied: timesCopied == null && nullToAbsent
+          ? const Value.absent()
+          : Value(timesCopied),
+      bodyParts: bodyParts == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bodyParts),
     );
   }
 
@@ -2342,6 +2363,8 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
       duration: serializer.fromJson<int>(json['duration']),
       difficulty: serializer.fromJson<Difficulty>(json['difficulty']),
       notes: serializer.fromJson<String>(json['notes']),
+      timesCopied: serializer.fromJson<int>(json['timesCopied']),
+      bodyParts: serializer.fromJson<RoutineBodyParts>(json['bodyParts']),
     );
   }
   @override
@@ -2354,6 +2377,8 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
       'duration': serializer.toJson<int>(duration),
       'difficulty': serializer.toJson<Difficulty>(difficulty),
       'notes': serializer.toJson<String>(notes),
+      'timesCopied': serializer.toJson<int>(timesCopied),
+      'bodyParts': serializer.toJson<RoutineBodyParts>(bodyParts),
     };
   }
 
@@ -2363,7 +2388,9 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
           String name,
           int duration,
           Difficulty difficulty,
-          String notes}) =>
+          String notes,
+          int timesCopied,
+          RoutineBodyParts bodyParts}) =>
       RoutineData(
         id: id ?? this.id,
         groupId: groupId ?? this.groupId,
@@ -2371,6 +2398,8 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
         duration: duration ?? this.duration,
         difficulty: difficulty ?? this.difficulty,
         notes: notes ?? this.notes,
+        timesCopied: timesCopied ?? this.timesCopied,
+        bodyParts: bodyParts ?? this.bodyParts,
       );
   @override
   String toString() {
@@ -2380,7 +2409,9 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
           ..write('name: $name, ')
           ..write('duration: $duration, ')
           ..write('difficulty: $difficulty, ')
-          ..write('notes: $notes')
+          ..write('notes: $notes, ')
+          ..write('timesCopied: $timesCopied, ')
+          ..write('bodyParts: $bodyParts')
           ..write(')'))
         .toString();
   }
@@ -2392,8 +2423,14 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
           groupId.hashCode,
           $mrjc(
               name.hashCode,
-              $mrjc(duration.hashCode,
-                  $mrjc(difficulty.hashCode, notes.hashCode))))));
+              $mrjc(
+                  duration.hashCode,
+                  $mrjc(
+                      difficulty.hashCode,
+                      $mrjc(
+                          notes.hashCode,
+                          $mrjc(
+                              timesCopied.hashCode, bodyParts.hashCode))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -2403,7 +2440,9 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
           other.name == this.name &&
           other.duration == this.duration &&
           other.difficulty == this.difficulty &&
-          other.notes == this.notes);
+          other.notes == this.notes &&
+          other.timesCopied == this.timesCopied &&
+          other.bodyParts == this.bodyParts);
 }
 
 class RoutineCompanion extends UpdateCompanion<RoutineData> {
@@ -2413,6 +2452,8 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
   final Value<int> duration;
   final Value<Difficulty> difficulty;
   final Value<String> notes;
+  final Value<int> timesCopied;
+  final Value<RoutineBodyParts> bodyParts;
   const RoutineCompanion({
     this.id = const Value.absent(),
     this.groupId = const Value.absent(),
@@ -2420,6 +2461,8 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
     this.duration = const Value.absent(),
     this.difficulty = const Value.absent(),
     this.notes = const Value.absent(),
+    this.timesCopied = const Value.absent(),
+    this.bodyParts = const Value.absent(),
   });
   RoutineCompanion.insert({
     this.id = const Value.absent(),
@@ -2428,6 +2471,8 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
     @required int duration,
     @required Difficulty difficulty,
     this.notes = const Value.absent(),
+    this.timesCopied = const Value.absent(),
+    this.bodyParts = const Value.absent(),
   })  : groupId = Value(groupId),
         name = Value(name),
         duration = Value(duration),
@@ -2439,6 +2484,8 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
     Expression<int> duration,
     Expression<int> difficulty,
     Expression<String> notes,
+    Expression<int> timesCopied,
+    Expression<String> bodyParts,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2447,6 +2494,8 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
       if (duration != null) 'duration': duration,
       if (difficulty != null) 'difficulty': difficulty,
       if (notes != null) 'notes': notes,
+      if (timesCopied != null) 'times_copied': timesCopied,
+      if (bodyParts != null) 'body_parts': bodyParts,
     });
   }
 
@@ -2456,7 +2505,9 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
       Value<String> name,
       Value<int> duration,
       Value<Difficulty> difficulty,
-      Value<String> notes}) {
+      Value<String> notes,
+      Value<int> timesCopied,
+      Value<RoutineBodyParts> bodyParts}) {
     return RoutineCompanion(
       id: id ?? this.id,
       groupId: groupId ?? this.groupId,
@@ -2464,6 +2515,8 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
       duration: duration ?? this.duration,
       difficulty: difficulty ?? this.difficulty,
       notes: notes ?? this.notes,
+      timesCopied: timesCopied ?? this.timesCopied,
+      bodyParts: bodyParts ?? this.bodyParts,
     );
   }
 
@@ -2489,6 +2542,13 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
     }
+    if (timesCopied.present) {
+      map['times_copied'] = Variable<int>(timesCopied.value);
+    }
+    if (bodyParts.present) {
+      final converter = $RoutineTable.$converter1;
+      map['body_parts'] = Variable<String>(converter.mapToSql(bodyParts.value));
+    }
     return map;
   }
 
@@ -2500,7 +2560,9 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
           ..write('name: $name, ')
           ..write('duration: $duration, ')
           ..write('difficulty: $difficulty, ')
-          ..write('notes: $notes')
+          ..write('notes: $notes, ')
+          ..write('timesCopied: $timesCopied, ')
+          ..write('bodyParts: $bodyParts')
           ..write(')'))
         .toString();
   }
@@ -2573,9 +2635,32 @@ class $RoutineTable extends Routine with TableInfo<$RoutineTable, RoutineData> {
         maxTextLength: 155, defaultValue: const Constant(""));
   }
 
+  final VerificationMeta _timesCopiedMeta =
+      const VerificationMeta('timesCopied');
+  GeneratedIntColumn _timesCopied;
+  @override
+  GeneratedIntColumn get timesCopied =>
+      _timesCopied ??= _constructTimesCopied();
+  GeneratedIntColumn _constructTimesCopied() {
+    return GeneratedIntColumn('times_copied', $tableName, false,
+        defaultValue: const Constant(0));
+  }
+
+  final VerificationMeta _bodyPartsMeta = const VerificationMeta('bodyParts');
+  GeneratedTextColumn _bodyParts;
+  @override
+  GeneratedTextColumn get bodyParts => _bodyParts ??= _constructBodyParts();
+  GeneratedTextColumn _constructBodyParts() {
+    return GeneratedTextColumn(
+      'body_parts',
+      $tableName,
+      true,
+    );
+  }
+
   @override
   List<GeneratedColumn> get $columns =>
-      [id, groupId, name, duration, difficulty, notes];
+      [id, groupId, name, duration, difficulty, notes, timesCopied, bodyParts];
   @override
   $RoutineTable get asDslTable => this;
   @override
@@ -2613,6 +2698,13 @@ class $RoutineTable extends Routine with TableInfo<$RoutineTable, RoutineData> {
       context.handle(
           _notesMeta, notes.isAcceptableOrUnknown(data['notes'], _notesMeta));
     }
+    if (data.containsKey('times_copied')) {
+      context.handle(
+          _timesCopiedMeta,
+          timesCopied.isAcceptableOrUnknown(
+              data['times_copied'], _timesCopiedMeta));
+    }
+    context.handle(_bodyPartsMeta, const VerificationResult.success());
     return context;
   }
 
@@ -2631,6 +2723,8 @@ class $RoutineTable extends Routine with TableInfo<$RoutineTable, RoutineData> {
 
   static TypeConverter<Difficulty, int> $converter0 =
       const EnumIndexConverter<Difficulty>(Difficulty.values);
+  static TypeConverter<RoutineBodyParts, String> $converter1 =
+      const RoutineBodyPartsConverter();
 }
 
 class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {

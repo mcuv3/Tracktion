@@ -7,6 +7,7 @@ import 'package:tracktion/models/tables/WorkOut.dart';
 
 import '../app/exercise.dart' as exeApp;
 import '../app/index.dart' as modelsApp;
+import "../tables/Converts.dart";
 import '../tables/Exercise.dart';
 
 export 'instance/shared.dart';
@@ -324,6 +325,43 @@ class SQLDatabase extends _$SQLDatabase {
 
       return setId;
     });
+  }
+
+  Future<void> updateRoutineBds(
+      {int exericiseId, int routineId, bool remove = false}) async {
+    final rts =
+        await (select(routine)..where((e) => e.id.equals(routineId))).get();
+    final bds = await (select(exerciseBodyParts)
+          ..where((e) => e.exerciseId.equals(exericiseId)))
+        .get();
+
+    if (rts.isEmpty || bds.isEmpty) return;
+
+    final rt = rts[0];
+
+    final Map<BodyPartEnum, int> newBds =
+        rt.bodyParts?.routineBd != null ? rt.bodyParts.routineBd : {};
+
+    bds.forEach((e) {
+      final bd = e.bodyPart;
+      if (newBds.containsKey(e.bodyPart)) {
+        newBds[bd] = remove ? newBds[bd] - 1 : newBds[bd] + 1;
+        return;
+      }
+      newBds[bd] = remove ? 0 : 1;
+    });
+
+    final newRoutine = RoutineData(
+        id: rt.id,
+        groupId: rt.groupId,
+        name: rt.name,
+        duration: rt.duration,
+        difficulty: rt.difficulty,
+        notes: rt.notes,
+        bodyParts: RoutineBodyParts(newBds),
+        timesCopied: rt.timesCopied);
+
+    await into(routine).insert(newRoutine, mode: InsertMode.replace);
   }
 
   // COMPLEX DELETES
