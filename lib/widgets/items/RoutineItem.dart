@@ -31,6 +31,7 @@ class _RoutineItemState extends State<RoutineItem>
   @override
   Widget build(BuildContext context) {
     final sets = widget.routineDay.sets;
+    final editMode = RoutinesService.of(context).editMode;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -77,10 +78,24 @@ class _RoutineItemState extends State<RoutineItem>
                   children: [
                     if (isExpanded)
                       Expanded(
-                          child: SetsRoutineItem(
-                        sets: widget.routineDay.sets,
-                        routineId: widget.routineDay.routine.id,
-                      )),
+                          child: sets.length == 0
+                              ? Container(
+                                  height: 100,
+                                  child: Center(child: Text("No sets added")))
+                              : SetsRoutineItem(
+                                  editMode: editMode,
+                                  sets: widget.routineDay.sets,
+                                  routineId: widget.routineDay.routine.id,
+                                  onTapSet: (set) {
+                                    RoutinesService.of(context)
+                                        .saveSetRoutineHandler(context,
+                                            widget.routineDay.routine.id, set);
+                                  },
+                                  onDeleteSet: (set) {
+                                    RoutinesService.of(context)
+                                        .deleteSetRoutine(context, set);
+                                  },
+                                )),
                     Material(
                         color: Colors.white,
                         child: Column(
@@ -114,54 +129,51 @@ class _RoutineItemState extends State<RoutineItem>
 class SetsRoutineItem extends StatelessWidget {
   final List<RoutineSetData> sets;
   final int routineId;
-  const SetsRoutineItem({this.sets, Key key, @required this.routineId})
+  final Function(RoutineSetData) onDeleteSet;
+  final Function(RoutineSetData) onTapSet;
+  final bool editMode;
+  const SetsRoutineItem(
+      {this.sets,
+      Key key,
+      @required this.routineId,
+      this.editMode = false,
+      @required this.onDeleteSet,
+      this.onTapSet})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final editMode = RoutinesService.of(context).editMode;
-
-    return sets.length == 0
-        ? Container(height: 100, child: Center(child: Text("No sets added")))
-        : ListView(
-            shrinkWrap: true,
-            physics: ClampingScrollPhysics(),
-            children: ListTile.divideTiles(
-                color: Colors.red,
-                context: context,
-                tiles: sets.map((set) => ListTile(
-                    onTap: () {
-                      RoutinesService.of(context)
-                          .saveSetRoutineHandler(context, routineId, set);
-                    },
-                    visualDensity: VisualDensity.compact,
-                    leading: FaIcon(FontAwesomeIcons.dumbbell,
-                        color: Theme.of(context).colorScheme.analysisLight),
-                    title: Text(set.exerciseName.toString()),
-                    subtitle: Text(
-                        "Type: ${enumToString(set.copyMethod)} - RPE:${set.targetRpe.toString()}"),
-                    trailing: AnimatedOpacity(
-                      opacity: editMode ? 1.0 : 0.0,
-                      duration: Duration(milliseconds: 400),
-                      child: Container(
-                        width: 50,
-                        child: Row(
-                          children: [
-                            IconButton(
-                                icon: FaIcon(FontAwesomeIcons.times,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .routinesLight),
-                                onPressed: editMode
-                                    ? () {
-                                        RoutinesService.of(context)
-                                            .deleteSetRoutine(context, set);
-                                      }
-                                    : null)
-                          ],
-                        ),
-                      ),
-                    )))).toList());
+    return ListView(
+        shrinkWrap: true,
+        physics: ClampingScrollPhysics(),
+        children: ListTile.divideTiles(
+            color: Colors.red,
+            context: context,
+            tiles: sets.map((set) => ListTile(
+                onTap: () => onTapSet(set),
+                visualDensity: VisualDensity.compact,
+                leading: FaIcon(FontAwesomeIcons.dumbbell,
+                    color: Theme.of(context).colorScheme.analysisLight),
+                title: Text(set.exerciseName.toString()),
+                subtitle: Text(
+                    "Type: ${enumToString(set.copyMethod)} - RPE:${set.targetRpe.toString()}"),
+                trailing: AnimatedOpacity(
+                  opacity: editMode ? 1.0 : 0.0,
+                  duration: Duration(milliseconds: 400),
+                  child: Container(
+                    width: 50,
+                    child: Row(
+                      children: [
+                        IconButton(
+                            icon: FaIcon(FontAwesomeIcons.times,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .routinesLight),
+                            onPressed: editMode ? () => onDeleteSet(set) : null)
+                      ],
+                    ),
+                  ),
+                )))).toList());
   }
 }
 

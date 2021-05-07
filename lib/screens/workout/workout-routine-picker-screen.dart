@@ -4,7 +4,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tracktion/bloc/routines/routines_bloc.dart';
 import "package:tracktion/colors/custom_colors.dart";
 import 'package:tracktion/models/app/index.dart';
+import 'package:tracktion/screens/routine/routine-preview-screen.dart';
 import 'package:tracktion/util/enumToString.dart';
+import 'package:tracktion/widgets/modals/showAnimatedModal.dart';
 
 class WorkoutRoutinePicker extends StatefulWidget {
   static const routeName = "/workout/routine/picker";
@@ -25,6 +27,10 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
     Future.delayed(Duration.zero).then((_) {
       BlocProvider.of<RoutinesBloc>(context).add(FetchRoutines());
     });
+  }
+
+  void showRoutinePreviewHandler(RoutineSlim routine) {
+    showAnimatedModal(context, RoutinePreview(routine.id));
   }
 
   @override
@@ -129,6 +135,7 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
                   itemBuilder: (conext, i) => RoutineSlimWidget(
                     routine: routines[i],
                     key: Key("RoutineWidget $i"),
+                    onPress: () {},
                   ),
                   itemCount: routines.length,
                 );
@@ -147,47 +154,51 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
 
 class RoutineSlimWidget extends StatelessWidget {
   final RoutineSlim routine;
-
-  const RoutineSlimWidget({Key key, @required this.routine}) : super(key: key);
+  final Function onPress;
+  const RoutineSlimWidget({Key key, @required this.routine, this.onPress})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 6),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.analysisLight,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 7,
-            offset: Offset(0, 3), // changes position of shadow
-          ),
-        ],
-      ),
-      child: ListTile(
-        title: Column(
-          children: [
-            Text(routine.routineName,
-                style: TextStyle(color: Colors.white, fontSize: 18)),
-            Text(routine.groupName,
-                style: TextStyle(
-                    color: Colors.white.withOpacity(0.5), fontSize: 12)),
+    return GestureDetector(
+      onTap: onPress,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 6),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.analysisLight,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 7,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
           ],
         ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            FaIcon(
-              FontAwesomeIcons.gamepad,
-              color: Theme.of(context).colorScheme.routines.withOpacity(0.8),
-            ),
-            Text(enumToString(routine.difficulty),
-                style: TextStyle(
-                    color: Colors.white.withOpacity(0.5), fontSize: 12)),
-          ],
+        child: ListTile(
+          title: Column(
+            children: [
+              Text(routine.routineName,
+                  style: TextStyle(color: Colors.white, fontSize: 18)),
+              Text(routine.groupName,
+                  style: TextStyle(
+                      color: Colors.white.withOpacity(0.5), fontSize: 12)),
+            ],
+          ),
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              FaIcon(
+                FontAwesomeIcons.gamepad,
+                color: Theme.of(context).colorScheme.routines.withOpacity(0.8),
+              ),
+              Text(enumToString(routine.difficulty),
+                  style: TextStyle(
+                      color: Colors.white.withOpacity(0.5), fontSize: 12)),
+            ],
+          ),
         ),
       ),
     );

@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_clean_calendar/flutter_clean_calendar.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:tracktion/screens/workout/workout-picker-screen.dart';
-
-import '../../colors/custom_colors.dart';
 
 class CalendarScreen extends StatefulWidget {
   final DateTime currentDate;
@@ -80,34 +77,38 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Container(
       height: 350,
       child: Scaffold(
-        body: Calendar(
-          isExpanded: true,
-          startOnMonday: true,
-          weekDays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-          events: _events,
-          onDateSelected: (date) => _handleNewDate(date),
-          hideTodayIcon: true,
-          eventDoneColor: Colors.redAccent,
-          selectedColor: Theme.of(context).colorScheme.exercise,
-          todayColor: Theme.of(context).colorScheme.exercise,
-          dayBuilder: (context, date) => date == widget.currentDate
-              ? Center(
-                  child: Container(
-                  width: 25,
-                  height: 25,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      color: Colors.red.withOpacity(0.8)),
-                  child: Text(date.day.toString(),
-                      style: TextStyle(color: Colors.white)),
-                ))
-              : Center(child: Text(date.day.toString())),
-          eventColor: Colors.redAccent,
-          dayOfWeekStyle: TextStyle(
-              color: Colors.black, fontWeight: FontWeight.w800, fontSize: 11),
+        body: Center(
+          child: Text("Change library"),
         ),
       ),
     );
   }
 }
+
+// Calendar(
+//           isExpanded: true,
+//           startOnMonday: true,
+//           weekDays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+//           events: _events,
+//           onDateSelected: (date) => _handleNewDate(date),
+//           hideTodayIcon: true,
+//           eventDoneColor: Colors.redAccent,
+//           selectedColor: Theme.of(context).colorScheme.exercise,
+//           todayColor: Theme.of(context).colorScheme.exercise,
+//           dayBuilder: (context, date) => date == widget.currentDate
+//               ? Center(
+//                   child: Container(
+//                   width: 25,
+//                   height: 25,
+//                   alignment: Alignment.center,
+//                   decoration: BoxDecoration(
+//                       borderRadius: BorderRadius.circular(15),
+//                       color: Colors.red.withOpacity(0.8)),
+//                   child: Text(date.day.toString(),
+//                       style: TextStyle(color: Colors.white)),
+//                 ))
+//               : Center(child: Text(date.day.toString())),
+//           eventColor: Colors.redAccent,
+//           dayOfWeekStyle: TextStyle(
+//               color: Colors.black, fontWeight: FontWeight.w800, fontSize: 11),
+//         )

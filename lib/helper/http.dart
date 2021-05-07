@@ -11,20 +11,26 @@ class Ht {
   static final host = 'http://192.168.1.25:8000';
 
   static final verbs = {
-    'post': (String path, dynamic body) =>
-        http.post(host + path, headers: headers, body: body),
-    'patch': (String path, dynamic body) =>
-        http.patch(host + path, headers: headers, body: body),
+    'post': (String path, dynamic body) => http.post(
+        Uri(host: host, path: path, port: 8000),
+        headers: headers,
+        body: body),
+    'patch': (String path, dynamic body) => http.patch(
+        Uri(host: host, path: path, port: 8000),
+        headers: headers,
+        body: body),
     'delete': (String path, dynamic body) => http.delete(
-          host + path,
+          Uri(host: host, path: path, port: 8000),
           headers: headers,
         ),
     'get': (String path, dynamic body) => http.get(
-          host + path,
+          Uri(host: host, path: path, port: 8000),
           headers: headers,
         ),
-    'put': (String path, dynamic body) =>
-        http.put(host + path, headers: headers, body: body),
+    'put': (String path, dynamic body) => http.put(
+        Uri(host: host, path: path, port: 8000),
+        headers: headers,
+        body: body),
   };
   static set token(String token) {
     Ht.headers["Authorization"] = 'Token $token';
@@ -39,18 +45,21 @@ class Ht {
   static conv(dynamic src) => json.decode(src);
 
   static Future<http.Response> get(String path) async =>
-      await http.get(host + path, headers: headers);
+      await http.get(Uri(host: host, path: path, port: 8000), headers: headers);
   static Future<http.Response> patch(String path,
           {Map<String, dynamic> body}) =>
-      http.patch(host + path, headers: headers, body: body);
+      http.patch(Uri(host: host, path: path, port: 8000),
+          headers: headers, body: body);
   static Future<http.Response> put(String path, {dynamic body}) =>
-      http.put(host + path, headers: headers, body: body);
+      http.put(Uri(host: host, path: path, port: 8000),
+          headers: headers, body: body);
   static Future<http.Response> delete(String path) =>
-      http.delete(host + path, headers: headers);
+      http.delete(Uri(host: host, path: path, port: 8000), headers: headers);
   static Future<http.Response> post(String path, {dynamic body}) async {
-    print(host + path);
+    print(Uri(host: host, path: path, port: 8000));
     return await http
-        .post(host + path, headers: headers, body: body)
+        .post(Uri(host: host, path: path, port: 8000),
+            headers: headers, body: body)
         .catchError((e) => throw e);
   }
 }

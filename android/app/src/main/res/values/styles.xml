@@ -12,7 +12,10 @@
          running.
          
          This Theme is only used starting with V2 of Flutter's Android embedding. -->
-    <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
+         <string name="app_name">tracktion</string>
+        <string name="facebook_app_id">367629340988340</string>
+        <string name="fb_login_protocol_scheme">fb367629340988340</string>
+        <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <item name="android:windowBackground">@android:color/white</item>
     </style>
 </resources>

@@ -23,6 +23,8 @@ enum BodyPartEnum {
 //     (9, 'BACK'),
 // )
 
+// TODO: migrate this to the new form.
+
 List<BodyPartEnum> toBodyPart(List<dynamic> bodyParts) => bodyParts.map((i) {
       switch (i) {
         case 1:

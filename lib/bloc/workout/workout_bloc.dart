@@ -181,11 +181,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
           .where((s) => s != null)
           .toList();
 
-      // for (final set in cleanedSets) {
       await Future.wait(cleanedSets.map((s) =>
           this._saveSet(SaveSet(date: event.date, isEdit: false, set: s))));
-      // await this._saveSet(SaveSet(date: event.date, isEdit: false, set: set));
-      // }
     } catch (e) {
       print(e);
     }

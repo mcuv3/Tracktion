@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tracktion/bloc/auth/auth_cubit.dart';
 import 'package:tracktion/bloc/common/Workout.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
@@ -23,6 +25,8 @@ import 'bloc/routines/routines_bloc.dart';
 import 'plugins/desktop/desktop.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences.setMockInitialValues({});
   setTargetPlatformForDesktop();
   runApp(MyApp());
 }
@@ -46,6 +50,16 @@ class _MyAppState extends State<MyApp> {
     common = Common(currentDate: DateTime.now());
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+    initializeFlutterFire();
+  }
+
+  void initializeFlutterFire() async {
+    try {
+      // Wait for Firebase to initialize and set `_initialized` state to true
+      await Firebase.initializeApp();
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -152,7 +166,7 @@ class _InitAppState extends State<InitApp> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero).then((_) {
-      BlocProvider.of<AuthCubit>(context).checkCredentials();
+      // BlocProvider.of<AuthCubit>(context).checkCredentials();
     });
   }
 
@@ -186,10 +200,10 @@ class _InitAppState extends State<InitApp> {
           )),
       home: BlocConsumer<AuthCubit, AuthState>(
         builder: (ctx, state) {
-          print(state);
-          if (state is AuthSuccess) return MainScreen();
-          if (state is AuthFailed) return AuthScreen();
-          return LoadingScreen();
+          // print(state);
+          // if (state is AuthSuccess) return MainScreen();
+          // if (state is AuthFailed) return AuthScreen();
+          return AuthScreen();
         },
         listener: (ctx, state) {
           if (state is AuthSuccess) {
@@ -209,7 +223,7 @@ class _InitAppState extends State<InitApp> {
         WorkOutScreen.routeName: (ctx) => WorkOutScreen(),
         RoutineMainScreen.routeName: (ctx) => RoutineMainScreen(),
         RoutinesScreen.routeName: (ctx) => RoutinesScreen(),
-        WorkoutRoutinePicker.routeName:(ctx)=>WorkoutRoutinePicker()
+        WorkoutRoutinePicker.routeName: (ctx) => WorkoutRoutinePicker()
       },
     );
   }
