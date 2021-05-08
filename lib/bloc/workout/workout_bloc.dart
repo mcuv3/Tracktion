@@ -4,7 +4,6 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:moor_flutter/moor_flutter.dart';
-import 'package:tracktion/bloc/common/Workout.dart';
 import 'package:tracktion/util/analysis/getSetMaxWeigth.dart';
 import 'package:tracktion/util/analysis/getSetVolume.dart';
 import 'package:tracktion/util/analysis/mergeSetLastWorkout.dart';
@@ -19,9 +18,8 @@ part 'workout_state.dart';
 
 class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   final SQLDatabase db;
-  final Common common;
-  WorkoutBloc({@required this.db, @required this.common})
-      : super(WorkoutInitial());
+
+  WorkoutBloc(this.db) : super(WorkoutInitial());
 
   @override
   Stream<WorkoutState> mapEventToState(

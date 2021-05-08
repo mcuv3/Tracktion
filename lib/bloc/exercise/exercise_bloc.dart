@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:tracktion/bloc/common/Workout.dart';
 import 'package:tracktion/models/app/body-parts.dart';
 import 'package:tracktion/models/app/exercise.dart' as exeModel;
 import 'package:tracktion/models/db/database.dart';
@@ -14,10 +13,8 @@ part 'exercise_state.dart';
 
 class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
   final SQLDatabase db;
-  final Common common;
 
-  ExerciseBloc({@required this.db, @required this.common})
-      : super(ExercisesInitial());
+  ExerciseBloc(this.db) : super(ExercisesInitial());
 
   @override
   Stream<ExerciseState> mapEventToState(

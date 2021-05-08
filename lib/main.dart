@@ -1,14 +1,13 @@
 import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tracktion/bloc/auth/auth_cubit.dart';
-import 'package:tracktion/bloc/common/Workout.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/bloc/workout-picker/workoutpicker_bloc.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
@@ -24,30 +23,27 @@ import 'bloc/routine/routine_bloc.dart';
 import 'bloc/routines/routines_bloc.dart';
 import 'plugins/desktop/desktop.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SharedPreferences.setMockInitialValues({});
+  await Firebase.initializeApp();
   setTargetPlatformForDesktop();
-  runApp(MyApp());
+  runApp(TracktionApp());
 }
 
-class MyApp extends StatefulWidget {
+class TracktionApp extends StatefulWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  _TracktionAppState createState() => _TracktionAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _TracktionAppState extends State<TracktionApp> {
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult> _connectivitySubscription;
-  Common common;
-  bool isAuth = false;
 
   @override
   void initState() {
     super.initState();
     initConnectivity();
 
-    common = Common(currentDate: DateTime.now());
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
     initializeFlutterFire();
@@ -89,8 +85,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _updateConnectionStatus(ConnectivityResult result) async {
-    if (!isAuth) return;
-
     switch (result) {
       case ConnectivityResult.wifi:
       case ConnectivityResult.mobile:
@@ -106,18 +100,18 @@ class _MyAppState extends State<MyApp> {
     return RepositoryProvider<SQLDatabase>(
       create: (context) => constructDb(),
       child: BlocProvider(
-          create: (BuildContext context) => AuthCubit(),
+          create: (BuildContext context) => AuthCubit()..listenUser(),
           child: MultiBlocProvider(
             providers: [
               BlocProvider<ExerciseBloc>(
                 create: (BuildContext context) => ExerciseBloc(
-                    db: RepositoryProvider.of<SQLDatabase>(context),
-                    common: common),
+                  RepositoryProvider.of<SQLDatabase>(context),
+                ),
               ),
               BlocProvider<WorkoutBloc>(
                 create: (context) => WorkoutBloc(
-                    db: RepositoryProvider.of<SQLDatabase>(context),
-                    common: common),
+                  RepositoryProvider.of<SQLDatabase>(context),
+                ),
               ),
               BlocProvider<WorkoutpickerBloc>(
                 create: (context) => WorkoutpickerBloc(
@@ -139,92 +133,63 @@ class _MyAppState extends State<MyApp> {
                   create: (BuildContext context) => ExerciseStreamCubit(
                       db: RepositoryProvider.of<SQLDatabase>(context))),
             ],
-            child: InitApp(changeAuthStatus: (auth) {
-              setState(() {
-                isAuth = auth;
-              });
-            }),
-          )),
-    );
-  }
-}
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              builder: (BuildContext context, Widget widget) {
+                Widget error = Text('...rendering error...');
+                if (widget is Scaffold || widget is Navigator)
+                  error = Scaffold(body: Center(child: error));
+                ErrorWidget.builder =
+                    (FlutterErrorDetails errorDetails) => error;
+                return widget;
+              },
+              theme: ThemeData(
+                  brightness: WidgetsBinding.instance.window.platformBrightness,
+                  fontFamily: 'CarterOne',
+                  primarySwatch: Colors.red,
+                  primaryColor: Color(0xFFB71C1C),
+                  accentColor: Color(0xFF9E9E9E),
+                  visualDensity: VisualDensity.adaptivePlatformDensity,
+                  textTheme: TextTheme(
+                    headline6:
+                        TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  ),
+                  buttonTheme: const ButtonThemeData(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(4.0),
+                      ),
+                    ),
+                  )),
+              home: StreamBuilder<User>(
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: (context, stream) {
+                  final user = stream.data;
 
-class InitApp extends StatefulWidget {
-  final Function(bool) changeAuthStatus;
+                  final state = stream.connectionState;
 
-  const InitApp({
-    Key key,
-    this.changeAuthStatus,
-  }) : super(key: key);
+                  if (state == ConnectionState.waiting ||
+                      state == ConnectionState.none) return LoadingScreen();
 
-  @override
-  _InitAppState createState() => _InitAppState();
-}
+                  if (user != null) return MainScreen();
 
-class _InitAppState extends State<InitApp> {
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration.zero).then((_) {
-      // BlocProvider.of<AuthCubit>(context).checkCredentials();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      builder: (BuildContext context, Widget widget) {
-        Widget error = Text('...rendering error...');
-        if (widget is Scaffold || widget is Navigator)
-          error = Scaffold(body: Center(child: error));
-        ErrorWidget.builder = (FlutterErrorDetails errorDetails) => error;
-        return widget;
-      },
-      theme: ThemeData(
-          brightness: WidgetsBinding.instance.window.platformBrightness,
-          fontFamily: 'CarterOne',
-          primarySwatch: Colors.red,
-          primaryColor: Color(0xFFB71C1C),
-          accentColor: Color(0xFF9E9E9E),
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          textTheme: TextTheme(
-            headline6: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          ),
-          buttonTheme: const ButtonThemeData(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(4.0),
+                  return AuthScreen();
+                },
               ),
+              routes: {
+                MainScreen.routeName: (ctx) => MainScreen(),
+                BodyPartsScreen.routeName: (ctx) => BodyPartsScreen(),
+                SearchExercise.routeName: (ctx) => SearchExercise(),
+                AddEditBodyPartsScreen.routeName: (ctx) =>
+                    AddEditBodyPartsScreen(),
+                ExerciseWorkOut.routeName: (ctx) => ExerciseWorkOut(),
+                WorkOutScreen.routeName: (ctx) => WorkOutScreen(),
+                RoutineMainScreen.routeName: (ctx) => RoutineMainScreen(),
+                RoutinesScreen.routeName: (ctx) => RoutinesScreen(),
+                WorkoutRoutinePicker.routeName: (ctx) => WorkoutRoutinePicker()
+              },
             ),
           )),
-      home: BlocConsumer<AuthCubit, AuthState>(
-        builder: (ctx, state) {
-          // print(state);
-          // if (state is AuthSuccess) return MainScreen();
-          // if (state is AuthFailed) return AuthScreen();
-          return AuthScreen();
-        },
-        listener: (ctx, state) {
-          if (state is AuthSuccess) {
-            widget.changeAuthStatus(true);
-          }
-          if (state is AuthFailed) {
-            widget.changeAuthStatus(false);
-          }
-        },
-      ),
-      routes: {
-        MainScreen.routeName: (ctx) => MainScreen(),
-        BodyPartsScreen.routeName: (ctx) => BodyPartsScreen(),
-        SearchExercise.routeName: (ctx) => SearchExercise(),
-        AddEditBodyPartsScreen.routeName: (ctx) => AddEditBodyPartsScreen(),
-        ExerciseWorkOut.routeName: (ctx) => ExerciseWorkOut(),
-        WorkOutScreen.routeName: (ctx) => WorkOutScreen(),
-        RoutineMainScreen.routeName: (ctx) => RoutineMainScreen(),
-        RoutinesScreen.routeName: (ctx) => RoutinesScreen(),
-        WorkoutRoutinePicker.routeName: (ctx) => WorkoutRoutinePicker()
-      },
     );
   }
 }

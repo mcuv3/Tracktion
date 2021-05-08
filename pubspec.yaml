@@ -27,6 +27,7 @@ dependencies:
   intl: ^0.17.0
   google_sign_in: "^4.5.1"
   flutter_facebook_auth: ^1.0.0
+  flutter_twitter_login: ^1.1.0
   font_awesome_flutter: ^8.11.0
   modal_bottom_sheet: ^1.0.0+1
   # flutter_clean_calendar: ^1.0.2+1
@@ -66,6 +67,7 @@ flutter:
     - assets/vectors/routines/4.svg
     - assets/vectors/routines/5.svg
     - assets/vectors/routines/6.svg
+    - assets/icons/google_light.png
 
   fonts:
     - family: CarterOne

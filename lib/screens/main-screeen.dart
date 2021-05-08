@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tracktion/bloc/auth/auth_cubit.dart';
 import 'package:tracktion/screens/exercise/body-parts-screen.dart';
 import 'package:tracktion/screens/index.dart';
@@ -37,6 +38,20 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       drawer: MainDrawer(),
       appBar: AppBar(
+        leading: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
+          if (state is AuthSuccess)
+            return GestureDetector(
+              onTap: () {
+                Scaffold.of(context).openDrawer();
+              },
+              child: CircleAvatar(
+                child: Image.network(state.user.photoURL),
+                backgroundColor: Colors.transparent,
+              ),
+            );
+          else
+            return FaIcon(FontAwesomeIcons.archway);
+        }),
         iconTheme: IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
         shadowColor: Colors.white,
