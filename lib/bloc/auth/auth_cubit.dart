@@ -105,8 +105,8 @@ class AuthCubit extends Cubit<AuthState> {
   Future<UserCredential> _signInWithTwitter() async {
     // Create a TwitterLogin instance
     final TwitterLogin twitterLogin = new TwitterLogin(
-      consumerKey: 'WHy9Y7Hqybv7ehDVtj3qayERr',
-      consumerSecret: '7JS0CnEA0QMiDYaVQAVafXexVgOMCWj4ZxHXUyanaEsigf17Yq',
+      consumerKey: 'xxx',
+      consumerSecret: 'xxx',
     );
 
     // Trigger the sign-in flow
