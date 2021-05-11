@@ -20,7 +20,7 @@ class CardInkwell extends StatelessWidget {
       ),
       child: Material(
         borderRadius: BorderRadius.circular(12.0),
-        color: Colors.black,
+        color: Colors.white,
         child: InkWell(
           onLongPress: onLongPress,
           borderRadius: BorderRadius.circular(12.0),

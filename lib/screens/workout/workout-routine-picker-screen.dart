@@ -33,6 +33,10 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
     showAnimatedModal(context, RoutinePreview(routine.id));
   }
 
+  void filterRoutines() {
+     BlocProvider.of<RoutinesBloc>(context).add(FilterRoutines(filters));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,9 +64,8 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
                 Icons.search,
                 size: 24,
               ),
-              hintText: 'eggs ...',
+              hintText: 'Push day ..',
             ),
-            onChanged: (value) {},
             style: TextStyle(fontSize: 16),
           ),
         ),
@@ -109,6 +112,7 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
                               fillColor: MaterialStateProperty.resolveWith(
                                   (states) => Colors.white),
                               onChanged: (v) {
+                                  filterRoutines();
                                 setState(() {
                                   filters[body.key] = v;
                                 });
@@ -128,7 +132,6 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
             child: BlocBuilder<RoutinesBloc, RoutinesState>(
                 builder: (context, state) {
               if (state is AllRoutines) {
-                print(state.routines);
                 final routines = state.routines;
                 return ListView.builder(
                   padding: EdgeInsets.all(10),

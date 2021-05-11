@@ -10,6 +10,12 @@ class StreamRoutines extends RoutinesEvent {
 
 class FetchRoutines extends RoutinesEvent {}
 
+class FilterRoutines extends RoutinesEvent {
+  final List<bool> filters;
+
+  FilterRoutines(this.filters);
+}
+
 class SaveFullRoutine extends RoutinesEvent {
   final RoutineData routine;
   final List<RoutineSetData> sets;

@@ -86,10 +86,10 @@ class SQLDatabase extends _$SQLDatabase {
   //     (select(routine)..where((t) => t.groupId.equals(groupId))).watch();
   //
 
-  Future<List<RoutineSlim>> findRoutines() async {
+  Future<List<RoutineSlim>> findRoutines([String cursor = ""]) async {
     final res = await (select(routine).join([
       leftOuterJoin(routineGroup, routineGroup.id.equalsExp(routine.groupId))
-    ])).get();
+    ])..orderBy([OrderingTerm(expression: routine.timesCopied)])).get();
 
     return res.map((row) {
       final group = row.readTable(routineGroup);
@@ -99,7 +99,7 @@ class SQLDatabase extends _$SQLDatabase {
           difficulty: rt.difficulty,
           groupName: group.name,
           routineName: rt.name,
-          topBodyParts: []);
+          topBodyParts: rt.bodyParts);
     }).toList();
   }
 
@@ -111,7 +111,7 @@ class SQLDatabase extends _$SQLDatabase {
     return query.watch().map((row) {
       return row.fold<List<modelsApp.RoutineDay>>([], (routineDays, tuple) {
         final _routine = tuple.readTable(routine);
-        final set = tuple.readTable(routineSet);
+        final set = tuple.readTableOrNull(routineSet);
         final indexRoutine =
             routineDays.indexWhere((r) => r.routine.id == _routine.id);
 

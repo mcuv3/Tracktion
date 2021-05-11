@@ -26,6 +26,8 @@ class RoutinesBloc extends Bloc<RoutinesEvent, RoutinesState> {
       yield* _saveRoutine(event);
     } else if (event is FetchRoutines) {
       yield* _streamAllRoutines(event);
+    } else if (event is FilterRoutines) {
+      yield* _filterRoutines(event);
     }
   }
 
@@ -51,6 +53,18 @@ class RoutinesBloc extends Bloc<RoutinesEvent, RoutinesState> {
       print(e);
       yield RoutinesFailure("Something went wrong fetching routines.");
     }
+  }
+
+  Stream<RoutinesState> _filterRoutines(FilterRoutines event) async* {
+    final routines = (state as AllRoutines).routines;
+
+    print(event.filters);
+    print(routines);
+    routines.map((r) {
+      print(r.topBodyParts);
+    });
+
+    yield AllRoutines(routines);
   }
 
   Stream<RoutinesState> _deleteRoutine(DeleteRoutine event) async* {

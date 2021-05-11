@@ -41,12 +41,17 @@ class MainScreen extends StatelessWidget {
         leading: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
           if (state is AuthSuccess)
             return GestureDetector(
+              
               onTap: () {
                 Scaffold.of(context).openDrawer();
               },
-              child: CircleAvatar(
-                child: Image.network(state.user.photoURL),
-                backgroundColor: Colors.transparent,
+              child: Container(
+                padding:EdgeInsets.all(8),
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(state.user.photoURL),
+                  backgroundColor: Colors.transparent,
+                  
+                ),
               ),
             );
           else
