@@ -34,7 +34,8 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
   }
 
   void filterRoutines() {
-     BlocProvider.of<RoutinesBloc>(context).add(FilterRoutines(filters));
+    BlocProvider.of<RoutinesBloc>(context)
+        .add(FilterRoutines(filters, searchController.text));
   }
 
   @override
@@ -50,13 +51,17 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
             icon: Icon(
               Icons.cancel,
             ),
-            onPressed: () {},
+            onPressed: () {
+              searchController.text = "";
+              filterRoutines();
+            },
           )
         ],
         title: Container(
           margin: EdgeInsets.symmetric(vertical: 10),
           child: TextFormField(
             autofocus: false,
+            onChanged: (v) => filterRoutines(),
             controller: searchController,
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
@@ -112,7 +117,7 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
                               fillColor: MaterialStateProperty.resolveWith(
                                   (states) => Colors.white),
                               onChanged: (v) {
-                                  filterRoutines();
+                                filterRoutines();
                                 setState(() {
                                   filters[body.key] = v;
                                 });
@@ -132,7 +137,8 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
             child: BlocBuilder<RoutinesBloc, RoutinesState>(
                 builder: (context, state) {
               if (state is AllRoutines) {
-                final routines = state.routines;
+                final routines = state.filtered;
+                print(state.filtered);
                 return ListView.builder(
                   padding: EdgeInsets.all(10),
                   itemBuilder: (conext, i) => RoutineSlimWidget(

@@ -89,7 +89,9 @@ class SQLDatabase extends _$SQLDatabase {
   Future<List<RoutineSlim>> findRoutines([String cursor = ""]) async {
     final res = await (select(routine).join([
       leftOuterJoin(routineGroup, routineGroup.id.equalsExp(routine.groupId))
-    ])..orderBy([OrderingTerm(expression: routine.timesCopied)])).get();
+    ])
+          ..orderBy([OrderingTerm(expression: routine.timesCopied)]))
+        .get();
 
     return res.map((row) {
       final group = row.readTable(routineGroup);
@@ -340,7 +342,7 @@ class SQLDatabase extends _$SQLDatabase {
     final rt = rts[0];
 
     final Map<BodyPartEnum, int> newBds =
-        rt.bodyParts?.routineBd != null ? rt.bodyParts.routineBd : {};
+        rt.bodyParts?.bds != null ? rt.bodyParts.bds : {};
 
     bds.forEach((e) {
       final bd = e.bodyPart;

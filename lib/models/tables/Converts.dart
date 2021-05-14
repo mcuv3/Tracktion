@@ -6,9 +6,9 @@ import 'package:tracktion/models/app/body-parts.dart';
 
 @j.JsonSerializable()
 class RoutineBodyParts {
-  Map<BodyPartEnum, int> routineBd;
+  Map<BodyPartEnum, int> bds;
 
-  RoutineBodyParts(this.routineBd);
+  RoutineBodyParts(this.bds);
 
   factory RoutineBodyParts.fromJson(Map<String, dynamic> json) {
     final Map<BodyPartEnum, int> bds = {};
@@ -19,7 +19,7 @@ class RoutineBodyParts {
   }
 
   Map<String, dynamic> toJson() {
-    return routineBd.map((key, value) {
+    return bds.map((key, value) {
       return MapEntry(key.index.toString(), value);
     });
   }

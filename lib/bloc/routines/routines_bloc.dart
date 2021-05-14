@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:tracktion/models/app/index.dart' as modelsApp;
+import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/db/database.dart';
 
 part 'routines_event.dart';
@@ -48,7 +49,7 @@ class RoutinesBloc extends Bloc<RoutinesEvent, RoutinesState> {
     yield RoutinesLoading();
     try {
       final routines = await this.db.findRoutines();
-      yield AllRoutines(routines);
+      yield AllRoutines(routines, routines);
     } catch (e) {
       print(e);
       yield RoutinesFailure("Something went wrong fetching routines.");
@@ -56,15 +57,39 @@ class RoutinesBloc extends Bloc<RoutinesEvent, RoutinesState> {
   }
 
   Stream<RoutinesState> _filterRoutines(FilterRoutines event) async* {
-    final routines = (state as AllRoutines).routines;
+    final routines = (state as AllRoutines);
+    final filters = event.filters;
+    final search = event.search.toLowerCase();
 
-    print(event.filters);
-    print(routines);
-    routines.map((r) {
-      print(r.topBodyParts);
-    });
+    final hasFilters = filters.any((e) => e);
 
-    yield AllRoutines(routines);
+    if (!hasFilters && search == "") {
+      yield AllRoutines(routines.routines, routines.routines);
+      return;
+    }
+
+    List<RoutineSlim> filteredRoutines = routines.routines;
+
+    if (hasFilters)
+      filteredRoutines = routines.routines
+          .where((r) => filters
+              .asMap()
+              .entries
+              .map<bool>((e) =>
+                  r.topBodyParts.bds
+                      .containsKey(modelsApp.BodyPartEnum.values[e.key]) &&
+                  e.value)
+              .any((e) => e))
+          .toList();
+
+    if (search != "")
+      filteredRoutines = filteredRoutines
+          .where((e) =>
+              e.routineName.toLowerCase().contains(search) &&
+              e.groupName.toLowerCase().contains(search))
+          .toList();
+
+    yield AllRoutines(routines.routines, filteredRoutines);
   }
 
   Stream<RoutinesState> _deleteRoutine(DeleteRoutine event) async* {

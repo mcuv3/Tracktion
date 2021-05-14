@@ -12,7 +12,8 @@ class Routines extends RoutinesState {
 
 class AllRoutines extends RoutinesState {
   final List<modelsApp.RoutineSlim> routines;
-  AllRoutines(this.routines);
+  final List<modelsApp.RoutineSlim> filtered;
+  AllRoutines(this.routines, this.filtered);
 }
 
 class RoutinesSuccess extends RoutinesState {}

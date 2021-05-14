@@ -12,8 +12,8 @@ class FetchRoutines extends RoutinesEvent {}
 
 class FilterRoutines extends RoutinesEvent {
   final List<bool> filters;
-
-  FilterRoutines(this.filters);
+  final String search;
+  FilterRoutines(this.filters, this.search);
 }
 
 class SaveFullRoutine extends RoutinesEvent {
