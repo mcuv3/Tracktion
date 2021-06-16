@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tracktion/bloc/routines/routines_bloc.dart';
 import "package:tracktion/colors/custom_colors.dart";
@@ -187,14 +188,25 @@ class RoutineSlimWidget extends StatelessWidget {
           ],
         ),
         child: ListTile(
-          title: Column(
+          leading: Column(
             children: [
               Text(routine.routineName,
                   style: TextStyle(color: Colors.white, fontSize: 18)),
-              Text(routine.groupName,
+              Text("Group: ${routine.groupName}",
                   style: TextStyle(
                       color: Colors.white.withOpacity(0.5), fontSize: 12)),
             ],
+          ),
+          title: Row(
+            children: [
+              SvgPicture.asset(
+                'assets/vectors/legs.svg',
+                width: 30,
+                height: 30,
+                color: Colors.black,
+              ),
+            ],
+            mainAxisSize: MainAxisSize.min,
           ),
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.center,

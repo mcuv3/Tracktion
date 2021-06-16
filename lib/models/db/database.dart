@@ -2,6 +2,7 @@ import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tracktion/models/app/RoutineSlim.dart';
 import 'package:tracktion/models/app/body-parts.dart';
+import 'package:tracktion/models/db/migration.dart';
 import 'package:tracktion/models/tables/Routines.dart';
 import 'package:tracktion/models/tables/WorkOut.dart';
 
@@ -34,16 +35,34 @@ class SQLDatabase extends _$SQLDatabase {
   SQLDatabase(QueryExecutor e) : super(e);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 8;
 
   @override
-  MigrationStrategy get migration => MigrationStrategy(
-      onCreate: (Migrator m) async {
+  MigrationStrategy get migration =>
+      MigrationStrategy(onCreate: (Migrator m) async {
+        print("Creating database");
         await m.createAll();
-
         return;
-      },
-      onUpgrade: (Migrator m, int from, int to) async {});
+      }, onUpgrade: (Migrator m, int from, int to) async {
+        print("Updating database");
+        await m.createAll();
+      }, beforeOpen: (details) async {
+        if (!details.wasCreated) return;
+
+        final exes = exercisesMigration.map((e) => into(exercises).insert(e));
+        final bds =
+            bodyPartsMigration.map((e) => into(exerciseBodyParts).insert(e));
+
+        await Future.wait(exes);
+        await Future.wait(bds);
+
+        final created = await select(exercises).get();
+        final bdsCreated = await select(exerciseBodyParts).get();
+        print("Exes created");
+        print(created);
+        print("Bds created");
+        print(bdsCreated);
+      });
 
   Stream<modelsApp.Exercise> findExerciseStream(int exerciseId) {
     final query = select(exercises).join([
