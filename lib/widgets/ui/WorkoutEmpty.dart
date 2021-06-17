@@ -66,16 +66,23 @@ class WorkoutEmpty extends StatelessWidget {
                   label: Text('Copy Workout')),
             ],
           ),
-           TextButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(WorkoutRoutinePicker.routeName);
-                  },
-                  icon: FaIcon(
-                    FontAwesomeIcons.route,
-                    size: 25,
-                    color: Theme.of(context).colorScheme.analysis.withOpacity(0.7),
-                  ),
-                  label: Text('Start Routine',style: TextStyle(color:Theme.of(context).colorScheme.analysis)))
+          TextButton.icon(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamed(WorkoutRoutinePicker.routeName)
+                    .then((routine) => routine != null
+                        ? WorkOutScreenService.of(context)
+                            .routineSelectedHanlder(routine)
+                        : null);
+              },
+              icon: FaIcon(
+                FontAwesomeIcons.route,
+                size: 25,
+                color: Theme.of(context).colorScheme.analysis.withOpacity(0.7),
+              ),
+              label: Text('Start Routine',
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.analysis)))
         ],
       )),
     );

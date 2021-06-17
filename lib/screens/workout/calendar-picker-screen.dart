@@ -15,7 +15,6 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
   void _handleNewDate(date) {
-    print(date);
     showCupertinoModalBottomSheet(
       expand: true,
       isDismissible: false,

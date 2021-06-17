@@ -149,42 +149,56 @@ class SetsRoutineItem extends StatelessWidget {
         children: ListTile.divideTiles(
             color: Colors.red,
             context: context,
-            tiles: sets.map((set) => ListTile(
-                onTap: () => onTapSet(set),
-                visualDensity: VisualDensity.compact,
-                leading: FaIcon(FontAwesomeIcons.dumbbell,
-                    color: Theme.of(context).colorScheme.analysisLight),
-                title: Text(set.exerciseName.toString()),
-                subtitle: Text(
-                    "Type: ${enumToString(set.copyMethod)} - RPE:${set.targetRpe.toString()}"),
-                trailing: AnimatedOpacity(
-                  opacity: editMode ? 1.0 : 0.0,
-                  duration: Duration(milliseconds: 400),
-                  child: Container(
-                    width: 50,
-                    child: Row(
-                      children: [
-                        IconButton(
-                            icon: FaIcon(FontAwesomeIcons.times,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .routinesLight),
-                            onPressed: editMode ? () => onDeleteSet(set) : null)
-                      ],
-                    ),
-                  ),
-                )))).toList());
+            tiles: sets.map((set) => SetRoutineItem(
+                set: set,
+                onTapSet: onTapSet,
+                actionIcon: FontAwesomeIcons.times,
+                editMode: editMode,
+                onDeleteSet: onDeleteSet))).toList());
   }
 }
 
 class SetRoutineItem extends StatelessWidget {
-  const SetRoutineItem({
-    Key key,
-  }) : super(key: key);
+  const SetRoutineItem(
+      {Key key,
+      @required this.onTapSet,
+      @required this.editMode,
+      @required this.onDeleteSet,
+      @required this.actionIcon,
+      @required this.set})
+      : super(key: key);
+
+  final IconData actionIcon;
+  final RoutineSetData set;
+  final Function(RoutineSetData p1) onTapSet;
+  final bool editMode;
+  final Function(RoutineSetData p1) onDeleteSet;
 
   @override
   Widget build(BuildContext context) {
-    return Text("Set 1");
+    return ListTile(
+        onTap: () => onTapSet(set),
+        visualDensity: VisualDensity.compact,
+        leading: FaIcon(FontAwesomeIcons.dumbbell,
+            color: Theme.of(context).colorScheme.analysisLight),
+        title: Text(set.exerciseName.toString()),
+        subtitle: Text(
+            "Type: ${enumToString(set.copyMethod)} - RPE:${set.targetRpe.toString()}"),
+        trailing: AnimatedOpacity(
+          opacity: editMode ? 1.0 : 0.0,
+          duration: Duration(milliseconds: 400),
+          child: Container(
+            width: 50,
+            child: Row(
+              children: [
+                IconButton(
+                    icon: FaIcon(actionIcon,
+                        color: Theme.of(context).colorScheme.routinesLight),
+                    onPressed: editMode ? () => onDeleteSet(set) : null)
+              ],
+            ),
+          ),
+        ));
   }
 }
 

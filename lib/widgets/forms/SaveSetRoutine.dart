@@ -15,8 +15,13 @@ class SaveSetRoutineForm extends StatefulWidget {
   final modelsApp.Exercise exercise;
   final int routineId;
   final RoutineSetData set;
+  final bool showMethods;
   SaveSetRoutineForm(
-      {Key key, @required this.exercise, @required this.routineId, this.set})
+      {Key key,
+      this.showMethods = true,
+      @required this.exercise,
+      @required this.routineId,
+      this.set})
       : super(key: key);
 
   @override
@@ -140,46 +145,49 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm>
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          buildHeader(exerciseName),
-          ...ListTile.divideTiles(
-              context: context,
-              color: Theme.of(context).colorScheme.analysis.withOpacity(0.8),
-              tiles: CopyMethod.values
-                  .map((e) => ListTile(
-                        dense: true,
-                        contentPadding: EdgeInsets.all(4),
-                        leading: Radio(
-                          activeColor: Colors.red,
-                          fillColor: MaterialStateProperty.all(
-                              invalidMethod ? Colors.red : Colors.black),
-                          value: e,
-                          groupValue: method,
-                          onChanged: (v) {
-                            setState(() {
-                              method = v;
-                              if (invalidMethod) {
-                                invalidMethod = false;
-                              }
-                            });
-                          },
-                        ),
-                        title: Text(enumToString(e),
-                            style: TextStyle(
-                                fontSize: 14,
-                                color:
-                                    invalidMethod ? Colors.red : Colors.black)),
-                        trailing: IconButton(
-                          color: Theme.of(context).colorScheme.analysis,
-                          icon: FaIcon(
-                            FontAwesomeIcons.infoCircle,
-                            color: Theme.of(context).colorScheme.analysisLight,
+          if (widget.showMethods) buildHeader(exerciseName),
+          if (widget.showMethods)
+            ...ListTile.divideTiles(
+                context: context,
+                color: Theme.of(context).colorScheme.analysis.withOpacity(0.8),
+                tiles: CopyMethod.values
+                    .map((e) => ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.all(4),
+                          leading: Radio(
+                            activeColor: Colors.red,
+                            fillColor: MaterialStateProperty.all(
+                                invalidMethod ? Colors.red : Colors.black),
+                            value: e,
+                            groupValue: method,
+                            onChanged: (v) {
+                              setState(() {
+                                method = v;
+                                if (invalidMethod) {
+                                  invalidMethod = false;
+                                }
+                              });
+                            },
                           ),
-                          onPressed: () {
-                            showDetails(e);
-                          },
-                        ),
-                      ))
-                  .toList()),
+                          title: Text(enumToString(e),
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: invalidMethod
+                                      ? Colors.red
+                                      : Colors.black)),
+                          trailing: IconButton(
+                            color: Theme.of(context).colorScheme.analysis,
+                            icon: FaIcon(
+                              FontAwesomeIcons.infoCircle,
+                              color:
+                                  Theme.of(context).colorScheme.analysisLight,
+                            ),
+                            onPressed: () {
+                              showDetails(e);
+                            },
+                          ),
+                        ))
+                    .toList()),
           buildHeader("Configuration"),
           AnimatedSize(
             vsync: this,

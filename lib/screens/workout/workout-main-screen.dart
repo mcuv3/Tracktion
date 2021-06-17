@@ -7,14 +7,41 @@ import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/screens/analysis/workout-analysis-screen.dart';
 import 'package:tracktion/widgets/Drawer.dart';
+import 'package:tracktion/widgets/forms/RoutineSetConfiguration.dart';
 import 'package:tracktion/widgets/inputs/DatePicker.dart';
 import 'package:tracktion/widgets/items/WorkoutItem.dart';
 import 'package:tracktion/widgets/modals/NoteInput.dart';
+import 'package:tracktion/widgets/modals/showAnimatedModal.dart';
 import 'package:tracktion/widgets/ui/IconDropDown.dart';
 import 'package:tracktion/widgets/ui/WorkoutEmpty.dart';
 
 import '../../colors/custom_colors.dart';
 import '../index.dart';
+
+class WorkOutScreenService extends InheritedWidget {
+  final BuildContext context;
+  WorkOutScreenService({Key key, @required this.child, @required this.context})
+      : super(key: key, child: child);
+
+  final Widget child;
+
+  static WorkOutScreenService of(BuildContext context) {
+    return context.dependOnInheritedWidgetOfExactType<WorkOutScreenService>();
+  }
+
+  void routineSelectedHanlder(RoutineSlim routine) {
+    showAnimatedModal(
+        context,
+        RoutinesSetConfuguration(
+          routine: routine,
+        ));
+  }
+
+  @override
+  bool updateShouldNotify(WorkOutScreenService oldWidget) {
+    return true;
+  }
+}
 
 class WorkOutScreen extends StatefulWidget {
   static const routeName = "/workout";
@@ -161,147 +188,151 @@ class _WorkOutScreenState extends State<WorkOutScreen>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-          appBar: AppBar(
-            actions: (delitionMode | sortMode)
-                ? [
-                    if (!sortMode)
+    return WorkOutScreenService(
+      context: context,
+      child: SafeArea(
+        child: Scaffold(
+            appBar: AppBar(
+              actions: (delitionMode | sortMode)
+                  ? [
+                      if (!sortMode)
+                        IconButton(
+                            icon: FaIcon(
+                              FontAwesomeIcons.trash,
+                              size: 24,
+                            ),
+                            onPressed: deleteSetsHandler),
                       IconButton(
                           icon: FaIcon(
-                            FontAwesomeIcons.trash,
+                            FontAwesomeIcons.times,
                             size: 24,
                           ),
-                          onPressed: deleteSetsHandler),
-                    IconButton(
-                        icon: FaIcon(
-                          FontAwesomeIcons.times,
-                          size: 24,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            delitionMode = false;
-                            sortMode = false;
-                          });
-                        }),
-                  ]
-                : [
-                    IconButton(
-                        icon: FaIcon(
-                          FontAwesomeIcons.sort,
-                          size: 30,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            sortMode = !sortMode;
-                          });
-                        }),
-                    IconButton(
-                        icon: FaIcon(
-                          FontAwesomeIcons.plusCircle,
-                          size: 30,
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pushNamed(
-                              BodyPartsScreen.routeName,
-                              arguments: {"pushed": true});
-                        }),
-                    Container(
-                        child: IconDropDown(
-                      icons: [
-                        Icon(Icons.timeline),
-                        Icon(Icons.view_agenda),
-                        Icon(Icons.settings),
-                      ],
-                      backgroundColor: Theme.of(context).colorScheme.analysis,
-                      iconColor: Colors.white,
-                      onChange: (index) {
-                        if (index == 0) {
-                          setState(() {
-                            analysisMode = !analysisMode;
-                          });
-                        }
-                        print(index);
-                      },
-                    )),
-                  ],
-          ),
-          drawer: MainDrawer(),
-          body: Column(
-            children: [
-              BlocListener<WorkoutBloc, WorkoutState>(
-                listener: (context, state) {
-                  if (state is WorkoutSets) {
-                    setState(() {
-                      currentDate = state.date;
-                    });
-                  }
-                },
-                child: DatePicker(
-                  changeDate: changeDateHandler,
-                  currentDate: currentDate,
+                          onPressed: () {
+                            setState(() {
+                              delitionMode = false;
+                              sortMode = false;
+                            });
+                          }),
+                    ]
+                  : [
+                      IconButton(
+                          icon: FaIcon(
+                            FontAwesomeIcons.sort,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              sortMode = !sortMode;
+                            });
+                          }),
+                      IconButton(
+                          icon: FaIcon(
+                            FontAwesomeIcons.plusCircle,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(
+                                BodyPartsScreen.routeName,
+                                arguments: {"pushed": true});
+                          }),
+                      Container(
+                          child: IconDropDown(
+                        icons: [
+                          Icon(Icons.timeline),
+                          Icon(Icons.view_agenda),
+                          Icon(Icons.settings),
+                        ],
+                        backgroundColor: Theme.of(context).colorScheme.analysis,
+                        iconColor: Colors.white,
+                        onChange: (index) {
+                          if (index == 0) {
+                            setState(() {
+                              analysisMode = !analysisMode;
+                            });
+                          }
+                          print(index);
+                        },
+                      )),
+                    ],
+            ),
+            drawer: MainDrawer(),
+            body: Column(
+              children: [
+                BlocListener<WorkoutBloc, WorkoutState>(
+                  listener: (context, state) {
+                    if (state is WorkoutSets) {
+                      setState(() {
+                        currentDate = state.date;
+                      });
+                    }
+                  },
+                  child: DatePicker(
+                    changeDate: changeDateHandler,
+                    currentDate: currentDate,
+                  ),
                 ),
-              ),
-              Expanded(
-                child: AnimatedBuilder(
-                  animation: _pageController,
-                  builder: (context, _) => Transform.translate(
-                    offset: Offset(0.0 * (direction ? 1 : -1), 0.0),
-                    child: BlocBuilder<WorkoutBloc, WorkoutState>(
-                      builder: (context, state) {
-                        if (state is WorkoutSets) {
-                          return StreamBuilder(
-                            builder: (context, sts) {
-                              if (sts.connectionState ==
-                                  ConnectionState.active) {
-                                List<SetWorkout> sets = sts.data;
+                Expanded(
+                  child: AnimatedBuilder(
+                    animation: _pageController,
+                    builder: (context, _) => Transform.translate(
+                      offset: Offset(0.0 * (direction ? 1 : -1), 0.0),
+                      child: BlocBuilder<WorkoutBloc, WorkoutState>(
+                        builder: (context, state) {
+                          if (state is WorkoutSets) {
+                            return StreamBuilder(
+                              builder: (context, sts) {
+                                if (sts.connectionState ==
+                                    ConnectionState.active) {
+                                  List<SetWorkout> sets = sts.data;
 
-                                sets.sort((a, b) => orderSets
-                                    .indexOf(a.id)
-                                    .compareTo(orderSets.indexOf(b.id)));
-                                if (sets.isEmpty)
-                                  return WorkoutEmpty(
-                                    currentDate: state.date,
-                                  );
+                                  sets.sort((a, b) => orderSets
+                                      .indexOf(a.id)
+                                      .compareTo(orderSets.indexOf(b.id)));
+                                  if (sets.isEmpty)
+                                    return WorkoutEmpty(
+                                      currentDate: state.date,
+                                    );
 
-                                if (analysisMode)
-                                  return WorkoutAnalysisScreen(sets);
+                                  if (analysisMode)
+                                    return WorkoutAnalysisScreen(sets);
 
-                                return !sortMode
-                                    ? ListView.builder(
-                                        itemCount: sets.length,
-                                        itemBuilder: (context, i) =>
-                                            buildSet(sets[i], sets),
-                                      )
-                                    : ReorderableListView(
-                                        onReorder: (prev, next) =>
-                                            orderSetsHandler(prev, next, sets),
-                                        children: [
-                                            for (final set in sets)
-                                              buildSet(set, sets)
-                                          ]
-                                        // itemCount: sets.length,
-                                        );
-                              }
+                                  return !sortMode
+                                      ? ListView.builder(
+                                          itemCount: sets.length,
+                                          itemBuilder: (context, i) =>
+                                              buildSet(sets[i], sets),
+                                        )
+                                      : ReorderableListView(
+                                          onReorder: (prev, next) =>
+                                              orderSetsHandler(
+                                                  prev, next, sets),
+                                          children: [
+                                              for (final set in sets)
+                                                buildSet(set, sets)
+                                            ]
+                                          // itemCount: sets.length,
+                                          );
+                                }
 
-                              return Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            },
-                            stream: state.sets,
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                              stream: state.sets,
+                            );
+                          }
+
+                          return Center(
+                            child: CircularProgressIndicator(),
                           );
-                        }
-
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      },
+                        },
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          )),
+              ],
+            )),
+      ),
     );
   }
 }

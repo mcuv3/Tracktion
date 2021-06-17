@@ -3,10 +3,7 @@ import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/models/tables/Routines.dart';
 
 List<ExerciseBodyPart> bodyPartsMigration = [
-  ExerciseBodyPart(
-    exerciseId: 1,
-    bodyPart: BodyPartEnum.Legs,
-  ),
+  ExerciseBodyPart(exerciseId: 1,bodyPart: BodyPartEnum.Legs),
   ExerciseBodyPart(exerciseId: 1, bodyPart: BodyPartEnum.Quadriceps),
   ExerciseBodyPart(exerciseId: 2, bodyPart: BodyPartEnum.Chest),
   ExerciseBodyPart(exerciseId: 2, bodyPart: BodyPartEnum.Arms),
@@ -21,7 +18,9 @@ List<ExerciseBodyPart> bodyPartsMigration = [
   ExerciseBodyPart(exerciseId: 6, bodyPart: BodyPartEnum.Arms),
   ExerciseBodyPart(exerciseId: 7, bodyPart: BodyPartEnum.Quadriceps),
   ExerciseBodyPart(exerciseId: 8, bodyPart: BodyPartEnum.Back),
+  ExerciseBodyPart(exerciseId: 8,bodyPart: BodyPartEnum.Shoulders)
 ];
+
 List<Exercise> exercisesMigration = [
   Exercise(
       id: 1,

@@ -39,6 +39,10 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
         .add(FilterRoutines(filters, searchController.text));
   }
 
+  void routineSelectHandler(RoutineSlim routine) {
+    Navigator.of(context).pop(routine);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,7 +149,7 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
                   itemBuilder: (conext, i) => RoutineSlimWidget(
                     routine: routines[i],
                     key: Key("RoutineWidget $i"),
-                    onPress: () {},
+                    onPress: () => routineSelectHandler(routines[i]),
                   ),
                   itemCount: routines.length,
                 );
