@@ -21,22 +21,16 @@ class RoutinesSetConfuguration extends StatefulWidget {
 }
 
 class _RoutinesSetConfugurationState extends State<RoutinesSetConfuguration> {
+  List<RoutineSetData> setsConfigured = [];
+
   @override
   void initState() {
     super.initState();
     BlocProvider.of<RoutineBloc>(context).add(StreamRoutine(widget.routine.id));
   }
 
-  void editHanlder(RoutineSetData set) async {
+  void editHanlder(RoutineSetData set, int idx) async {
     app.Exercise exercise;
-
-    // if (set == null) {
-    //   exercise = await Navigator.of(context).pushNamed(
-    //       BodyPartsScreen.routeName,
-    //       arguments: {"readOnly": true}) as app.Exercise;
-
-    //   if (exercise == null) return;
-    // }
 
     RoutineSetData setRoutine = await showAnimatedModal(
         context,
@@ -47,10 +41,13 @@ class _RoutinesSetConfugurationState extends State<RoutinesSetConfuguration> {
           showMethods: false,
         ));
 
-    // if (setRoutine == null) return;
-    print(setRoutine);
+    setState(() {
+      setsConfigured[idx] = setRoutine;
+    });
+  }
 
-    // BlocProvider.of<RoutineBloc>(context).add(SaveSet(setRoutine));
+  void submitHanlder() {
+    Navigator.of(context).pop(setsConfigured);
   }
 
   @override
@@ -62,16 +59,22 @@ class _RoutinesSetConfugurationState extends State<RoutinesSetConfuguration> {
               stream: state.routine,
               builder: (context, stream) {
                 final List<RoutineSetData> sets = stream.data;
-                print(sets);
+
+                if (stream.connectionState == ConnectionState.waiting)
+                  return Text("Waiting");
+
+                if (setsConfigured.isEmpty) {
+                  setsConfigured = sets;
+                }
+
                 return Container(
-                  margin: EdgeInsets.only(top: 15),
                   width: double.maxFinite,
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                          width: double.infinity,
+                          width: double.maxFinite,
+                          margin: EdgeInsets.only(top: 12),
                           padding:
                               EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
@@ -85,13 +88,17 @@ class _RoutinesSetConfugurationState extends State<RoutinesSetConfuguration> {
                         itemBuilder: (context, i) => SetRoutineItem(
                           editMode: true,
                           actionIcon: FontAwesomeIcons.edit,
-                          onDeleteSet: (r) => editHanlder(r),
+                          onDeleteSet: (r) => editHanlder(r, i),
                           onTapSet: (r) {},
-                          set: sets[i],
+                          set: setsConfigured[i],
                         ),
-                        itemCount: sets.length,
+                        itemCount: setsConfigured.length,
                       ),
-                      SaveFormActions(onCancel: () {}, onSave: () {})
+                      SaveFormActions(
+                          onCancel: () {
+                            Navigator.of(context).pop();
+                          },
+                          onSave: submitHanlder)
                     ],
                   ),
                 );

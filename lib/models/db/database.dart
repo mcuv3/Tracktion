@@ -55,13 +55,6 @@ class SQLDatabase extends _$SQLDatabase {
 
         await Future.wait(exes);
         await Future.wait(bds);
-
-        final created = await select(exercises).get();
-        final bdsCreated = await select(exerciseBodyParts).get();
-        print("Exes created");
-        print(created);
-        print("Bds created");
-        print(bdsCreated);
       });
 
   Stream<modelsApp.Exercise> findExerciseStream(int exerciseId) {
@@ -306,7 +299,6 @@ class SQLDatabase extends _$SQLDatabase {
           .go();
 
       for (final bodyPart in entry.bodyParts) {
-        print(bodyPart);
         await into(exerciseBodyParts).insert(
             ExerciseBodyPart(bodyPart: bodyPart, exerciseId: exerciseId),
             mode: InsertMode.replace);

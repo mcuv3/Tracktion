@@ -20,10 +20,6 @@ Future<dynamic> showAnimatedModal<T>(BuildContext context, Widget widget) {
         return AlertDialog(
           shape: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0)),
           contentPadding: EdgeInsets.all(0),
-          titlePadding: EdgeInsets.all(0),
-          scrollable: true,
-          insetPadding: EdgeInsets.all(0),
-          actionsPadding: EdgeInsets.all(0),
           content: widget,
         );
       });

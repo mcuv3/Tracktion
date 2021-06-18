@@ -143,7 +143,6 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
                 builder: (context, state) {
               if (state is AllRoutines) {
                 final routines = state.filtered;
-                print(state.filtered);
                 return ListView.builder(
                   padding: EdgeInsets.all(10),
                   itemBuilder: (conext, i) => RoutineSlimWidget(

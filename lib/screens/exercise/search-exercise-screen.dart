@@ -95,7 +95,6 @@ class _SearchExerciseState extends State<SearchExercise> {
                           builder: (context, exs) {
                             if (exs.connectionState == ConnectionState.active) {
                               List<Exercise> exes = exs.data ?? [];
-                              print(exes);
                               exes
                                   .where((ex) => ex.name
                                       .toLowerCase()
@@ -111,8 +110,6 @@ class _SearchExerciseState extends State<SearchExercise> {
                                         return Navigator.of(context)
                                             .pop(exes[i]);
                                       }
-                                      print(exes[i]);
-
                                       Navigator.of(context).pushNamed(
                                           ExerciseWorkOut.routeName,
                                           arguments: {"exercise": exes[i]});

@@ -28,17 +28,15 @@ class MainDrawer extends StatelessWidget {
               accountEmail: Text(email),
               accountName: Text(name),
               decoration: BoxDecoration(color: Colors.black),
-              currentAccountPicture:  CircleAvatar(
-                  backgroundImage: NetworkImage(photoUrl),
-                  backgroundColor: Colors.transparent,
-                  
-                ),
+              currentAccountPicture: CircleAvatar(
+                backgroundImage: NetworkImage(photoUrl),
+                backgroundColor: Colors.transparent,
+              ),
             ),
             ListTile(
               leading: FaIcon(FontAwesomeIcons.home),
               title: Text("Home"),
               onTap: () {
-                print("Home Clicked");
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => MainScreen()),
@@ -49,7 +47,6 @@ class MainDrawer extends StatelessWidget {
               leading: FaIcon(FontAwesomeIcons.running),
               title: Text("Exercises"),
               onTap: () {
-                print("Categories Clicked");
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => BodyPartsScreen()),
@@ -63,7 +60,6 @@ class MainDrawer extends StatelessWidget {
               ),
               title: Text("Workouts"),
               onTap: () {
-                print("Categories Clicked");
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => WorkOutScreen()),
@@ -87,7 +83,6 @@ class MainDrawer extends StatelessWidget {
               leading: FaIcon(FontAwesomeIcons.userAlt),
               title: Text("Profile"),
               onTap: () {
-                print("Categories Clicked");
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => WorkOutScreen()),

@@ -17,7 +17,6 @@ class ServerMigrator {
             verb: migration.verb,
             payload: migration.payload);
         if (res.statusCode > 400) {
-          print("Something went wrong");
           break;
         }
         await this.db.deleteMigration(migration);

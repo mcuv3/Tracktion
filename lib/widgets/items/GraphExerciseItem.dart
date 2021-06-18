@@ -201,7 +201,6 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
 
   LineChartData volumens(List<SetResume> sets, List<double> bounderies) {
     var interval = ((bounderies[0] - bounderies[1]) / 8);
-    print(interval);
     interval += 10 - (interval % 10);
     return LineChartData(
       gridData: FlGridData(

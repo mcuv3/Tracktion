@@ -29,7 +29,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
       _selectedDay = date;
       _selectedEvents = _events[_selectedDay] ?? [];
     });
-    print(_selectedEvents);
   }
 
   List _selectedEvents;

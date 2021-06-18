@@ -56,7 +56,6 @@ class Ht {
   static Future<http.Response> delete(String path) =>
       http.delete(Uri(host: host, path: path, port: 8000), headers: headers);
   static Future<http.Response> post(String path, {dynamic body}) async {
-    print(Uri(host: host, path: path, port: 8000));
     return await http
         .post(Uri(host: host, path: path, port: 8000),
             headers: headers, body: body)

@@ -67,7 +67,6 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.routine);
     return Container(
       padding: EdgeInsets.only(top: 10),
       width: double.maxFinite,

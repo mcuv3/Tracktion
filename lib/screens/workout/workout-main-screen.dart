@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/app/index.dart';
+import 'package:tracktion/models/db/database.dart' as dbModels;
 import 'package:tracktion/screens/analysis/workout-analysis-screen.dart';
 import 'package:tracktion/widgets/Drawer.dart';
 import 'package:tracktion/widgets/forms/RoutineSetConfiguration.dart';
@@ -29,12 +30,16 @@ class WorkOutScreenService extends InheritedWidget {
     return context.dependOnInheritedWidgetOfExactType<WorkOutScreenService>();
   }
 
-  void routineSelectedHanlder(RoutineSlim routine) {
-    showAnimatedModal(
+  void routineSelectedHanlder(RoutineSlim routine) async {
+    List<dbModels.RoutineSetData> sets = await showAnimatedModal(
         context,
         RoutinesSetConfuguration(
           routine: routine,
         ));
+
+    if (sets == null) return;
+
+    BlocProvider.of<WorkoutBloc>(context).add(CopyRoutine(sets));
   }
 
   @override
@@ -144,13 +149,10 @@ class _WorkOutScreenState extends State<WorkOutScreen>
 
     if (ids.length == 0) for (final set in sets) ids.add(set.id);
     if (next >= orderSets.length) next = orderSets.length - 1;
-    // if (next > prev) next -= 1;
-    print(ids);
 
     final item = ids.removeAt(prev);
     ids.insert(next, item);
-    //
-    print(ids);
+
     setState(() {
       orderSets = ids;
     });
@@ -250,7 +252,6 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                               analysisMode = !analysisMode;
                             });
                           }
-                          print(index);
                         },
                       )),
                     ],

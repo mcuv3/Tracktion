@@ -50,3 +50,8 @@ class CopySets extends WorkoutEvent {
       @required this.date,
       @required this.workoutFilters});
 }
+
+class CopyRoutine extends WorkoutEvent {
+  final List<RoutineSetData> sets;
+  CopyRoutine(this.sets);
+}

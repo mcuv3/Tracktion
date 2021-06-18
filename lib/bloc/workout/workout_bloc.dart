@@ -41,6 +41,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       _deleteSets(event);
     } else if (event is CopySets) {
       _copySets(event);
+    } else if (event is CopyRoutine) {
+      _copyRoutine(event);
     }
   }
 
@@ -186,10 +188,17 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     }
   }
 
+  Future<void> _copyRoutine(CopyRoutine event) async {
+    try {
+      final sets = event.sets;
+
+      // TODO: Copy routines into  workout
+      // TODO: _saveSet function will help you a lot
+    } catch (e) {}
+  }
+
   Future<void> _saveRep(SaveRep event) async {
     try {
-      print(event.rep.setId);
-
       final rep = Rep(
           id: event.rep.id,
           note: event.rep.notes,
