@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:tracktion/helper/http.dart';
 import 'package:tracktion/models/db/database.dart';
 
 class ServerMigrator {
   final SQLDatabase db;
 
-  ServerMigrator({@required this.db});
+  ServerMigrator({required this.db});
 
   void migrate() async {
     final migrations = await this.db.getAllMigrations();
@@ -17,6 +16,7 @@ class ServerMigrator {
             verb: migration.verb,
             payload: migration.payload);
         if (res.statusCode > 400) {
+          print("Something went wrong");
           break;
         }
         await this.db.deleteMigration(migration);

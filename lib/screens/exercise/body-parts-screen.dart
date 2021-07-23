@@ -13,9 +13,7 @@ class BodyPartsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final args =
-        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
-    final readOnly = args != null && args["readOnly"] == true;
-
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     return Scaffold(
         drawer: args != null ? null : MainDrawer(),
         appBar: AppBar(
@@ -41,19 +39,13 @@ class BodyPartsScreen extends StatelessWidget {
                     alignment: WrapAlignment.center,
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: BodyPartEnum.values
-                        .map((body) => GestureDetector(
-                            onTap: () async {
-                              final exercise = await Navigator.of(context)
-                                  .pushNamed(SearchExercise.routeName,
-                                      arguments: {
-                                    "body": body,
-                                    "readOnly": readOnly
-                                  });
-                              if (readOnly && exercise != null)
-                                Navigator.of(context).pop(exercise);
+                        .map((bdy) => GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pushNamed(
+                                  SearchExercise.routeName,
+                                  arguments: bdy);
                             },
-                            child:
-                                Hero(tag: body, child: BodyPartWidget(body))))
+                            child: Hero(tag: bdy, child: BodyPartWidget(bdy))))
                         .toList(),
                   ),
                 ],
@@ -61,21 +53,17 @@ class BodyPartsScreen extends StatelessWidget {
             ))
           ],
         )),
-        floatingActionButton: readOnly
-            ? null
-            : Padding(
-                padding: EdgeInsets.all(8),
-                child: TextButton.icon(
-                  style: TextButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.exercise),
-                  onPressed: () {
-                    Navigator.of(context)
-                        .pushNamed(AddEditBodyPartsScreen.routeName);
-                  },
-                  icon: Icon(Icons.add),
-                  label: Text('Add Exercise',
-                      style: TextStyle(color: Colors.white)),
-                ),
-              ));
+        floatingActionButton: Padding(
+          padding: EdgeInsets.all(8),
+          child: TextButton.icon(
+            style: TextButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.exercise),
+            onPressed: () {
+              Navigator.of(context).pushNamed(AddEditBodyPartsScreen.routeName);
+            },
+            icon: Icon(Icons.add),
+            label: Text('Add Exercise', style: TextStyle(color: Colors.white)),
+          ),
+        ));
   }
 }

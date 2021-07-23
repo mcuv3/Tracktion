@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'enumToString.dart';
 
 void bottomSheetOptions<T>(
-    { Function cb,
-     BuildContext context,
-     List<T> options}) {
+    {required Function cb,
+    required BuildContext context,
+    required List<T> options}) {
   showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) => ListView.builder(

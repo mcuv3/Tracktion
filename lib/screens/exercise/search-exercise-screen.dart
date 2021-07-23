@@ -23,10 +23,7 @@ class SearchExercise extends StatefulWidget {
 
 class _SearchExerciseState extends State<SearchExercise> {
   final _controller = TextEditingController();
-  var initialization = false;
   var search = '';
-  var bodyPart = BodyPartEnum.Arms;
-  var readOnly = false;
 
   void searchHandler(String val) {
     setState(() {
@@ -37,9 +34,8 @@ class _SearchExerciseState extends State<SearchExercise> {
   @override
   void initState() {
     Future.delayed(Duration.zero).then((_) {
-      Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
-      bodyPart = args["body"];
-      BlocProvider.of<ExerciseBloc>(context).add(FetchExers(bodyPart));
+      final bd = ModalRoute.of(context)?.settings.arguments as BodyPartEnum;
+      BlocProvider.of<ExerciseBloc>(context).add(FetchExers(bd));
     });
     super.initState();
   }
@@ -47,9 +43,10 @@ class _SearchExerciseState extends State<SearchExercise> {
   @override
   Widget build(BuildContext context) {
     final query = MediaQuery.of(context);
-    Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
-    bodyPart = args["body"] ?? BodyPartEnum.Arms;
-    readOnly = !!args["readOnly"];
+    final bodyPart =
+        ModalRoute.of(context)?.settings.arguments as BodyPartEnum? ??
+            BodyPartEnum.Arms;
+
     return Scaffold(
       appBar: AppBar(
           elevation: 0,
@@ -58,7 +55,7 @@ class _SearchExerciseState extends State<SearchExercise> {
           ),
           titleSpacing: 0,
           backgroundColor: Colors.white,
-          title: Text(bodyPart.toString()?.split('.')[1],
+          title: Text(bodyPart.toString().split('.')[1],
               style: TextStyle(
                   color: Theme.of(context).colorScheme.exercise, fontSize: 25)),
           centerTitle: true),
@@ -88,13 +85,19 @@ class _SearchExerciseState extends State<SearchExercise> {
                   ),
                   BlocBuilder<ExerciseBloc, ExerciseState>(
                     builder: (ctx, state) {
-                      Widget main;
+                      Widget main = Center(
+                        child: CircularProgressIndicator(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.exercise,
+                        ),
+                      );
 
                       if (state is Exercises) {
                         main = StreamBuilder(
                           builder: (context, exs) {
                             if (exs.connectionState == ConnectionState.active) {
-                              List<Exercise> exes = exs.data ?? [];
+                              var exes = exs.data as List<Exercise>? ?? [];
+                              print(exes);
                               exes
                                   .where((ex) => ex.name
                                       .toLowerCase()
@@ -106,10 +109,6 @@ class _SearchExerciseState extends State<SearchExercise> {
                                 reverse: true,
                                 itemBuilder: (ctx, i) => GestureDetector(
                                     onTap: () {
-                                      if (readOnly) {
-                                        return Navigator.of(context)
-                                            .pop(exes[i]);
-                                      }
                                       Navigator.of(context).pushNamed(
                                           ExerciseWorkOut.routeName,
                                           arguments: {"exercise": exes[i]});
@@ -122,15 +121,6 @@ class _SearchExerciseState extends State<SearchExercise> {
                             return Text('Loading');
                           },
                           stream: state.exes,
-                        );
-                      }
-
-                      if (state is ExercisesLoading) {
-                        main = Center(
-                          child: CircularProgressIndicator(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.exercise,
-                          ),
                         );
                       }
 

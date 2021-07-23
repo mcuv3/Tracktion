@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_clean_calendar/flutter_clean_calendar.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:tracktion/screens/workout/workout-picker-screen.dart';
+
+import '../../colors/custom_colors.dart';
 
 class CalendarScreen extends StatefulWidget {
   final DateTime currentDate;
@@ -15,6 +18,7 @@ class CalendarScreen extends StatefulWidget {
 
 class _CalendarScreenState extends State<CalendarScreen> {
   void _handleNewDate(date) {
+    print(date);
     showCupertinoModalBottomSheet(
       expand: true,
       isDismissible: false,
@@ -29,10 +33,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
       _selectedDay = date;
       _selectedEvents = _events[_selectedDay] ?? [];
     });
+    print(_selectedEvents);
   }
 
-  List _selectedEvents;
-  DateTime _selectedDay;
+  List? _selectedEvents;
+  DateTime? _selectedDay;
 
   final Map<DateTime, List> _events = {
     DateTime(2021, 1, 7): [
@@ -75,38 +80,34 @@ class _CalendarScreenState extends State<CalendarScreen> {
     return Container(
       height: 350,
       child: Scaffold(
-        body: Center(
-          child: Text("Change library"),
+        body: Calendar(
+          isExpanded: true,
+          startOnMonday: true,
+          weekDays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          events: _events,
+          onDateSelected: (date) => _handleNewDate(date),
+          hideTodayIcon: true,
+          eventDoneColor: Colors.redAccent,
+          selectedColor: Theme.of(context).colorScheme.exercise,
+          todayColor: Theme.of(context).colorScheme.exercise,
+          dayBuilder: (context, date) => date == widget.currentDate
+              ? Center(
+                  child: Container(
+                  width: 25,
+                  height: 25,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      color: Colors.red.withOpacity(0.8)),
+                  child: Text(date.day.toString(),
+                      style: TextStyle(color: Colors.white)),
+                ))
+              : Center(child: Text(date.day.toString())),
+          eventColor: Colors.redAccent,
+          dayOfWeekStyle: TextStyle(
+              color: Colors.black, fontWeight: FontWeight.w800, fontSize: 11),
         ),
       ),
     );
   }
 }
-
-// Calendar(
-//           isExpanded: true,
-//           startOnMonday: true,
-//           weekDays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-//           events: _events,
-//           onDateSelected: (date) => _handleNewDate(date),
-//           hideTodayIcon: true,
-//           eventDoneColor: Colors.redAccent,
-//           selectedColor: Theme.of(context).colorScheme.exercise,
-//           todayColor: Theme.of(context).colorScheme.exercise,
-//           dayBuilder: (context, date) => date == widget.currentDate
-//               ? Center(
-//                   child: Container(
-//                   width: 25,
-//                   height: 25,
-//                   alignment: Alignment.center,
-//                   decoration: BoxDecoration(
-//                       borderRadius: BorderRadius.circular(15),
-//                       color: Colors.red.withOpacity(0.8)),
-//                   child: Text(date.day.toString(),
-//                       style: TextStyle(color: Colors.white)),
-//                 ))
-//               : Center(child: Text(date.day.toString())),
-//           eventColor: Colors.redAccent,
-//           dayOfWeekStyle: TextStyle(
-//               color: Colors.black, fontWeight: FontWeight.w800, fontSize: 11),
-//         )

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/models/app/body-parts.dart';
+import 'package:tracktion/models/app/difficulties.dart';
 import 'package:tracktion/models/app/exercise.dart';
-import 'package:tracktion/models/tables/Routines.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/create-exercise.dart';
 import 'package:tracktion/util/showMessage.dart';
@@ -31,9 +31,9 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController notesController = TextEditingController();
   final form = GlobalKey<FormState>();
-  var difficulty = Difficulty.Normal;
+  var difficulty = Difficulty.Easy;
   var editMode = false;
-  Exercise exe;
+  Exercise? exe;
   var isInit = true;
 
   @override
@@ -42,17 +42,18 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
     if (isInit) {
       isInit = false;
       final props =
-          ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
       if (props == null) return;
-      this.exe = props["exe"];
-      if (this.exe != null) {
-        this.editMode = true;
-        this.bodyParts = BodyPartEnum.values.map((b) {
-          return {"body": b, "active": exe.bodyParts.any((e) => e == b)};
+
+      exe = props["exe"];
+      if (exe != null) {
+        editMode = true;
+        bodyParts = BodyPartEnum.values.map((b) {
+          return {"body": b, "active": exe!.bodyParts.any((e) => e == b)};
         }).toList();
-        this.difficulty = exe.difficulty;
-        this.nameController.text = exe.name;
-        this.notesController.text = exe.notes;
+        difficulty = exe!.difficulty;
+        nameController.text = exe!.name;
+        notesController.text = exe!.notes ?? "";
       }
     }
   }
@@ -65,11 +66,12 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
 
   void deleteHandler() async {
     final delete = await showModalConfirmation(
-        context: context,
-        contentText: "This exercise will delete from all your workouts.",
-        confirmText: 'Delete me');
-    if (!delete) return;
-    BlocProvider.of<ExerciseBloc>(context).add(DeleteExe(exe));
+            context: context,
+            contentText: "This exercise will delete from all your workouts.",
+            confirmText: 'Delete me') ??
+        false;
+    if (!delete || exe == null || exe?.id == null) return;
+    BlocProvider.of<ExerciseBloc>(context).add(DeleteExe(exe!.id!));
   }
 
   GestureDetector bodyPartPicker(int i) {
@@ -92,7 +94,7 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
       nameController.text = "";
       notesController.text = "";
       setState(() {
-        difficulty = Difficulty.Normal;
+        difficulty = Difficulty.Easy;
         bodyParts = bodyParts.map((e) {
           e['active'] = false;
           return e;
@@ -107,7 +109,7 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
   void submit(BuildContext ctx) {
     List<BodyPartEnum> parts = [];
 
-    if (!form.currentState.validate()) return;
+    if (!form.currentState!.validate()) return;
 
     bodyParts.forEach((b) {
       if (b["active"]) parts.add(b["body"]);
@@ -118,23 +120,25 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
           context: ctx, message: 'Body parts or difficulty missing.');
       return;
     }
+    final submitedExe = exe;
+    // if (submitedExe == null) return;
 
     exe = Exercise(
-        id: exe == null ? null : exe.id,
-        lastWorkouts: editMode ? exe.lastWorkouts : [],
-        maxVolumeSetId: editMode ? exe.maxVolumeSetId : null,
-        maxWeigthSetId: editMode ? exe.maxWeigthSetId : null,
-        maxVolume: editMode ? exe.maxVolume : null,
-        maxWeigth: editMode ? exe.maxWeigth : null,
+        id: submitedExe?.id ,
+        lastWorkouts: editMode ? submitedExe!.lastWorkouts : [],
+        maxVolumeSetId: editMode ? submitedExe!.maxVolumeSetId : null,
+        maxWeigthSetId: editMode ? submitedExe!.maxWeigthSetId : null,
+        maxVolume: editMode ? submitedExe!.maxVolume : 0.0,
+        maxWeigth: editMode ? submitedExe!.maxWeigth : 0.0,
         bodyParts: parts,
         difficulty: difficulty,
         notes: notesController.text,
         name: nameController.text);
 
-    if (editMode && exe.id != null) {
-      BlocProvider.of<ExerciseBloc>(context).add(EditExe(exe));
+    if (editMode && submitedExe!=null && submitedExe.id != null) {
+      BlocProvider.of<ExerciseBloc>(context).add(EditExe(exe!));
     } else {
-      BlocProvider.of<ExerciseBloc>(context).add(CreateExe(exe));
+      BlocProvider.of<ExerciseBloc>(context).add(CreateExe(exe!));
     }
   }
 
@@ -189,7 +193,7 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
                         controller: nameController,
                         hint: 'Exercise name',
                         validator: (val) {
-                          if (val.length <= 3) {
+                          if (val != null && val.length <= 3) {
                             return 'Name too short';
                           }
                           return null;
@@ -198,7 +202,7 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
                       SizedBox(
                         height: 10,
                       ),
-                      Select(
+                      Select<Difficulty>(
                         options: Difficulty.values,
                         value: difficulty,
                         onSelect: (val) {

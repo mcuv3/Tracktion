@@ -8,27 +8,27 @@ part of 'database.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
 class Exercise extends DataClass implements Insertable<Exercise> {
-  final int id;
+  final int? id;
   final String name;
   final String lastWorkouts;
-  final double maxVolume;
-  final double maxWeigth;
-  final int maxWeigthSetId;
-  final int maxVolumeSetId;
-  final String notes;
+  final double? maxVolume;
+  final double? maxWeigth;
+  final int? maxWeigthSetId;
+  final int? maxVolumeSetId;
+  final String? notes;
   final Difficulty difficulty;
   Exercise(
-      {@required this.id,
-      @required this.name,
-      @required this.lastWorkouts,
-      @required this.maxVolume,
-      @required this.maxWeigth,
+      {this.id,
+      required this.name,
+      required this.lastWorkouts,
+      this.maxVolume,
+      this.maxWeigth,
       this.maxWeigthSetId,
       this.maxVolumeSetId,
       this.notes,
-      @required this.difficulty});
+      required this.difficulty});
   factory Exercise.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return Exercise(
       id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
@@ -112,46 +112,46 @@ class Exercise extends DataClass implements Insertable<Exercise> {
   }
 
   factory Exercise.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Exercise(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<int?>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       lastWorkouts: serializer.fromJson<String>(json['lastWorkouts']),
-      maxVolume: serializer.fromJson<double>(json['maxVolume']),
-      maxWeigth: serializer.fromJson<double>(json['maxWeigth']),
-      maxWeigthSetId: serializer.fromJson<int>(json['maxWeigthSetId']),
-      maxVolumeSetId: serializer.fromJson<int>(json['maxVolumeSetId']),
-      notes: serializer.fromJson<String>(json['notes']),
+      maxVolume: serializer.fromJson<double?>(json['maxVolume']),
+      maxWeigth: serializer.fromJson<double?>(json['maxWeigth']),
+      maxWeigthSetId: serializer.fromJson<int?>(json['maxWeigthSetId']),
+      maxVolumeSetId: serializer.fromJson<int?>(json['maxVolumeSetId']),
+      notes: serializer.fromJson<String?>(json['notes']),
       difficulty: serializer.fromJson<Difficulty>(json['difficulty']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<int?>(id),
       'name': serializer.toJson<String>(name),
       'lastWorkouts': serializer.toJson<String>(lastWorkouts),
-      'maxVolume': serializer.toJson<double>(maxVolume),
-      'maxWeigth': serializer.toJson<double>(maxWeigth),
-      'maxWeigthSetId': serializer.toJson<int>(maxWeigthSetId),
-      'maxVolumeSetId': serializer.toJson<int>(maxVolumeSetId),
-      'notes': serializer.toJson<String>(notes),
+      'maxVolume': serializer.toJson<double?>(maxVolume),
+      'maxWeigth': serializer.toJson<double?>(maxWeigth),
+      'maxWeigthSetId': serializer.toJson<int?>(maxWeigthSetId),
+      'maxVolumeSetId': serializer.toJson<int?>(maxVolumeSetId),
+      'notes': serializer.toJson<String?>(notes),
       'difficulty': serializer.toJson<Difficulty>(difficulty),
     };
   }
 
   Exercise copyWith(
-          {int id,
-          String name,
-          String lastWorkouts,
-          double maxVolume,
-          double maxWeigth,
-          int maxWeigthSetId,
-          int maxVolumeSetId,
-          String notes,
-          Difficulty difficulty}) =>
+          {int? id,
+          String? name,
+          String? lastWorkouts,
+          double? maxVolume,
+          double? maxWeigth,
+          int? maxWeigthSetId,
+          int? maxVolumeSetId,
+          String? notes,
+          Difficulty? difficulty}) =>
       Exercise(
         id: id ?? this.id,
         name: name ?? this.name,
@@ -212,14 +212,14 @@ class Exercise extends DataClass implements Insertable<Exercise> {
 }
 
 class ExercisesCompanion extends UpdateCompanion<Exercise> {
-  final Value<int> id;
+  final Value<int?> id;
   final Value<String> name;
   final Value<String> lastWorkouts;
-  final Value<double> maxVolume;
-  final Value<double> maxWeigth;
-  final Value<int> maxWeigthSetId;
-  final Value<int> maxVolumeSetId;
-  final Value<String> notes;
+  final Value<double?> maxVolume;
+  final Value<double?> maxWeigth;
+  final Value<int?> maxWeigthSetId;
+  final Value<int?> maxVolumeSetId;
+  final Value<String?> notes;
   final Value<Difficulty> difficulty;
   const ExercisesCompanion({
     this.id = const Value.absent(),
@@ -234,18 +234,16 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
   });
   ExercisesCompanion.insert({
     this.id = const Value.absent(),
-    @required String name,
-    @required String lastWorkouts,
-    @required double maxVolume,
-    @required double maxWeigth,
+    required String name,
+    required String lastWorkouts,
+    this.maxVolume = const Value.absent(),
+    this.maxWeigth = const Value.absent(),
     this.maxWeigthSetId = const Value.absent(),
     this.maxVolumeSetId = const Value.absent(),
     this.notes = const Value.absent(),
-    @required Difficulty difficulty,
-  })  : name = Value(name),
+    required Difficulty difficulty,
+  })   : name = Value(name),
         lastWorkouts = Value(lastWorkouts),
-        maxVolume = Value(maxVolume),
-        maxWeigth = Value(maxWeigth),
         difficulty = Value(difficulty);
   static Insertable<Exercise> custom({
     Expression<int> id,
@@ -272,15 +270,15 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
   }
 
   ExercisesCompanion copyWith(
-      {Value<int> id,
-      Value<String> name,
-      Value<String> lastWorkouts,
-      Value<double> maxVolume,
-      Value<double> maxWeigth,
-      Value<int> maxWeigthSetId,
-      Value<int> maxVolumeSetId,
-      Value<String> notes,
-      Value<Difficulty> difficulty}) {
+      {Value<int?>? id,
+      Value<String>? name,
+      Value<String>? lastWorkouts,
+      Value<double?>? maxVolume,
+      Value<double?>? maxWeigth,
+      Value<int?>? maxWeigthSetId,
+      Value<int?>? maxVolumeSetId,
+      Value<String?>? notes,
+      Value<Difficulty>? difficulty}) {
     return ExercisesCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -348,7 +346,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
 class $ExercisesTable extends Exercises
     with TableInfo<$ExercisesTable, Exercise> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $ExercisesTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   GeneratedColumn<int> _id;
@@ -456,14 +454,10 @@ class $ExercisesTable extends Exercises
     if (data.containsKey('max_volume')) {
       context.handle(_maxVolumeMeta,
           maxVolume.isAcceptableOrUnknown(data['max_volume'], _maxVolumeMeta));
-    } else if (isInserting) {
-      context.missing(_maxVolumeMeta);
     }
     if (data.containsKey('max_weigth')) {
       context.handle(_maxWeigthMeta,
           maxWeigth.isAcceptableOrUnknown(data['max_weigth'], _maxWeigthMeta));
-    } else if (isInserting) {
-      context.missing(_maxWeigthMeta);
     }
     if (data.containsKey('max_weigth_set_id')) {
       context.handle(
@@ -506,10 +500,10 @@ class ExerciseBodyPart extends DataClass
     implements Insertable<ExerciseBodyPart> {
   final int exerciseId;
   final BodyPartEnum bodyPart;
-  ExerciseBodyPart({@required this.exerciseId, @required this.bodyPart});
+  ExerciseBodyPart({required this.exerciseId, required this.bodyPart});
   factory ExerciseBodyPart.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return ExerciseBodyPart(
       exerciseId: const IntType()
@@ -543,7 +537,7 @@ class ExerciseBodyPart extends DataClass
   }
 
   factory ExerciseBodyPart.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return ExerciseBodyPart(
       exerciseId: serializer.fromJson<int>(json['exerciseId']),
@@ -551,7 +545,7 @@ class ExerciseBodyPart extends DataClass
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'exerciseId': serializer.toJson<int>(exerciseId),
@@ -559,7 +553,7 @@ class ExerciseBodyPart extends DataClass
     };
   }
 
-  ExerciseBodyPart copyWith({int exerciseId, BodyPartEnum bodyPart}) =>
+  ExerciseBodyPart copyWith({int? exerciseId, BodyPartEnum? bodyPart}) =>
       ExerciseBodyPart(
         exerciseId: exerciseId ?? this.exerciseId,
         bodyPart: bodyPart ?? this.bodyPart,
@@ -591,9 +585,9 @@ class ExerciseBodyPartsCompanion extends UpdateCompanion<ExerciseBodyPart> {
     this.bodyPart = const Value.absent(),
   });
   ExerciseBodyPartsCompanion.insert({
-    @required int exerciseId,
-    @required BodyPartEnum bodyPart,
-  })  : exerciseId = Value(exerciseId),
+    required int exerciseId,
+    required BodyPartEnum bodyPart,
+  })   : exerciseId = Value(exerciseId),
         bodyPart = Value(bodyPart);
   static Insertable<ExerciseBodyPart> custom({
     Expression<int> exerciseId,
@@ -606,7 +600,7 @@ class ExerciseBodyPartsCompanion extends UpdateCompanion<ExerciseBodyPart> {
   }
 
   ExerciseBodyPartsCompanion copyWith(
-      {Value<int> exerciseId, Value<BodyPartEnum> bodyPart}) {
+      {Value<int>? exerciseId, Value<BodyPartEnum>? bodyPart}) {
     return ExerciseBodyPartsCompanion(
       exerciseId: exerciseId ?? this.exerciseId,
       bodyPart: bodyPart ?? this.bodyPart,
@@ -639,7 +633,7 @@ class ExerciseBodyPartsCompanion extends UpdateCompanion<ExerciseBodyPart> {
 class $ExerciseBodyPartsTable extends ExerciseBodyParts
     with TableInfo<$ExerciseBodyPartsTable, ExerciseBodyPart> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $ExerciseBodyPartsTable(this._db, [this._alias]);
   final VerificationMeta _exerciseIdMeta = const VerificationMeta('exerciseId');
   GeneratedColumn<int> _exerciseId;
@@ -695,17 +689,17 @@ class $ExerciseBodyPartsTable extends ExerciseBodyParts
 }
 
 class Migration extends DataClass implements Insertable<Migration> {
-  final int id;
+  final int? id;
   final String endPoint;
   final String payload;
   final String verb;
   Migration(
-      {@required this.id,
-      @required this.endPoint,
-      @required this.payload,
-      @required this.verb});
+      {this.id,
+      required this.endPoint,
+      required this.payload,
+      required this.verb});
   factory Migration.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return Migration(
       id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
@@ -749,27 +743,28 @@ class Migration extends DataClass implements Insertable<Migration> {
   }
 
   factory Migration.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Migration(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<int?>(json['id']),
       endPoint: serializer.fromJson<String>(json['endPoint']),
       payload: serializer.fromJson<String>(json['payload']),
       verb: serializer.fromJson<String>(json['verb']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<int?>(id),
       'endPoint': serializer.toJson<String>(endPoint),
       'payload': serializer.toJson<String>(payload),
       'verb': serializer.toJson<String>(verb),
     };
   }
 
-  Migration copyWith({int id, String endPoint, String payload, String verb}) =>
+  Migration copyWith(
+          {int? id, String? endPoint, String? payload, String? verb}) =>
       Migration(
         id: id ?? this.id,
         endPoint: endPoint ?? this.endPoint,
@@ -801,7 +796,7 @@ class Migration extends DataClass implements Insertable<Migration> {
 }
 
 class MigrationsCompanion extends UpdateCompanion<Migration> {
-  final Value<int> id;
+  final Value<int?> id;
   final Value<String> endPoint;
   final Value<String> payload;
   final Value<String> verb;
@@ -813,17 +808,17 @@ class MigrationsCompanion extends UpdateCompanion<Migration> {
   });
   MigrationsCompanion.insert({
     this.id = const Value.absent(),
-    @required String endPoint,
-    @required String payload,
-    @required String verb,
-  })  : endPoint = Value(endPoint),
+    required String endPoint,
+    required String payload,
+    required String verb,
+  })   : endPoint = Value(endPoint),
         payload = Value(payload),
         verb = Value(verb);
   static Insertable<Migration> custom({
-    Expression<int> id,
-    Expression<String> endPoint,
-    Expression<String> payload,
-    Expression<String> verb,
+    Expression<int>? id,
+    Expression<String>? endPoint,
+    Expression<String>? payload,
+    Expression<String>? verb,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -834,10 +829,10 @@ class MigrationsCompanion extends UpdateCompanion<Migration> {
   }
 
   MigrationsCompanion copyWith(
-      {Value<int> id,
-      Value<String> endPoint,
-      Value<String> payload,
-      Value<String> verb}) {
+      {Value<int?>? id,
+      Value<String>? endPoint,
+      Value<String>? payload,
+      Value<String>? verb}) {
     return MigrationsCompanion(
       id: id ?? this.id,
       endPoint: endPoint ?? this.endPoint,
@@ -879,7 +874,7 @@ class MigrationsCompanion extends UpdateCompanion<Migration> {
 class $MigrationsTable extends Migrations
     with TableInfo<$MigrationsTable, Migration> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $MigrationsTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   GeneratedColumn<int> _id;
@@ -957,19 +952,19 @@ class $MigrationsTable extends Migrations
 }
 
 class SetWorkout extends DataClass implements Insertable<SetWorkout> {
-  final int id;
+  final int? id;
   final double volume;
   final double maxWeigth;
   final int workOutId;
   final int exerciseId;
   SetWorkout(
-      {@required this.id,
-      @required this.volume,
-      @required this.maxWeigth,
-      @required this.workOutId,
-      @required this.exerciseId});
+      {this.id,
+      required this.volume,
+      required this.maxWeigth,
+      required this.workOutId,
+      required this.exerciseId});
   factory SetWorkout.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return SetWorkout(
       id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
@@ -1022,10 +1017,10 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
   }
 
   factory SetWorkout.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return SetWorkout(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<int?>(json['id']),
       volume: serializer.fromJson<double>(json['volume']),
       maxWeigth: serializer.fromJson<double>(json['maxWeigth']),
       workOutId: serializer.fromJson<int>(json['workOutId']),
@@ -1033,10 +1028,10 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<int?>(id),
       'volume': serializer.toJson<double>(volume),
       'maxWeigth': serializer.toJson<double>(maxWeigth),
       'workOutId': serializer.toJson<int>(workOutId),
@@ -1045,11 +1040,11 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
   }
 
   SetWorkout copyWith(
-          {int id,
-          double volume,
-          double maxWeigth,
-          int workOutId,
-          int exerciseId}) =>
+          {int? id,
+          double? volume,
+          double? maxWeigth,
+          int? workOutId,
+          int? exerciseId}) =>
       SetWorkout(
         id: id ?? this.id,
         volume: volume ?? this.volume,
@@ -1088,7 +1083,7 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
 }
 
 class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
-  final Value<int> id;
+  final Value<int?> id;
   final Value<double> volume;
   final Value<double> maxWeigth;
   final Value<int> workOutId;
@@ -1102,20 +1097,20 @@ class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
   });
   SetWorkoutsCompanion.insert({
     this.id = const Value.absent(),
-    @required double volume,
-    @required double maxWeigth,
-    @required int workOutId,
-    @required int exerciseId,
-  })  : volume = Value(volume),
+    required double volume,
+    required double maxWeigth,
+    required int workOutId,
+    required int exerciseId,
+  })   : volume = Value(volume),
         maxWeigth = Value(maxWeigth),
         workOutId = Value(workOutId),
         exerciseId = Value(exerciseId);
   static Insertable<SetWorkout> custom({
-    Expression<int> id,
-    Expression<double> volume,
-    Expression<double> maxWeigth,
-    Expression<int> workOutId,
-    Expression<int> exerciseId,
+    Expression<int>? id,
+    Expression<double>? volume,
+    Expression<double>? maxWeigth,
+    Expression<int>? workOutId,
+    Expression<int>? exerciseId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1127,11 +1122,11 @@ class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
   }
 
   SetWorkoutsCompanion copyWith(
-      {Value<int> id,
-      Value<double> volume,
-      Value<double> maxWeigth,
-      Value<int> workOutId,
-      Value<int> exerciseId}) {
+      {Value<int?>? id,
+      Value<double>? volume,
+      Value<double>? maxWeigth,
+      Value<int>? workOutId,
+      Value<int>? exerciseId}) {
     return SetWorkoutsCompanion(
       id: id ?? this.id,
       volume: volume ?? this.volume,
@@ -1178,7 +1173,7 @@ class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
 class $SetWorkoutsTable extends SetWorkouts
     with TableInfo<$SetWorkoutsTable, SetWorkout> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $SetWorkoutsTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   GeneratedColumn<int> _id;
@@ -1275,11 +1270,11 @@ class $SetWorkoutsTable extends SetWorkouts
 }
 
 class Workout extends DataClass implements Insertable<Workout> {
-  final int id;
+  final int? id;
   final DateTime date;
-  Workout({@required this.id, @required this.date});
+  Workout({this.id, required this.date});
   factory Workout.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return Workout(
       id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
@@ -1307,23 +1302,23 @@ class Workout extends DataClass implements Insertable<Workout> {
   }
 
   factory Workout.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Workout(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<int?>(json['id']),
       date: serializer.fromJson<DateTime>(json['date']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<int?>(id),
       'date': serializer.toJson<DateTime>(date),
     };
   }
 
-  Workout copyWith({int id, DateTime date}) => Workout(
+  Workout copyWith({int? id, DateTime? date}) => Workout(
         id: id ?? this.id,
         date: date ?? this.date,
       );
@@ -1345,7 +1340,7 @@ class Workout extends DataClass implements Insertable<Workout> {
 }
 
 class WorkoutsCompanion extends UpdateCompanion<Workout> {
-  final Value<int> id;
+  final Value<int?> id;
   final Value<DateTime> date;
   const WorkoutsCompanion({
     this.id = const Value.absent(),
@@ -1353,11 +1348,11 @@ class WorkoutsCompanion extends UpdateCompanion<Workout> {
   });
   WorkoutsCompanion.insert({
     this.id = const Value.absent(),
-    @required DateTime date,
+    required DateTime date,
   }) : date = Value(date);
   static Insertable<Workout> custom({
-    Expression<int> id,
-    Expression<DateTime> date,
+    Expression<int>? id,
+    Expression<DateTime>? date,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1365,7 +1360,7 @@ class WorkoutsCompanion extends UpdateCompanion<Workout> {
     });
   }
 
-  WorkoutsCompanion copyWith({Value<int> id, Value<DateTime> date}) {
+  WorkoutsCompanion copyWith({Value<int?>? id, Value<DateTime>? date}) {
     return WorkoutsCompanion(
       id: id ?? this.id,
       date: date ?? this.date,
@@ -1396,7 +1391,7 @@ class WorkoutsCompanion extends UpdateCompanion<Workout> {
 
 class $WorkoutsTable extends Workouts with TableInfo<$WorkoutsTable, Workout> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $WorkoutsTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   GeneratedColumn<int> _id;
@@ -1450,21 +1445,21 @@ class $WorkoutsTable extends Workouts with TableInfo<$WorkoutsTable, Workout> {
 }
 
 class Rep extends DataClass implements Insertable<Rep> {
-  final int id;
+  final int? id;
   final double weight;
   final int reps;
   final int rpe;
   final String note;
   final int setId;
   Rep(
-      {@required this.id,
-      @required this.weight,
-      @required this.reps,
-      @required this.rpe,
-      @required this.note,
-      @required this.setId});
+      {this.id,
+      required this.weight,
+      required this.reps,
+      required this.rpe,
+      required this.note,
+      required this.setId});
   factory Rep.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return Rep(
       id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
@@ -1518,10 +1513,10 @@ class Rep extends DataClass implements Insertable<Rep> {
   }
 
   factory Rep.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Rep(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<int?>(json['id']),
       weight: serializer.fromJson<double>(json['weight']),
       reps: serializer.fromJson<int>(json['reps']),
       rpe: serializer.fromJson<int>(json['rpe']),
@@ -1530,10 +1525,10 @@ class Rep extends DataClass implements Insertable<Rep> {
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<int?>(id),
       'weight': serializer.toJson<double>(weight),
       'reps': serializer.toJson<int>(reps),
       'rpe': serializer.toJson<int>(rpe),
@@ -1543,7 +1538,12 @@ class Rep extends DataClass implements Insertable<Rep> {
   }
 
   Rep copyWith(
-          {int id, double weight, int reps, int rpe, String note, int setId}) =>
+          {int? id,
+          double? weight,
+          int? reps,
+          int? rpe,
+          String? note,
+          int? setId}) =>
       Rep(
         id: id ?? this.id,
         weight: weight ?? this.weight,
@@ -1585,7 +1585,7 @@ class Rep extends DataClass implements Insertable<Rep> {
 }
 
 class RepsCompanion extends UpdateCompanion<Rep> {
-  final Value<int> id;
+  final Value<int?> id;
   final Value<double> weight;
   final Value<int> reps;
   final Value<int> rpe;
@@ -1601,22 +1601,22 @@ class RepsCompanion extends UpdateCompanion<Rep> {
   });
   RepsCompanion.insert({
     this.id = const Value.absent(),
-    @required double weight,
-    @required int reps,
-    @required int rpe,
+    required double weight,
+    required int reps,
+    required int rpe,
     this.note = const Value.absent(),
-    @required int setId,
-  })  : weight = Value(weight),
+    required int setId,
+  })   : weight = Value(weight),
         reps = Value(reps),
         rpe = Value(rpe),
         setId = Value(setId);
   static Insertable<Rep> custom({
-    Expression<int> id,
-    Expression<double> weight,
-    Expression<int> reps,
-    Expression<int> rpe,
-    Expression<String> note,
-    Expression<int> setId,
+    Expression<int>? id,
+    Expression<double>? weight,
+    Expression<int>? reps,
+    Expression<int>? rpe,
+    Expression<String>? note,
+    Expression<int>? setId,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1629,12 +1629,12 @@ class RepsCompanion extends UpdateCompanion<Rep> {
   }
 
   RepsCompanion copyWith(
-      {Value<int> id,
-      Value<double> weight,
-      Value<int> reps,
-      Value<int> rpe,
-      Value<String> note,
-      Value<int> setId}) {
+      {Value<int?>? id,
+      Value<double>? weight,
+      Value<int>? reps,
+      Value<int>? rpe,
+      Value<String>? note,
+      Value<int>? setId}) {
     return RepsCompanion(
       id: id ?? this.id,
       weight: weight ?? this.weight,
@@ -1685,7 +1685,7 @@ class RepsCompanion extends UpdateCompanion<Rep> {
 
 class $RepsTable extends Reps with TableInfo<$RepsTable, Rep> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $RepsTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   GeneratedColumn<int> _id;
@@ -1794,17 +1794,15 @@ class RoutineGroupData extends DataClass
   final int id;
   final String name;
   final String description;
-  final String imageUrl;
   final Level level;
   RoutineGroupData(
-      {@required this.id,
-      @required this.name,
-      @required this.description,
-      @required this.imageUrl,
-      @required this.level});
+      {required this.id,
+      required this.name,
+      required this.description,
+      required this.level});
   factory RoutineGroupData.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return RoutineGroupData(
       id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
@@ -1830,9 +1828,6 @@ class RoutineGroupData extends DataClass
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
-    if (!nullToAbsent || imageUrl != null) {
-      map['image_url'] = Variable<String>(imageUrl);
-    }
     if (!nullToAbsent || level != null) {
       final converter = $RoutineGroupTable.$converter0;
       map['level'] = Variable<int>(converter.mapToSql(level));
@@ -1847,48 +1842,38 @@ class RoutineGroupData extends DataClass
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
-      imageUrl: imageUrl == null && nullToAbsent
-          ? const Value.absent()
-          : Value(imageUrl),
       level:
           level == null && nullToAbsent ? const Value.absent() : Value(level),
     );
   }
 
   factory RoutineGroupData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return RoutineGroupData(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String>(json['description']),
-      imageUrl: serializer.fromJson<String>(json['imageUrl']),
       level: serializer.fromJson<Level>(json['level']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String>(description),
-      'imageUrl': serializer.toJson<String>(imageUrl),
       'level': serializer.toJson<Level>(level),
     };
   }
 
   RoutineGroupData copyWith(
-          {int id,
-          String name,
-          String description,
-          String imageUrl,
-          Level level}) =>
+          {int? id, String? name, String? description, Level? level}) =>
       RoutineGroupData(
         id: id ?? this.id,
         name: name ?? this.name,
         description: description ?? this.description,
-        imageUrl: imageUrl ?? this.imageUrl,
         level: level ?? this.level,
       );
   @override
@@ -1897,19 +1882,14 @@ class RoutineGroupData extends DataClass
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
-          ..write('imageUrl: $imageUrl, ')
           ..write('level: $level')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      id.hashCode,
-      $mrjc(
-          name.hashCode,
-          $mrjc(description.hashCode,
-              $mrjc(imageUrl.hashCode, level.hashCode)))));
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(name.hashCode, $mrjc(description.hashCode, level.hashCode))));
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1917,7 +1897,6 @@ class RoutineGroupData extends DataClass
           other.id == this.id &&
           other.name == this.name &&
           other.description == this.description &&
-          other.imageUrl == this.imageUrl &&
           other.level == this.level);
 }
 
@@ -1925,24 +1904,20 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
   final Value<int> id;
   final Value<String> name;
   final Value<String> description;
-  final Value<String> imageUrl;
   final Value<Level> level;
   const RoutineGroupCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
-    this.imageUrl = const Value.absent(),
     this.level = const Value.absent(),
   });
   RoutineGroupCompanion.insert({
     this.id = const Value.absent(),
-    @required String name,
-    @required String description,
-    @required String imageUrl,
-    @required Level level,
-  })  : name = Value(name),
+    required String name,
+    required String description,
+    required Level level,
+  })   : name = Value(name),
         description = Value(description),
-        imageUrl = Value(imageUrl),
         level = Value(level);
   static Insertable<RoutineGroupData> custom({
     Expression<int> id,
@@ -1955,22 +1930,19 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
-      if (imageUrl != null) 'image_url': imageUrl,
       if (level != null) 'level': level,
     });
   }
 
   RoutineGroupCompanion copyWith(
-      {Value<int> id,
-      Value<String> name,
-      Value<String> description,
-      Value<String> imageUrl,
-      Value<Level> level}) {
+      {Value<int>? id,
+      Value<String>? name,
+      Value<String>? description,
+      Value<Level>? level}) {
     return RoutineGroupCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
-      imageUrl: imageUrl ?? this.imageUrl,
       level: level ?? this.level,
     );
   }
@@ -1987,9 +1959,6 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
     if (description.present) {
       map['description'] = Variable<String>(description.value);
     }
-    if (imageUrl.present) {
-      map['image_url'] = Variable<String>(imageUrl.value);
-    }
     if (level.present) {
       final converter = $RoutineGroupTable.$converter0;
       map['level'] = Variable<int>(converter.mapToSql(level.value));
@@ -2003,7 +1972,6 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
           ..write('id: $id, ')
           ..write('name: $name, ')
           ..write('description: $description, ')
-          ..write('imageUrl: $imageUrl, ')
           ..write('level: $level')
           ..write(')'))
         .toString();
@@ -2013,7 +1981,7 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
 class $RoutineGroupTable extends RoutineGroup
     with TableInfo<$RoutineGroupTable, RoutineGroupData> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $RoutineGroupTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   GeneratedColumn<int> _id;
@@ -2053,8 +2021,7 @@ class $RoutineGroupTable extends RoutineGroup
               typeName: 'INTEGER', requiredDuringInsert: true)
           .withConverter<Level>($RoutineGroupTable.$converter0);
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, name, description, imageUrl, level];
+  List<GeneratedColumn> get $columns => [id, name, description, level];
   @override
   String get aliasedName => _alias ?? 'routine_group';
   @override
@@ -2081,12 +2048,6 @@ class $RoutineGroupTable extends RoutineGroup
     } else if (isInserting) {
       context.missing(_descriptionMeta);
     }
-    if (data.containsKey('image_url')) {
-      context.handle(_imageUrlMeta,
-          imageUrl.isAcceptableOrUnknown(data['image_url'], _imageUrlMeta));
-    } else if (isInserting) {
-      context.missing(_imageUrlMeta);
-    }
     context.handle(_levelMeta, const VerificationResult.success());
     return context;
   }
@@ -2112,22 +2073,14 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
   final int id;
   final int groupId;
   final String name;
-  final int duration;
-  final Difficulty difficulty;
   final String notes;
-  final int timesCopied;
-  final RoutineBodyParts bodyParts;
   RoutineData(
-      {@required this.id,
-      @required this.groupId,
-      @required this.name,
-      @required this.duration,
-      @required this.difficulty,
-      @required this.notes,
-      @required this.timesCopied,
-      this.bodyParts});
+      {required this.id,
+      required this.groupId,
+      required this.name,
+      required this.notes});
   factory RoutineData.fromData(Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return RoutineData(
       id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
@@ -2159,22 +2112,8 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
     if (!nullToAbsent || name != null) {
       map['name'] = Variable<String>(name);
     }
-    if (!nullToAbsent || duration != null) {
-      map['duration'] = Variable<int>(duration);
-    }
-    if (!nullToAbsent || difficulty != null) {
-      final converter = $RoutineTable.$converter0;
-      map['difficulty'] = Variable<int>(converter.mapToSql(difficulty));
-    }
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
-    }
-    if (!nullToAbsent || timesCopied != null) {
-      map['times_copied'] = Variable<int>(timesCopied);
-    }
-    if (!nullToAbsent || bodyParts != null) {
-      final converter = $RoutineTable.$converter1;
-      map['body_parts'] = Variable<String>(converter.mapToSql(bodyParts));
     }
     return map;
   }
@@ -2186,70 +2125,38 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
           ? const Value.absent()
           : Value(groupId),
       name: name == null && nullToAbsent ? const Value.absent() : Value(name),
-      duration: duration == null && nullToAbsent
-          ? const Value.absent()
-          : Value(duration),
-      difficulty: difficulty == null && nullToAbsent
-          ? const Value.absent()
-          : Value(difficulty),
       notes:
           notes == null && nullToAbsent ? const Value.absent() : Value(notes),
-      timesCopied: timesCopied == null && nullToAbsent
-          ? const Value.absent()
-          : Value(timesCopied),
-      bodyParts: bodyParts == null && nullToAbsent
-          ? const Value.absent()
-          : Value(bodyParts),
     );
   }
 
   factory RoutineData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return RoutineData(
       id: serializer.fromJson<int>(json['id']),
       groupId: serializer.fromJson<int>(json['groupId']),
       name: serializer.fromJson<String>(json['name']),
-      duration: serializer.fromJson<int>(json['duration']),
-      difficulty: serializer.fromJson<Difficulty>(json['difficulty']),
       notes: serializer.fromJson<String>(json['notes']),
-      timesCopied: serializer.fromJson<int>(json['timesCopied']),
-      bodyParts: serializer.fromJson<RoutineBodyParts>(json['bodyParts']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'groupId': serializer.toJson<int>(groupId),
       'name': serializer.toJson<String>(name),
-      'duration': serializer.toJson<int>(duration),
-      'difficulty': serializer.toJson<Difficulty>(difficulty),
       'notes': serializer.toJson<String>(notes),
-      'timesCopied': serializer.toJson<int>(timesCopied),
-      'bodyParts': serializer.toJson<RoutineBodyParts>(bodyParts),
     };
   }
 
-  RoutineData copyWith(
-          {int id,
-          int groupId,
-          String name,
-          int duration,
-          Difficulty difficulty,
-          String notes,
-          int timesCopied,
-          RoutineBodyParts bodyParts}) =>
+  RoutineData copyWith({int? id, int? groupId, String? name, String? notes}) =>
       RoutineData(
         id: id ?? this.id,
         groupId: groupId ?? this.groupId,
         name: name ?? this.name,
-        duration: duration ?? this.duration,
-        difficulty: difficulty ?? this.difficulty,
         notes: notes ?? this.notes,
-        timesCopied: timesCopied ?? this.timesCopied,
-        bodyParts: bodyParts ?? this.bodyParts,
       );
   @override
   String toString() {
@@ -2257,30 +2164,14 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
           ..write('id: $id, ')
           ..write('groupId: $groupId, ')
           ..write('name: $name, ')
-          ..write('duration: $duration, ')
-          ..write('difficulty: $difficulty, ')
-          ..write('notes: $notes, ')
-          ..write('timesCopied: $timesCopied, ')
-          ..write('bodyParts: $bodyParts')
+          ..write('notes: $notes')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      id.hashCode,
-      $mrjc(
-          groupId.hashCode,
-          $mrjc(
-              name.hashCode,
-              $mrjc(
-                  duration.hashCode,
-                  $mrjc(
-                      difficulty.hashCode,
-                      $mrjc(
-                          notes.hashCode,
-                          $mrjc(
-                              timesCopied.hashCode, bodyParts.hashCode))))))));
+  int get hashCode => $mrjf($mrjc(id.hashCode,
+      $mrjc(groupId.hashCode, $mrjc(name.hashCode, notes.hashCode))));
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2288,45 +2179,27 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
           other.id == this.id &&
           other.groupId == this.groupId &&
           other.name == this.name &&
-          other.duration == this.duration &&
-          other.difficulty == this.difficulty &&
-          other.notes == this.notes &&
-          other.timesCopied == this.timesCopied &&
-          other.bodyParts == this.bodyParts);
+          other.notes == this.notes);
 }
 
 class RoutineCompanion extends UpdateCompanion<RoutineData> {
   final Value<int> id;
   final Value<int> groupId;
   final Value<String> name;
-  final Value<int> duration;
-  final Value<Difficulty> difficulty;
   final Value<String> notes;
-  final Value<int> timesCopied;
-  final Value<RoutineBodyParts> bodyParts;
   const RoutineCompanion({
     this.id = const Value.absent(),
     this.groupId = const Value.absent(),
     this.name = const Value.absent(),
-    this.duration = const Value.absent(),
-    this.difficulty = const Value.absent(),
     this.notes = const Value.absent(),
-    this.timesCopied = const Value.absent(),
-    this.bodyParts = const Value.absent(),
   });
   RoutineCompanion.insert({
     this.id = const Value.absent(),
-    @required int groupId,
-    @required String name,
-    @required int duration,
-    @required Difficulty difficulty,
+    required int groupId,
+    required String name,
     this.notes = const Value.absent(),
-    this.timesCopied = const Value.absent(),
-    this.bodyParts = const Value.absent(),
   })  : groupId = Value(groupId),
-        name = Value(name),
-        duration = Value(duration),
-        difficulty = Value(difficulty);
+        name = Value(name);
   static Insertable<RoutineData> custom({
     Expression<int> id,
     Expression<int> groupId,
@@ -2341,32 +2214,20 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
       if (id != null) 'id': id,
       if (groupId != null) 'group_id': groupId,
       if (name != null) 'name': name,
-      if (duration != null) 'duration': duration,
-      if (difficulty != null) 'difficulty': difficulty,
       if (notes != null) 'notes': notes,
-      if (timesCopied != null) 'times_copied': timesCopied,
-      if (bodyParts != null) 'body_parts': bodyParts,
     });
   }
 
   RoutineCompanion copyWith(
-      {Value<int> id,
-      Value<int> groupId,
-      Value<String> name,
-      Value<int> duration,
-      Value<Difficulty> difficulty,
-      Value<String> notes,
-      Value<int> timesCopied,
-      Value<RoutineBodyParts> bodyParts}) {
+      {Value<int>? id,
+      Value<int>? groupId,
+      Value<String>? name,
+      Value<String>? notes}) {
     return RoutineCompanion(
       id: id ?? this.id,
       groupId: groupId ?? this.groupId,
       name: name ?? this.name,
-      duration: duration ?? this.duration,
-      difficulty: difficulty ?? this.difficulty,
       notes: notes ?? this.notes,
-      timesCopied: timesCopied ?? this.timesCopied,
-      bodyParts: bodyParts ?? this.bodyParts,
     );
   }
 
@@ -2382,22 +2243,8 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
-    if (duration.present) {
-      map['duration'] = Variable<int>(duration.value);
-    }
-    if (difficulty.present) {
-      final converter = $RoutineTable.$converter0;
-      map['difficulty'] = Variable<int>(converter.mapToSql(difficulty.value));
-    }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
-    }
-    if (timesCopied.present) {
-      map['times_copied'] = Variable<int>(timesCopied.value);
-    }
-    if (bodyParts.present) {
-      final converter = $RoutineTable.$converter1;
-      map['body_parts'] = Variable<String>(converter.mapToSql(bodyParts.value));
     }
     return map;
   }
@@ -2408,11 +2255,7 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
           ..write('id: $id, ')
           ..write('groupId: $groupId, ')
           ..write('name: $name, ')
-          ..write('duration: $duration, ')
-          ..write('difficulty: $difficulty, ')
-          ..write('notes: $notes, ')
-          ..write('timesCopied: $timesCopied, ')
-          ..write('bodyParts: $bodyParts')
+          ..write('notes: $notes')
           ..write(')'))
         .toString();
   }
@@ -2420,7 +2263,7 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
 
 class $RoutineTable extends Routine with TableInfo<$RoutineTable, RoutineData> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $RoutineTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   GeneratedColumn<int> _id;
@@ -2509,24 +2352,10 @@ class $RoutineTable extends Routine with TableInfo<$RoutineTable, RoutineData> {
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
-    if (data.containsKey('duration')) {
-      context.handle(_durationMeta,
-          duration.isAcceptableOrUnknown(data['duration'], _durationMeta));
-    } else if (isInserting) {
-      context.missing(_durationMeta);
-    }
-    context.handle(_difficultyMeta, const VerificationResult.success());
     if (data.containsKey('notes')) {
       context.handle(
           _notesMeta, notes.isAcceptableOrUnknown(data['notes'], _notesMeta));
     }
-    if (data.containsKey('times_copied')) {
-      context.handle(
-          _timesCopiedMeta,
-          timesCopied.isAcceptableOrUnknown(
-              data['times_copied'], _timesCopiedMeta));
-    }
-    context.handle(_bodyPartsMeta, const VerificationResult.success());
     return context;
   }
 
@@ -2542,11 +2371,6 @@ class $RoutineTable extends Routine with TableInfo<$RoutineTable, RoutineData> {
   $RoutineTable createAlias(String alias) {
     return $RoutineTable(_db, alias);
   }
-
-  static TypeConverter<Difficulty, int> $converter0 =
-      const EnumIndexConverter<Difficulty>(Difficulty.values);
-  static TypeConverter<RoutineBodyParts, String> $converter1 =
-      const RoutineBodyPartsConverter();
 }
 
 class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
@@ -2554,24 +2378,22 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
   final String exerciseName;
   final int exerciseId;
   final int routineId;
-  final int series;
-  final double repmax;
+  final int reps;
   final CopyMethod copyMethod;
   final int targetRpe;
   final String notes;
   RoutineSetData(
-      {@required this.id,
-      @required this.exerciseName,
-      @required this.exerciseId,
-      @required this.routineId,
-      @required this.series,
-      this.repmax,
-      @required this.copyMethod,
-      @required this.targetRpe,
-      @required this.notes});
+      {required this.id,
+      required this.exerciseName,
+      required this.exerciseId,
+      required this.routineId,
+      required this.reps,
+      required this.copyMethod,
+      required this.targetRpe,
+      required this.notes});
   factory RoutineSetData.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
-      {String prefix}) {
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
     return RoutineSetData(
       id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
@@ -2608,11 +2430,8 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
     if (!nullToAbsent || routineId != null) {
       map['routine_id'] = Variable<int>(routineId);
     }
-    if (!nullToAbsent || series != null) {
-      map['series'] = Variable<int>(series);
-    }
-    if (!nullToAbsent || repmax != null) {
-      map['repmax'] = Variable<double>(repmax);
+    if (!nullToAbsent || reps != null) {
+      map['reps'] = Variable<int>(reps);
     }
     if (!nullToAbsent || copyMethod != null) {
       final converter = $RoutineSetTable.$converter0;
@@ -2639,10 +2458,7 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
       routineId: routineId == null && nullToAbsent
           ? const Value.absent()
           : Value(routineId),
-      series:
-          series == null && nullToAbsent ? const Value.absent() : Value(series),
-      repmax:
-          repmax == null && nullToAbsent ? const Value.absent() : Value(repmax),
+      reps: reps == null && nullToAbsent ? const Value.absent() : Value(reps),
       copyMethod: copyMethod == null && nullToAbsent
           ? const Value.absent()
           : Value(copyMethod),
@@ -2655,30 +2471,28 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
   }
 
   factory RoutineSetData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
+      {ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return RoutineSetData(
       id: serializer.fromJson<int>(json['id']),
       exerciseName: serializer.fromJson<String>(json['exerciseName']),
       exerciseId: serializer.fromJson<int>(json['exerciseId']),
       routineId: serializer.fromJson<int>(json['routineId']),
-      series: serializer.fromJson<int>(json['series']),
-      repmax: serializer.fromJson<double>(json['repmax']),
+      reps: serializer.fromJson<int>(json['reps']),
       copyMethod: serializer.fromJson<CopyMethod>(json['copyMethod']),
       targetRpe: serializer.fromJson<int>(json['targetRpe']),
       notes: serializer.fromJson<String>(json['notes']),
     );
   }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'exerciseName': serializer.toJson<String>(exerciseName),
       'exerciseId': serializer.toJson<int>(exerciseId),
       'routineId': serializer.toJson<int>(routineId),
-      'series': serializer.toJson<int>(series),
-      'repmax': serializer.toJson<double>(repmax),
+      'reps': serializer.toJson<int>(reps),
       'copyMethod': serializer.toJson<CopyMethod>(copyMethod),
       'targetRpe': serializer.toJson<int>(targetRpe),
       'notes': serializer.toJson<String>(notes),
@@ -2686,22 +2500,20 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
   }
 
   RoutineSetData copyWith(
-          {int id,
-          String exerciseName,
-          int exerciseId,
-          int routineId,
-          int series,
-          double repmax,
-          CopyMethod copyMethod,
-          int targetRpe,
-          String notes}) =>
+          {int? id,
+          String? exerciseName,
+          int? exerciseId,
+          int? routineId,
+          int? reps,
+          CopyMethod? copyMethod,
+          int? targetRpe,
+          String? notes}) =>
       RoutineSetData(
         id: id ?? this.id,
         exerciseName: exerciseName ?? this.exerciseName,
         exerciseId: exerciseId ?? this.exerciseId,
         routineId: routineId ?? this.routineId,
-        series: series ?? this.series,
-        repmax: repmax ?? this.repmax,
+        reps: reps ?? this.reps,
         copyMethod: copyMethod ?? this.copyMethod,
         targetRpe: targetRpe ?? this.targetRpe,
         notes: notes ?? this.notes,
@@ -2713,8 +2525,7 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
           ..write('exerciseName: $exerciseName, ')
           ..write('exerciseId: $exerciseId, ')
           ..write('routineId: $routineId, ')
-          ..write('series: $series, ')
-          ..write('repmax: $repmax, ')
+          ..write('reps: $reps, ')
           ..write('copyMethod: $copyMethod, ')
           ..write('targetRpe: $targetRpe, ')
           ..write('notes: $notes')
@@ -2732,11 +2543,9 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
               $mrjc(
                   routineId.hashCode,
                   $mrjc(
-                      series.hashCode,
-                      $mrjc(
-                          repmax.hashCode,
-                          $mrjc(copyMethod.hashCode,
-                              $mrjc(targetRpe.hashCode, notes.hashCode)))))))));
+                      reps.hashCode,
+                      $mrjc(copyMethod.hashCode,
+                          $mrjc(targetRpe.hashCode, notes.hashCode))))))));
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2745,8 +2554,7 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
           other.exerciseName == this.exerciseName &&
           other.exerciseId == this.exerciseId &&
           other.routineId == this.routineId &&
-          other.series == this.series &&
-          other.repmax == this.repmax &&
+          other.reps == this.reps &&
           other.copyMethod == this.copyMethod &&
           other.targetRpe == this.targetRpe &&
           other.notes == this.notes);
@@ -2757,8 +2565,7 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
   final Value<String> exerciseName;
   final Value<int> exerciseId;
   final Value<int> routineId;
-  final Value<int> series;
-  final Value<double> repmax;
+  final Value<int> reps;
   final Value<CopyMethod> copyMethod;
   final Value<int> targetRpe;
   final Value<String> notes;
@@ -2767,25 +2574,24 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
     this.exerciseName = const Value.absent(),
     this.exerciseId = const Value.absent(),
     this.routineId = const Value.absent(),
-    this.series = const Value.absent(),
-    this.repmax = const Value.absent(),
+    this.reps = const Value.absent(),
     this.copyMethod = const Value.absent(),
     this.targetRpe = const Value.absent(),
     this.notes = const Value.absent(),
   });
   RoutineSetCompanion.insert({
     this.id = const Value.absent(),
-    @required String exerciseName,
-    @required int exerciseId,
-    @required int routineId,
-    this.series = const Value.absent(),
-    this.repmax = const Value.absent(),
-    @required CopyMethod copyMethod,
-    @required int targetRpe,
+    required String exerciseName,
+    required int exerciseId,
+    required int routineId,
+    required int reps,
+    required CopyMethod copyMethod,
+    required int targetRpe,
     this.notes = const Value.absent(),
   })  : exerciseName = Value(exerciseName),
         exerciseId = Value(exerciseId),
         routineId = Value(routineId),
+        reps = Value(reps),
         copyMethod = Value(copyMethod),
         targetRpe = Value(targetRpe);
   static Insertable<RoutineSetData> custom({
@@ -2804,8 +2610,7 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
       if (exerciseName != null) 'exercise_name': exerciseName,
       if (exerciseId != null) 'exercise_id': exerciseId,
       if (routineId != null) 'routine_id': routineId,
-      if (series != null) 'series': series,
-      if (repmax != null) 'repmax': repmax,
+      if (reps != null) 'reps': reps,
       if (copyMethod != null) 'copy_method': copyMethod,
       if (targetRpe != null) 'target_rpe': targetRpe,
       if (notes != null) 'notes': notes,
@@ -2813,22 +2618,20 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
   }
 
   RoutineSetCompanion copyWith(
-      {Value<int> id,
-      Value<String> exerciseName,
-      Value<int> exerciseId,
-      Value<int> routineId,
-      Value<int> series,
-      Value<double> repmax,
-      Value<CopyMethod> copyMethod,
-      Value<int> targetRpe,
-      Value<String> notes}) {
+      {Value<int>? id,
+      Value<String>? exerciseName,
+      Value<int>? exerciseId,
+      Value<int>? routineId,
+      Value<int>? reps,
+      Value<CopyMethod>? copyMethod,
+      Value<int>? targetRpe,
+      Value<String>? notes}) {
     return RoutineSetCompanion(
       id: id ?? this.id,
       exerciseName: exerciseName ?? this.exerciseName,
       exerciseId: exerciseId ?? this.exerciseId,
       routineId: routineId ?? this.routineId,
-      series: series ?? this.series,
-      repmax: repmax ?? this.repmax,
+      reps: reps ?? this.reps,
       copyMethod: copyMethod ?? this.copyMethod,
       targetRpe: targetRpe ?? this.targetRpe,
       notes: notes ?? this.notes,
@@ -2850,11 +2653,8 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
     if (routineId.present) {
       map['routine_id'] = Variable<int>(routineId.value);
     }
-    if (series.present) {
-      map['series'] = Variable<int>(series.value);
-    }
-    if (repmax.present) {
-      map['repmax'] = Variable<double>(repmax.value);
+    if (reps.present) {
+      map['reps'] = Variable<int>(reps.value);
     }
     if (copyMethod.present) {
       final converter = $RoutineSetTable.$converter0;
@@ -2876,8 +2676,7 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
           ..write('exerciseName: $exerciseName, ')
           ..write('exerciseId: $exerciseId, ')
           ..write('routineId: $routineId, ')
-          ..write('series: $series, ')
-          ..write('repmax: $repmax, ')
+          ..write('reps: $reps, ')
           ..write('copyMethod: $copyMethod, ')
           ..write('targetRpe: $targetRpe, ')
           ..write('notes: $notes')
@@ -2889,7 +2688,7 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
 class $RoutineSetTable extends RoutineSet
     with TableInfo<$RoutineSetTable, RoutineSetData> {
   final GeneratedDatabase _db;
-  final String _alias;
+  final String? _alias;
   $RoutineSetTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   GeneratedColumn<int> _id;
@@ -2964,8 +2763,7 @@ class $RoutineSetTable extends RoutineSet
         exerciseName,
         exerciseId,
         routineId,
-        series,
-        repmax,
+        reps,
         copyMethod,
         targetRpe,
         notes
@@ -3004,13 +2802,11 @@ class $RoutineSetTable extends RoutineSet
     } else if (isInserting) {
       context.missing(_routineIdMeta);
     }
-    if (data.containsKey('series')) {
-      context.handle(_seriesMeta,
-          series.isAcceptableOrUnknown(data['series'], _seriesMeta));
-    }
-    if (data.containsKey('repmax')) {
-      context.handle(_repmaxMeta,
-          repmax.isAcceptableOrUnknown(data['repmax'], _repmaxMeta));
+    if (data.containsKey('reps')) {
+      context.handle(
+          _repsMeta, reps.isAcceptableOrUnknown(data['reps'], _repsMeta));
+    } else if (isInserting) {
+      context.missing(_repsMeta);
     }
     context.handle(_copyMethodMeta, const VerificationResult.success());
     if (data.containsKey('target_rpe')) {
@@ -3045,26 +2841,16 @@ class $RoutineSetTable extends RoutineSet
 
 abstract class _$SQLDatabase extends GeneratedDatabase {
   _$SQLDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
-  $ExercisesTable _exercises;
-  $ExercisesTable get exercises => _exercises ??= $ExercisesTable(this);
-  $ExerciseBodyPartsTable _exerciseBodyParts;
-  $ExerciseBodyPartsTable get exerciseBodyParts =>
-      _exerciseBodyParts ??= $ExerciseBodyPartsTable(this);
-  $MigrationsTable _migrations;
-  $MigrationsTable get migrations => _migrations ??= $MigrationsTable(this);
-  $SetWorkoutsTable _setWorkouts;
-  $SetWorkoutsTable get setWorkouts => _setWorkouts ??= $SetWorkoutsTable(this);
-  $WorkoutsTable _workouts;
-  $WorkoutsTable get workouts => _workouts ??= $WorkoutsTable(this);
-  $RepsTable _reps;
-  $RepsTable get reps => _reps ??= $RepsTable(this);
-  $RoutineGroupTable _routineGroup;
-  $RoutineGroupTable get routineGroup =>
-      _routineGroup ??= $RoutineGroupTable(this);
-  $RoutineTable _routine;
-  $RoutineTable get routine => _routine ??= $RoutineTable(this);
-  $RoutineSetTable _routineSet;
-  $RoutineSetTable get routineSet => _routineSet ??= $RoutineSetTable(this);
+  late final $ExercisesTable exercises = $ExercisesTable(this);
+  late final $ExerciseBodyPartsTable exerciseBodyParts =
+      $ExerciseBodyPartsTable(this);
+  late final $MigrationsTable migrations = $MigrationsTable(this);
+  late final $SetWorkoutsTable setWorkouts = $SetWorkoutsTable(this);
+  late final $WorkoutsTable workouts = $WorkoutsTable(this);
+  late final $RepsTable reps = $RepsTable(this);
+  late final $RoutineGroupTable routineGroup = $RoutineGroupTable(this);
+  late final $RoutineTable routine = $RoutineTable(this);
+  late final $RoutineSetTable routineSet = $RoutineSetTable(this);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override

@@ -13,7 +13,7 @@ class WorkoutPickedScreen extends StatefulWidget {
   final DateTime datePicked;
   final DateTime targetDate;
 
-  WorkoutPickedScreen({this.datePicked, this.targetDate});
+  WorkoutPickedScreen({required this.datePicked, required this.targetDate});
 
   @override
   _WorkoutPickedScreenState createState() => _WorkoutPickedScreenState();
@@ -24,7 +24,7 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
   var editMode = false;
   var selectMode = true;
 
-  void changeRepStatusHandler({int repIndex, int setId}) {
+  void changeRepStatusHandler({required int repIndex, int? setId}) {
     final newStatus = {...workoutFilters};
     final repPrevValue = newStatus[setId]["reps"][repIndex];
     newStatus[setId]["reps"][repIndex] = !repPrevValue;
@@ -33,13 +33,16 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
     });
   }
 
-  void changeSetStatusHandler(int setId) {
+  void changeSetStatusHandler(int? setId) {
     final newStatus = {...workoutFilters};
-    final prevSetStatus = newStatus[setId]["active"];
-    newStatus[setId]["active"] = !prevSetStatus;
-    newStatus[setId]["reps"] = (newStatus[setId]["reps"] as List<bool>)
-        .map((e) => !prevSetStatus)
-        .toList();
+
+    final set = newStatus[setId];
+    if (set == null) return;
+
+    final prevSetStatus = set["active"];
+    set["active"] = !prevSetStatus;
+    set["reps"] =
+        (set["reps"] as List<bool>).map((e) => !prevSetStatus).toList();
     setState(() {
       workoutFilters = newStatus;
     });
@@ -47,12 +50,13 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
 
   void setsToStatus(List<SetWorkout> sets) {
     Map<int, dynamic> status = sets.fold({}, (prev, item) {
-      prev[item.id] = {
-        "active": true,
-        "reps": item.reps.map((e) {
-          return true;
-        }).toList()
-      };
+      if (item.id != null)
+        prev[item.id!] = {
+          "active": true,
+          "reps": item.reps.map((e) {
+            return true;
+          }).toList()
+        };
       return prev;
     });
 
@@ -61,15 +65,19 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
     });
   }
 
-  void deleteSetHandler(int setId) async {
+  deleteSetHandler(int? setId) async {
+    if (setId == null) return;
+
     final shouldDelete = await confirmationModal(
-        context: context, message: "Do you want to delete this set?");
+            context: context, message: "Do you want to delete this set?") ??
+        false;
     if (shouldDelete) {
       BlocProvider.of<WorkoutpickerBloc>(context).add(DeleteSetPicker(setId));
     }
   }
 
-  void saveRepHandler({Rep rep, int setIndex, int repIndex}) async {
+  void saveRepHandler(
+      {required Rep rep, required int setIndex, required int repIndex}) async {
     final updatedRep = await repInputsModal(context, rep);
     BlocProvider.of<WorkoutpickerBloc>(context).add(
         SaveRepPicker(rep: updatedRep, setIndex: setIndex, repIndex: repIndex));
@@ -166,9 +174,10 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
                             TextButton.icon(
                                 onPressed: () async {
                                   final shouldCopy = await confirmationModal(
-                                      context: context,
-                                      message:
-                                          "Do you want to apply this changes?");
+                                          context: context,
+                                          message:
+                                              "Do you want to apply this changes?") ??
+                                      false;
                                   if (shouldCopy) {
                                     BlocProvider.of<WorkoutBloc>(context).add(
                                         CopySets(

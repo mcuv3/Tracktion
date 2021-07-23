@@ -3,19 +3,19 @@ import 'package:tracktion/util/arrowClipper.dart';
 
 class IconDropDown extends StatefulWidget {
   final List<Icon> icons;
-  final BorderRadius borderRadius;
+  final BorderRadius? borderRadius;
   final Color backgroundColor;
   final Color iconColor;
   final ValueChanged<int> onChange;
 
   const IconDropDown({
-    Key key,
-    this.icons,
+    Key? key,
+    required this.icons,
     this.borderRadius,
     this.backgroundColor = const Color(0xFFF67C0B9),
     this.iconColor = Colors.black,
-    this.onChange,
-  })  : assert(icons != null),
+    required this.onChange,
+  })   : assert(icons != null),
         super(key: key);
   @override
   _IconDropDownState createState() => _IconDropDownState();
@@ -23,13 +23,13 @@ class IconDropDown extends StatefulWidget {
 
 class _IconDropDownState extends State<IconDropDown>
     with SingleTickerProviderStateMixin {
-  GlobalKey _key;
+  GlobalKey _key = LabeledGlobalKey("button_icon");
   bool isMenuOpen = false;
-  Offset buttonPosition;
-  Size buttonSize;
-  OverlayEntry _overlayEntry;
-  BorderRadius _borderRadius;
-  AnimationController _animationController;
+  Offset? buttonPosition;
+  Size? buttonSize;
+  OverlayEntry? _overlayEntry;
+  BorderRadius? _borderRadius;
+  AnimationController? _animationController;
 
   @override
   void initState() {
@@ -38,34 +38,36 @@ class _IconDropDownState extends State<IconDropDown>
       duration: Duration(milliseconds: 250),
     );
     _borderRadius = widget.borderRadius ?? BorderRadius.circular(4);
-    _key = LabeledGlobalKey("button_icon");
     super.initState();
   }
 
   @override
   void dispose() {
     if (isMenuOpen) closeMenu();
-    _animationController.dispose();
+
+    _animationController!.dispose();
     super.dispose();
   }
 
   findButton() {
-    RenderBox renderBox = _key.currentContext.findRenderObject();
-    buttonSize = renderBox.size;
-    buttonPosition = renderBox.localToGlobal(Offset.zero);
+    var renderBox = _key.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      buttonSize = renderBox.size;
+      buttonPosition = renderBox.localToGlobal(Offset.zero);
+    }
   }
 
   void closeMenu() {
-    _overlayEntry.remove();
-    _animationController.reverse();
+    _overlayEntry?.remove();
+    _animationController?.reverse();
     isMenuOpen = !isMenuOpen;
   }
 
   void openMenu() {
     findButton();
-    _animationController.forward();
+    _animationController?.forward();
     _overlayEntry = _overlayEntryBuilder();
-    Overlay.of(context).insert(_overlayEntry);
+    Overlay.of(context)?.insert(_overlayEntry!);
     isMenuOpen = !isMenuOpen;
   }
 
@@ -81,7 +83,7 @@ class _IconDropDownState extends State<IconDropDown>
         icon: AnimatedIcon(
           icon: AnimatedIcons.view_list,
           size: 32,
-          progress: _animationController,
+          progress: _animationController!,
         ),
         color: Colors.white,
         onPressed: () {
@@ -95,13 +97,15 @@ class _IconDropDownState extends State<IconDropDown>
     );
   }
 
-  OverlayEntry _overlayEntryBuilder() {
+  OverlayEntry? _overlayEntryBuilder() {
+    if (buttonSize != null && buttonPosition != null) return null;
+
     return OverlayEntry(
       builder: (context) {
         return Positioned(
-          top: buttonPosition.dy + buttonSize.height,
-          left: buttonPosition.dx,
-          width: buttonSize.width,
+          top: buttonPosition!.dy + buttonSize!.height,
+          left: buttonPosition!.dx,
+          width: buttonSize!.width,
           child: Material(
             color: Colors.transparent,
             child: Stack(
@@ -113,14 +117,14 @@ class _IconDropDownState extends State<IconDropDown>
                     child: Container(
                       width: 17,
                       height: 17,
-                      color: widget.backgroundColor ?? Color(0xFFF),
+                      color: widget.backgroundColor,
                     ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 15.0),
                   child: Container(
-                    height: widget.icons.length * buttonSize.height,
+                    height: widget.icons.length * buttonSize!.height,
                     decoration: BoxDecoration(
                       color: widget.backgroundColor,
                       borderRadius: _borderRadius,
@@ -140,8 +144,8 @@ class _IconDropDownState extends State<IconDropDown>
                               closeMenu();
                             },
                             child: Container(
-                              width: buttonSize.width,
-                              height: buttonSize.height,
+                              width: buttonSize!.width,
+                              height: buttonSize!.height,
                               child: widget.icons[index],
                             ),
                           );

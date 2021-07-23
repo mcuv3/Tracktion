@@ -8,23 +8,10 @@ class StreamRoutines extends RoutinesEvent {
   StreamRoutines(this.groupId);
 }
 
-class FetchRoutines extends RoutinesEvent {}
-
-class FilterRoutines extends RoutinesEvent {
-  final List<bool> filters;
-  final String search;
-  FilterRoutines(this.filters, this.search);
-}
-
-class SaveFullRoutine extends RoutinesEvent {
-  final RoutineData routine;
-  final List<RoutineSetData> sets;
-  SaveFullRoutine(this.routine, this.sets);
-}
-
 class SaveRoutine extends RoutinesEvent {
   final RoutineData routine;
-  SaveRoutine(this.routine);
+  final List<RoutineSetData> sets;
+  SaveRoutine(this.routine, this.sets);
 }
 
 class DeleteRoutine extends RoutinesEvent {

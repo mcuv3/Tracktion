@@ -52,7 +52,7 @@ class RoutineGroupBloc extends Bloc<RoutineGroupEvent, RoutineGroupState> {
   Stream<RoutineGroupState> _saveGroupRoutine(SaveGroupRoutine event) async* {
     try {
       final groupStrems = (state as RoutineGroups).groups;
-      await this.db.saveGroupRoutine(event.group.toCompanion(true));
+      await this.db.saveGroupRoutine(event.group);
       yield RoutinesGroupSuccess();
       yield RoutineGroups(groupStrems);
     } catch (e) {

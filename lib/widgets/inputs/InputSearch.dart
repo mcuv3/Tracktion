@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class InputSearch extends StatefulWidget {
   final Color textColor;
@@ -7,10 +6,10 @@ class InputSearch extends StatefulWidget {
   final TextEditingController controller;
   final Function change;
   InputSearch(
-      {@required this.textColor,
-      @required this.fillColor,
-      @required this.change,
-      this.controller});
+      {required this.textColor,
+      required this.fillColor,
+      required this.change,
+      required this.controller});
 
   @override
   _InputSearchState createState() => _InputSearchState();

@@ -4,7 +4,8 @@ class AbstractShape extends StatelessWidget {
   final double width;
   final double height;
   final CustomPainter shape;
-  AbstractShape({this.width, this.height, this.shape});
+  AbstractShape(
+      {required this.width, required this.height, required this.shape});
 
   @override
   Widget build(BuildContext context) {

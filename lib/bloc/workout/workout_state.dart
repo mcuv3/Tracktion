@@ -12,8 +12,8 @@ class WorkoutSets extends WorkoutState {
   final DateTime date;
 
   WorkoutSets({
-    @required this.sets,
-    @required this.date,
+    required this.sets,
+    required this.date,
   });
 }
 

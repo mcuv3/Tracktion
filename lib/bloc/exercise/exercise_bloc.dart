@@ -14,7 +14,7 @@ part 'exercise_state.dart';
 class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
   final SQLDatabase db;
 
-  ExerciseBloc(this.db) : super(ExercisesInitial());
+  ExerciseBloc({required this.db}) : super(ExercisesInitial());
 
   @override
   Stream<ExerciseState> mapEventToState(
@@ -35,20 +35,7 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     final exes = (state as Exercises).exes;
     yield ExercisesLoading();
     try {
-      final exe = event.exe;
-      final exeEntity = Exercise(
-          id: exe.id,
-          maxVolumeSetId: exe.maxVolumeSetId,
-          maxWeigthSetId: exe.maxWeigthSetId,
-          difficulty: exe.difficulty,
-          name: exe.name,
-          notes: exe.notes,
-          lastWorkouts: exe.lastWorkoutsToString(),
-          maxVolume: exe.maxVolume,
-          maxWeigth: exe.maxWeigth);
-
-      await db.deleteExercise(exeEntity);
-
+      await db.deleteExercise(event.exeId);
       yield ExerciseDeleteSuccess();
       yield Exercises(exes);
     } catch (e) {
@@ -65,7 +52,7 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     try {
       final exe = event.exe;
       final exeDb = Exercise(
-          id: exe.id,
+          id: exe.id!,
           difficulty: exe.difficulty,
           maxVolumeSetId: exe.maxVolumeSetId,
           maxWeigthSetId: exe.maxWeigthSetId,
@@ -92,17 +79,16 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     try {
       final exe = event.exe;
 
-      await db.insertMigration(MigrationsCompanion.insert(
-          verb: "post", endPoint: '/api/exercise/v1/', payload: exe.toJson()));
-
+      // await db.insertMigration(MigrationsCompanion.insert(
+      //     verb: "post", endPoint: '/api/exercise/v1/', payload: exe.toJson()));
+      // print(exe);
       final exeDb = Exercise(
           id: exe.id,
           difficulty: exe.difficulty,
           name: exe.name,
           notes: exe.notes,
-          lastWorkouts: "",
-          maxVolume: 0.0,
-          maxWeigth: 0.0);
+          lastWorkouts: "");
+
       final exeWithBd =
           ExerciseWithBodyParts(bodyParts: exe.bodyParts, exe: exeDb);
       await db.saveExercise(exeWithBd);

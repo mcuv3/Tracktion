@@ -9,8 +9,8 @@ class StreamRoutine extends RoutineEvent {
 }
 
 class DeleteSet extends RoutineEvent {
-  final RoutineSetData set;
-  DeleteSet(this.set);
+  final int setId;
+  DeleteSet(this.setId);
 }
 
 class SaveSet extends RoutineEvent {

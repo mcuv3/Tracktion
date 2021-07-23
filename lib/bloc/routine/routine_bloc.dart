@@ -19,9 +19,9 @@ class RoutineBloc extends Bloc<RoutineEvent, RoutineState> {
     if (event is StreamRoutine) {
       yield* _streamRoutine(event);
     } else if (event is DeleteSet) {
-      yield* _deleteSet(event);
+      _deleteSet(event);
     } else if (event is SaveSet) {
-      yield* _saveSet(event);
+      _saveSet(event);
     }
   }
 
@@ -37,14 +37,10 @@ class RoutineBloc extends Bloc<RoutineEvent, RoutineState> {
   }
 
   Stream<RoutineState> _deleteSet(DeleteSet event) async* {
+    final sets = (state as Routine).routine;
     try {
-      yield RoutineLoading();
-      await this.db.updateRoutineBds(
-          exericiseId: event.set.exerciseId,
-          routineId: event.set.routineId,
-          remove: true);
-      await this.db.deleteRoutineSet(event.set.id);
-      yield RoutineSuccess();
+      await this.db.deleteRoutineSet(event.setId);
+      yield Routine(sets);
     } catch (e) {
       yield RoutineFailure("Something went wrong saving the set");
     }
@@ -52,15 +48,11 @@ class RoutineBloc extends Bloc<RoutineEvent, RoutineState> {
 
   Stream<RoutineState> _saveSet(SaveSet event) async* {
     try {
-      yield RoutineLoading();
-      if (event.set.id == null) {
-        await this.db.updateRoutineBds(
-            exericiseId: event.set.exerciseId, routineId: event.set.routineId);
-      }
+      final routine = (state as Routine).routine;
       await this.db.saveSetRoutine(event.set.toCompanion(true));
       yield RoutineSuccess();
+      yield Routine(routine);
     } catch (e) {
-      print(e);
       yield RoutineFailure("Cannot save the set");
     }
   }

@@ -11,7 +11,7 @@ class BodyPartWidget extends StatelessWidget {
   final bool withTitle;
   final bool active;
   final Color textColor;
-  final Color bgColor;
+  final Color? bgColor;
   BodyPartWidget(this.bodyPart,
       {this.withTitle = true,
       this.width = 110,
@@ -31,7 +31,7 @@ class BodyPartWidget extends StatelessWidget {
       case BodyPartEnum.Back:
         file += 'back';
         break;
-      case BodyPartEnum.Gluteus:
+      case BodyPartEnum.GLUTEUS:
         file += 'butt';
         break;
       case BodyPartEnum.Calfs:

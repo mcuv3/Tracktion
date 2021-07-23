@@ -8,7 +8,7 @@ class WorkoutLoading extends WorkoutpickerState {}
 class Workout extends WorkoutpickerState {
   final List<appModels.SetWorkout> sets;
   final DateTime date;
-  Workout({this.sets, this.date});
+  Workout({required this.sets, required this.date});
 }
 
 class WorkoutPickerFailure extends WorkoutpickerState {

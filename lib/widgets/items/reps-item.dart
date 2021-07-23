@@ -7,12 +7,12 @@ class RepItem extends StatelessWidget {
   final int rpe;
   final bool editable;
   final bool selectable;
-  final Widget actions;
+  final Widget? actions;
 
   RepItem(
-      {@required this.reps,
-      @required this.weight,
-      @required this.rpe,
+      {required this.reps,
+      required this.weight,
+      required this.rpe,
       this.actions,
       this.selectable = false,
       this.isExpanded = false,
@@ -72,7 +72,7 @@ class RepItem extends StatelessWidget {
                 child: Text("RPE $rpe", style: textStyle),
               ),
             ),
-            if (actions != null) actions
+            if (actions is Widget) actions!
           ],
         ),
       ),

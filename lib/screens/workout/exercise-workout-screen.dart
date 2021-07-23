@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:tracktion/bloc/exercise-stream/exercisestream_cubit.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
@@ -28,9 +29,9 @@ class ExerciseWorkOut extends StatefulWidget {
 }
 
 class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
-  Exercise exs;
+  Exercise? exs;
   List<Rep> reps = [];
-  int setId;
+  int? setId;
   var date = DateTime.now();
   var init = false;
 
@@ -41,16 +42,17 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
     super.didChangeDependencies();
     if (!init) {
       var initialState =
-          ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
       if (initialState["reps"] != null) {
         reps = initialState["reps"];
       }
 
       setId = initialState["setId"];
       if (initialState["fromWorkout"] != null) fromWorkout = true;
-      exs = initialState["exercise"] as Exercise;
+      exs = initialState["exercise"] as Exercise?;
       if (exs != null)
-        BlocProvider.of<ExerciseStreamCubit>(context).streamExercise(exs.id);
+        BlocProvider.of<ExerciseStreamCubit>(context)
+            .streamExercise(exs?.id as int);
       init = true;
     }
   }
@@ -109,13 +111,14 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
 
     if (!fromWorkout || willDelete)
       shouldSave = await shouldSaveModal(
-          context, willDelete ? "This set will be deleted." : null);
+              context, willDelete ? "This set will be deleted." : null) ??
+          false;
 
     if (!shouldSave && willDelete) return false;
 
-    if (shouldSave) {
+    if (shouldSave && exs != null) {
       final set = SetWorkout(
-          id: setId, exercise: exs, reps: reps, maxWeigth: 0, volume: 0);
+          id: setId, exercise: exs!, reps: reps, maxWeigth: 0, volume: 0);
       if (reps.length == 0 && fromWorkout)
         BlocProvider.of<WorkoutBloc>(context).add(DeleteSet(set));
       else
@@ -158,16 +161,15 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                     }
                     return GestureDetector(
                       onTap: () {
-                         // TODO: change to a different library date time picker
-                        // DatePicker.showDatePicker(context,
-                        //     initialDateTime: date, onConfirm: (date, ints) {
-                        //   setState(() {
-                        //     date = date;
-                        //   });
-                        // },
-                        //     pickerTheme: DateTimePickerTheme(
-                        //         itemTextStyle:
-                        //             TextStyle(fontFamily: "CarterOne")));
+                        DatePicker.showDatePicker(context,
+                            initialDateTime: date, onConfirm: (date, ints) {
+                          setState(() {
+                            date = date;
+                          });
+                        },
+                            pickerTheme: DateTimePickerTheme(
+                                itemTextStyle:
+                                    TextStyle(fontFamily: "CarterOne")));
                       },
                       child: Container(
                           margin:

@@ -8,13 +8,14 @@ class HomeVector extends StatelessWidget {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     return Container(
-      child: Center(
-        child: SvgPicture.asset(
-          assetName,
-          height: 250,
-          width: 250,
-        ),
-      ),
+      child: 
+          Center(
+            child: SvgPicture.asset(
+              assetName,
+              height: 150,
+              width: 300,
+            ),
+          ),
     );
   }
 }

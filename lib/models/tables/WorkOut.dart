@@ -7,7 +7,7 @@ class Workouts extends Table {
 }
 
 class SetWorkouts extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  IntColumn get id => integer().nullable().autoIncrement()();
   RealColumn get volume => real()();
   RealColumn get maxWeigth => real()();
   IntColumn get workOutId =>
@@ -17,7 +17,7 @@ class SetWorkouts extends Table {
 }
 
 class Reps extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  IntColumn get id => integer().nullable().autoIncrement()();
   RealColumn get weight => real()();
   IntColumn get reps => integer()();
   IntColumn get rpe => integer()();

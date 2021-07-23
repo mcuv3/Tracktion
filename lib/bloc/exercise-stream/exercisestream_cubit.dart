@@ -8,11 +8,14 @@ part 'exercisestream_state.dart';
 
 class ExerciseStreamCubit extends Cubit<ExerciseStreamState> {
   final SQLDatabase db;
-  ExerciseStreamCubit({@required this.db}) : super(ExerciseStreamInitial());
+  ExerciseStreamCubit({required this.db}) : super(ExerciseStreamInitial());
 
   void streamExercise(int exerciseId) {
     if (state is ExeStream) {}
     final exe = this.db.findExerciseStream(exerciseId);
+
+
     emit(ExeStream(exe));
+  
   }
 }

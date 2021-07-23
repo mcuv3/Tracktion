@@ -1,64 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:tracktion/colors/custom_colors.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/auth-button.dart';
-import 'package:tracktion/widgets/forms/AuthForm.dart';
+import 'package:tracktion/vectors/home.dart';
+import 'package:tracktion/widgets/forms/auth-form.dart';
 
-// TODO: refactor all the login page to be more frendly with OAuth implmentation
+import '../../colors/custom_colors.dart';
 
 class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final query = MediaQuery.of(context);
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Container(
-          width: double.infinity,
-          color: Theme.of(context).colorScheme.analysis,
-          child: Stack(
-            children: [
-              AbstractShape(
-                height: query.size.height,
-                width: double.infinity,
-                shape: AuthShape(Colors.white),
-              ),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // SizedBox(height: 60),
-                    // HomeVector(),
-
-                    Container(
-                      width: double.infinity,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(
+            'Wellcome to TrackTion',
+            style: TextStyle(fontSize: 24),
+          ),
+          shadowColor: Colors.black45,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(30),
+            ),
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Container(
+            color: query.size.height < 550
+                ? Theme.of(context).colorScheme.routines
+                : Colors.transparent,
+            child: Column(
+              children: [
+                query.size.height > 550
+                    ? Stack(
+                        // alignment: Alignment.center,
                         children: [
-                          Text(
-                            "Tracktion",
-                            textAlign: TextAlign.start,
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.routines,
-                                fontSize: 34),
+                          AbstractShape(
+                            height: query.size.height * .9,
+                            width: double.infinity,
+                            shape:
+                                AuthShape(Theme.of(context).primaryColorLight),
                           ),
-                          Text(
-                              "An app where you can track freely your workouts to ensure  progress in your journy.",
-                              style: TextStyle(
-                                color: Colors.grey,
-                              )),
+                          Container(
+                            child: AbstractShape(
+                              height: query.size.height,
+                              width: double.infinity,
+                              shape: AuthShape(Theme.of(context).primaryColor),
+                            ),
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              HomeVector(),
+                              SizedBox(height: 60),
+                              AuthForm(),
+                            ],
+                          )
                         ],
-                      ),
-                    ),
-                    SizedBox(height: 150),
-                    SingleChildScrollView(child: AuthForm())
-                  ],
-                ),
-              )
-            ],
+                      )
+                    : AuthForm(),
+              ],
+            ),
           ),
         ));
   }

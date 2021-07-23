@@ -19,6 +19,6 @@ class EditExe extends ExerciseEvent {
 }
 
 class DeleteExe extends ExerciseEvent {
-  final exeModel.Exercise exe;
-  DeleteExe(this.exe);
+  final int exeId;
+  DeleteExe(this.exeId);
 }

@@ -1,14 +1,12 @@
 import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
-import 'package:tracktion/models/app/RoutineSlim.dart';
 import 'package:tracktion/models/app/body-parts.dart';
-import 'package:tracktion/models/db/migration.dart';
+import 'package:tracktion/models/app/difficulties.dart';
 import 'package:tracktion/models/tables/Routines.dart';
 import 'package:tracktion/models/tables/WorkOut.dart';
 
 import '../app/exercise.dart' as exeApp;
 import '../app/index.dart' as modelsApp;
-import "../tables/Converts.dart";
 import '../tables/Exercise.dart';
 
 export 'instance/shared.dart';
@@ -35,29 +33,18 @@ class SQLDatabase extends _$SQLDatabase {
   SQLDatabase(QueryExecutor e) : super(e);
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 1;
 
   @override
-  MigrationStrategy get migration =>
-      MigrationStrategy(onCreate: (Migrator m) async {
-        print("Creating database");
+  MigrationStrategy get migration => MigrationStrategy(
+      onCreate: (Migrator m) async {
         await m.createAll();
+
         return;
-      }, onUpgrade: (Migrator m, int from, int to) async {
-        print("Updating database");
-        await m.createAll();
-      }, beforeOpen: (details) async {
-        if (!details.wasCreated) return;
+      },
+      onUpgrade: (Migrator m, int from, int to) async {});
 
-        final exes = exercisesMigration.map((e) => into(exercises).insert(e));
-        final bds =
-            bodyPartsMigration.map((e) => into(exerciseBodyParts).insert(e));
-
-        await Future.wait(exes);
-        await Future.wait(bds);
-      });
-
-  Stream<modelsApp.Exercise> findExerciseStream(int exerciseId) {
+  Stream<modelsApp.Exercise?> findExerciseStream(int exerciseId) {
     final query = select(exercises).join([
       leftOuterJoin(exerciseBodyParts,
           exerciseBodyParts.exerciseId.equalsExp(exercises.id)),
@@ -72,6 +59,7 @@ class SQLDatabase extends _$SQLDatabase {
           return mergeTableExercise(exercise, bodyPart, exes);
         }).first;
       } catch (e) {
+        print(e);
         return null;
       }
     });
@@ -94,51 +82,8 @@ class SQLDatabase extends _$SQLDatabase {
   Stream<List<RoutineGroupData>> findRoutineGroups() =>
       select(routineGroup).watch();
 
-  // Stream<List<RoutineData>> findRoutines(int groupId) =>
-  //     (select(routine)..where((t) => t.groupId.equals(groupId))).watch();
-  //
-
-  Future<List<RoutineSlim>> findRoutines([String cursor = ""]) async {
-    final res = await (select(routine).join([
-      leftOuterJoin(routineGroup, routineGroup.id.equalsExp(routine.groupId))
-    ])
-          ..orderBy([OrderingTerm(expression: routine.timesCopied)]))
-        .get();
-
-    return res.map((row) {
-      final group = row.readTable(routineGroup);
-      final rt = row.readTable(routine);
-      return RoutineSlim(
-          id: rt.id,
-          difficulty: rt.difficulty,
-          groupName: group.name,
-          routineName: rt.name,
-          topBodyParts: rt.bodyParts);
-    }).toList();
-  }
-
-  Stream<List<modelsApp.RoutineDay>> findRoutinesByGroup(int groupId) {
-    final query = select(routine).join(
-        [leftOuterJoin(routineSet, routineSet.routineId.equalsExp(routine.id))])
-      ..where(routine.groupId.equals(groupId));
-
-    return query.watch().map((row) {
-      return row.fold<List<modelsApp.RoutineDay>>([], (routineDays, tuple) {
-        final _routine = tuple.readTable(routine);
-        final set = tuple.readTableOrNull(routineSet);
-        final indexRoutine =
-            routineDays.indexWhere((r) => r.routine.id == _routine.id);
-
-        if (indexRoutine == -1)
-          routineDays.add(modelsApp.RoutineDay(
-              routine: _routine, sets: set != null ? [set] : []));
-        else
-          routineDays[indexRoutine].add(set);
-
-        return routineDays;
-      });
-    });
-  }
+  Stream<List<RoutineData>> findRoutines(int groupId) =>
+      (select(routine)..where((t) => t.groupId.equals(groupId))).watch();
 
   Stream<List<RoutineSetData>> findRoutinesSet(int routineId) =>
       (select(routineSet)..where((t) => t.routineId.equals(routineId))).watch();
@@ -177,8 +122,8 @@ class SQLDatabase extends _$SQLDatabase {
           maxWeigthSetId: exe.maxWeigthSetId,
           lastWorkouts:
               modelsApp.Exercise.stringToLastWorkouts(exe.lastWorkouts),
-          maxVolume: exe.maxVolume,
-          maxWeigth: exe.maxWeigth,
+          maxVolume: exe.maxVolume?? 0.0,
+          maxWeigth: exe.maxWeigth ?? 0.0,
           name: exe.name,
           difficulty: exe.difficulty,
           notes: exe.notes,
@@ -225,8 +170,8 @@ class SQLDatabase extends _$SQLDatabase {
           maxWeigthSetId: exercise.maxWeigthSetId,
           lastWorkouts:
               modelsApp.Exercise.stringToLastWorkouts(exercise.lastWorkouts),
-          maxVolume: exercise.maxVolume,
-          maxWeigth: exercise.maxWeigth,
+          maxVolume: exercise.maxVolume ?? 0.0,
+          maxWeigth: exercise.maxWeigth ?? 0.0,
           name: exercise.name,
           bodyParts: [bodyPart],
           difficulty: exercise.difficulty,
@@ -265,7 +210,6 @@ class SQLDatabase extends _$SQLDatabase {
     return query.map((row) {
       final _id = row.read(id);
       final _max = row.read(max);
-      if (_id == null || _max == null) return null;
       return [_id, _max];
     }).getSingle();
   }
@@ -282,7 +226,6 @@ class SQLDatabase extends _$SQLDatabase {
     return query.map((row) {
       final _id = row.read(id);
       final _max = row.read(max);
-      if (_id == null || _max == null) return null;
       return [_id, _max];
     }).getSingle();
   }
@@ -299,6 +242,7 @@ class SQLDatabase extends _$SQLDatabase {
           .go();
 
       for (final bodyPart in entry.bodyParts) {
+        print(bodyPart);
         await into(exerciseBodyParts).insert(
             ExerciseBodyPart(bodyPart: bodyPart, exerciseId: exerciseId),
             mode: InsertMode.replace);
@@ -306,16 +250,18 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
-  Future<int> saveSet(modelsApp.SetWorkout set, int workoutId) {
+  Future<int?> saveSet(modelsApp.SetWorkout set, int workoutId) {
     return transaction(() async {
       final exeId = set.exercise.id;
       final repsSet = set.reps;
 
+      if (exeId == null) return null;
+
       final setId = await into(setWorkouts).insert(
-          SetWorkout(
+          SetWorkoutsCompanion.insert(
               maxWeigth: set.maxWeigth,
               volume: set.volume,
-              id: set.id,
+              id: Value(set.id),
               workOutId: workoutId,
               exerciseId: exeId),
           mode: InsertMode.replace);
@@ -328,7 +274,7 @@ class SQLDatabase extends _$SQLDatabase {
       for (final rep in repsSet) {
         await into(reps).insert(
             RepsCompanion.insert(
-                note: rep.notes == null ? "" : Value(rep.notes),
+                note: Value(rep.notes),
                 reps: rep.reps,
                 weight: rep.weight,
                 rpe: rep.rpe,
@@ -338,43 +284,6 @@ class SQLDatabase extends _$SQLDatabase {
 
       return setId;
     });
-  }
-
-  Future<void> updateRoutineBds(
-      {int exericiseId, int routineId, bool remove = false}) async {
-    final rts =
-        await (select(routine)..where((e) => e.id.equals(routineId))).get();
-    final bds = await (select(exerciseBodyParts)
-          ..where((e) => e.exerciseId.equals(exericiseId)))
-        .get();
-
-    if (rts.isEmpty || bds.isEmpty) return;
-
-    final rt = rts[0];
-
-    final Map<BodyPartEnum, int> newBds =
-        rt.bodyParts?.bds != null ? rt.bodyParts.bds : {};
-
-    bds.forEach((e) {
-      final bd = e.bodyPart;
-      if (newBds.containsKey(e.bodyPart)) {
-        newBds[bd] = remove ? newBds[bd] - 1 : newBds[bd] + 1;
-        return;
-      }
-      newBds[bd] = remove ? 0 : 1;
-    });
-
-    final newRoutine = RoutineData(
-        id: rt.id,
-        groupId: rt.groupId,
-        name: rt.name,
-        duration: rt.duration,
-        difficulty: rt.difficulty,
-        notes: rt.notes,
-        bodyParts: RoutineBodyParts(newBds),
-        timesCopied: rt.timesCopied);
-
-    await into(routine).insert(newRoutine, mode: InsertMode.replace);
   }
 
   // COMPLEX DELETES
@@ -396,7 +305,7 @@ class SQLDatabase extends _$SQLDatabase {
     return transaction(() async {
       await (delete(routineSet)..where((t) => t.routineId.equals(routineId)))
           .go();
-      await (delete(routine)..where((t) => t.id.equals(routineId))).go();
+      await (delete(routine)..where((t) => t.groupId.equals(routineId))).go();
     });
   }
 
@@ -410,10 +319,10 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
-  Future<void> deleteExercise(Exercise exe) async {
-    await (delete(exerciseBodyParts)..where((t) => t.exerciseId.equals(exe.id)))
+  Future<void> deleteExercise(int exeId) async {
+    await (delete(exerciseBodyParts)..where((t) => t.exerciseId.equals(exeId)))
         .go();
-    await delete(exercises).delete(exe);
+    await (delete(exercises)..where((tbl) => tbl.id.equals(exeId))).go();
   }
 
   Future<void> deleteWorkout(int workoutId) {
@@ -438,10 +347,10 @@ class SQLDatabase extends _$SQLDatabase {
       into(migrations).insert(migration);
   Future deleteMigration(Migration migration) =>
       delete(migrations).delete(migration);
-  Future saveRep(Rep rep) => into(reps).insert(rep, mode: InsertMode.replace);
+  Future saveRep(RepsCompanion rep) => into(reps).insert(rep, mode: InsertMode.replace);
   Future deleteRep(Rep rep) => delete(reps).delete(rep);
 
-  Future insertExercise(Exercise exe) =>
+  Future insertExercise(ExercisesCompanion exe) =>
       into(exercises).insert(exe, mode: InsertMode.replace);
   Future<void> saveGroupRoutine(RoutineGroupCompanion group) =>
       into(routineGroup).insert(group, mode: InsertMode.replace);
@@ -459,5 +368,5 @@ class SQLDatabase extends _$SQLDatabase {
 class ExerciseWithBodyParts {
   final Exercise exe;
   final List<BodyPartEnum> bodyParts;
-  ExerciseWithBodyParts({this.exe, this.bodyParts});
+  ExerciseWithBodyParts({required this.exe, required this.bodyParts});
 }

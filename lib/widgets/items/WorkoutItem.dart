@@ -10,14 +10,14 @@ class WorkoutItem extends StatelessWidget {
   final bool delitionMode;
   final bool isSortMode;
   final bool isSelected;
-  final Function(Rep) onViewComment;
+  final Function(Rep)? onViewComment;
   final bool editable;
   final bool selectable;
-  final List<bool> repsSelectors;
-  final void Function({int setId, int repIndex}) onCheckRep;
-  final void Function(int setId) onCheckSet;
-  final void Function(Rep rep, int repIndex) onEditRep;
-  final void Function(int setId) onDeleteSet;
+  final List<bool>? repsSelectors;
+  final void Function({required int setId, required int repIndex})? onCheckRep;
+  final void Function(int? setId)? onCheckSet;
+  final void Function(Rep rep, int repIndex)? onEditRep;
+  final void Function(int? setId)? onDeleteSet;
   final bool touchable;
 
   final SetWorkout set;
@@ -32,7 +32,7 @@ class WorkoutItem extends StatelessWidget {
       this.repsSelectors,
       this.onDeleteSet,
       this.onEditRep,
-      @required this.set,
+      required this.set,
       this.onViewComment,
       this.isSortMode = false,
       this.editable = false});
@@ -55,7 +55,7 @@ class WorkoutItem extends StatelessWidget {
             style: TextStyle(
                 fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
           ),
-          if (selectable)
+          if (selectable && onCheckSet != null)
             Container(
               decoration:
                   BoxDecoration(color: Theme.of(context).colorScheme.analysis),
@@ -67,18 +67,18 @@ class WorkoutItem extends StatelessWidget {
                 visualDensity: VisualDensity.compact,
                 value: isSelected,
                 onChanged: (newValue) {
-                  onCheckSet(set.id);
+                  onCheckSet!(set.id);
                 },
               ),
             ),
-          if (editable)
+          if (editable && onDeleteSet != null)
             IconButton(
               visualDensity: VisualDensity.compact,
               icon: Icon(
                 Icons.delete,
               ),
               onPressed: () {
-                onDeleteSet(set.id);
+                onDeleteSet!(set.id);
               },
               color: Colors.white,
               padding: EdgeInsets.all(0),
@@ -88,22 +88,25 @@ class WorkoutItem extends StatelessWidget {
     );
 
     Widget buildAction(
-        {Rep rep, bool selectedValue, int index, bool hasComment}) {
-      if (selectable) {
+        {required Rep rep,
+        required bool selectedValue,
+        required int index,
+        required bool hasComment}) {
+      if (selectable && onCheckRep != null) {
         return Checkbox(
           value: selectedValue,
           onChanged: (newValue) {
-            onCheckRep(setId: set.id, repIndex: index);
+            if (set.id != null) onCheckRep!(setId: set.id!, repIndex: index);
           },
         );
-      } else if (editable) {
+      } else if (editable && onEditRep != null) {
         return IconButton(
           visualDensity: VisualDensity.compact,
           icon: Icon(
             Icons.edit,
           ),
           onPressed: () {
-            onEditRep(rep, index);
+            onEditRep!(rep, index);
           },
           color: Colors.red,
           padding: EdgeInsets.all(0),
@@ -114,7 +117,7 @@ class WorkoutItem extends StatelessWidget {
         icon: Icon(
           hasComment ? Icons.comment : Icons.insert_comment_outlined,
         ),
-        onPressed: () => onViewComment(rep),
+        onPressed: onViewComment != null ? () => onViewComment!(rep) : null,
         color: Colors.red,
         padding: EdgeInsets.all(0),
       );
@@ -176,7 +179,7 @@ class WorkoutItem extends StatelessWidget {
                                 index: index,
                                 rep: rep,
                                 selectedValue: repsSelectors != null
-                                    ? repsSelectors[index]
+                                    ? repsSelectors![index]
                                     : false)),
                       )
                       .toList(),

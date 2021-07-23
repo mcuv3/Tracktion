@@ -11,7 +11,7 @@ part 'workoutpicker_state.dart';
 
 class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
   SQLDatabase db;
-  WorkoutpickerBloc({this.db}) : super(WorkoutLoading());
+  WorkoutpickerBloc({required this.db}) : super(WorkoutLoading());
 
   @override
   Stream<WorkoutpickerState> mapEventToState(
@@ -21,7 +21,7 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
       yield* _pickWorkout(event);
     } else if (event is DeleteSetPicker) {
       yield* _deleteSet(event);
-    } else {
+    } else if (event is SaveRepPicker) {
       yield* _saveRep(event);
     }
   }
@@ -63,6 +63,4 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
       yield WorkoutPickerFailure("Cannot sava the rep");
     }
   }
-
-  Future<List<Map<DateTime, List<int>>>> allWorkouts() {}
 }

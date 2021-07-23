@@ -4,10 +4,10 @@ import 'package:tracktion/util/enumToString.dart';
 
 class Select<T> extends StatelessWidget {
   const Select(
-      {Key key,
-       this.value,
-       this.onSelect,
-       this.options})
+      {Key? key,
+      required this.value,
+      required this.onSelect,
+      required this.options})
       : super(key: key);
 
   final Function(T) onSelect;

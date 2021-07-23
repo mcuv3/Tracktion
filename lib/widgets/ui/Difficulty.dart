@@ -1,13 +1,13 @@
+import 'package:flutter/material.dart';
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/util/enumToString.dart';
 
 import '../../colors/custom_colors.dart';
-import 'package:flutter/material.dart';
 
 class DifficultyWidget extends StatelessWidget {
   const DifficultyWidget({
-    Key key,
-    @required this.exs,
+    Key? key,
+    required this.exs,
   }) : super(key: key);
 
   final Exercise exs;
