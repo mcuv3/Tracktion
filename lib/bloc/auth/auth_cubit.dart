@@ -91,11 +91,10 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<UserCredential> _signInWithFacebook() async {
     // Trigger the sign-in flow
-    final AccessToken result = await FacebookAuth.instance.login();
-
+    final LoginResult result = await FacebookAuth.instance.login();
     // Create a credential from the access token
     final facebookAuthCredential =
-        FacebookAuthProvider.credential(result.token);
+        FacebookAuthProvider.credential(result.accessToken.token);
 
     // Once signed in, return the UserCredential
     return await FirebaseAuth.instance
