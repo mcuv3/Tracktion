@@ -6,7 +6,6 @@ import 'package:tracktion/screens/index.dart';
 import 'package:tracktion/screens/workout/calendar-picker-screen.dart';
 import 'package:tracktion/screens/workout/workout-routine-picker-screen.dart';
 
-// TODO: option to copy a workout from routines
 class WorkoutEmpty extends StatelessWidget {
   final DateTime currentDate;
   const WorkoutEmpty({
@@ -72,7 +71,7 @@ class WorkoutEmpty extends StatelessWidget {
                     .pushNamed(WorkoutRoutinePicker.routeName)
                     .then((routine) => routine != null
                         ? WorkOutScreenService.of(context)
-                            .routineSelectedHanlder(routine)
+                            .routineSelectedHanlder(routine,currentDate)
                         : null);
               },
               icon: FaIcon(

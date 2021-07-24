@@ -430,6 +430,13 @@ class SQLDatabase extends _$SQLDatabase {
 
   // BASIC QUERIES
 
+  Future<Exercise> findExercise(int id) =>
+      (select(exercises)..where((t) => t.id.equals(id))).getSingle();
+
+  Future<List<Rep>> findReps(int setId) =>
+      (select(reps)..where((t) => t.setId.equals(setId))).get();
+
+
   Future<List<Exercise>> getAllExercises() => select(exercises).get();
   Future<List<Workout>> getAllWorkouts() => select(workouts).get();
   Future<List<Migration>> getAllMigrations() => select(migrations).get();

@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:moor_flutter/moor_flutter.dart';
+import 'package:tracktion/models/tables/Routines.dart';
 import 'package:tracktion/util/analysis/getSetMaxWeigth.dart';
 import 'package:tracktion/util/analysis/getSetVolume.dart';
 import 'package:tracktion/util/analysis/mergeSetLastWorkout.dart';
@@ -190,11 +191,100 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
 
   Future<void> _copyRoutine(CopyRoutine event) async {
     try {
-      final sets = event.sets;
+      final List<modelsApp.SetWorkout> sets = [];
+      for (final set in event.sets) {
+        final exe = await this.db.findExercise(set.exerciseId);
+        final reps = await this._getRoutineReps(set, exe);
+        sets.add(modelsApp.SetWorkout(
+            maxWeigth: 0,
+            volume: 0,
+            reps: reps,
+            exercise: modelsApp.Exercise(
+                difficulty: exe.difficulty,
+                id: exe.id,
+                bodyParts: [],
+                lastWorkouts:
+                    modelsApp.Exercise.stringToLastWorkouts(exe.lastWorkouts),
+                maxVolume: exe.maxVolume,
+                maxVolumeSetId: exe.maxVolumeSetId,
+                maxWeigth: exe.maxWeigth,
+                maxWeigthSetId: exe.maxWeigthSetId,
+                name: exe.name,
+                notes: exe.notes),
+            id: null));
+      }
 
-      // TODO: Copy routines into  workout
-      // TODO: _saveSet function will help you a lot
-    } catch (e) {}
+      event.sets.map((set) async {}).toList();
+      await Future.wait(sets.map((s) =>
+          this._saveSet(SaveSet(date: event.date, isEdit: false, set: s))));
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<List<modelsApp.Rep>> _getRoutineReps(
+      RoutineSetData set, Exercise exe) async {
+    List<modelsApp.Rep> reps = [];
+
+    final prevs = modelsApp.Exercise.stringToLastWorkouts(exe.lastWorkouts);
+
+    switch (set.copyMethod) {
+      case CopyMethod.Static:
+        reps = List.filled(set.series, 0).map((_) =>
+            modelsApp.Rep(id: null, reps: 0, rpe: set.targetRpe, weight: 0));
+        break;
+      case CopyMethod.Previus:
+        if (prevs.length == 0) {
+          reps = [];
+        } else {
+          final setId = prevs[prevs.length - 1].setId;
+          final _reps = await this.db.findReps(setId);
+          reps = _reps.map((r) => modelsApp.Rep(
+              id: null,
+              reps: r.reps,
+              rpe: r.rpe,
+              weight: r.weight,
+              notes: r.note,
+              setId: null));
+        }
+
+        break;
+      case CopyMethod.Smart:
+        if (prevs.length == 0) {
+          reps = [];
+        } else {
+          final setId = prevs[prevs.length - 1].setId;
+          final _reps = await this.db.findReps(setId);
+          double weigth = 0;
+          int rps = 0;
+
+          _reps.forEach((r) {
+            rps += r.reps;
+            weigth += r.weight;
+          });
+
+          
+          reps = List.filled(_reps.length, modelsApp.Rep(
+              id: null,
+              reps: rps ~/ _reps.length,
+              rpe: set.targetRpe,
+              weight: weigth / _reps.length,
+              notes: "",
+              setId: null));
+        }
+
+        break;
+      case CopyMethod.Percentage:
+        final mr = set.repmax;
+        reps = List.filled(set.series, 0).map((_) => modelsApp.Rep(
+            id: null,
+            reps: set.series,
+            rpe: set.targetRpe,
+            weight: mr * set.percentage / 100));
+        break;
+    }
+
+    return reps;
   }
 
   Future<void> _saveRep(SaveRep event) async {

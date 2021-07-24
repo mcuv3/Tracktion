@@ -37,6 +37,7 @@ class RoutineSet extends Table {
       integer().customConstraint("NOT NULL REFERENCES routines (id)")();
   IntColumn get series => integer().withDefault(const Constant(3))();
   RealColumn get repmax => real().nullable()();
+  RealColumn get percentage => real().withDefault(const Constant(0.0))();
   IntColumn get copyMethod => intEnum<CopyMethod>()();
   IntColumn get targetRpe => integer()();
   TextColumn get notes =>

@@ -41,6 +41,8 @@ class _RoutinesSetConfugurationState extends State<RoutinesSetConfuguration> {
           showMethods: false,
         ));
 
+    if (setRoutine == null) return;
+
     setState(() {
       setsConfigured[idx] = setRoutine;
     });

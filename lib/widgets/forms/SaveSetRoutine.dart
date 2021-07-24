@@ -34,9 +34,11 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm>
   var rpe = 8;
   var invalidMethod = false;
   var invalidMr = false;
+  var invalidPr = false;
   var exerciseName = "";
 
   final mrController = TextEditingController(text: "0.0");
+  final perController = TextEditingController(text: "0.0");
   var numSeries = 3;
 
   final Map<String, String> copyMethods = {
@@ -63,8 +65,10 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm>
     rpe = widget.set.targetRpe;
     method = widget.set.copyMethod;
 
-    if (method == CopyMethod.Percentage)
-      mrController.value = TextEditingValue(text: widget.set.repmax.toString());
+    if (method == CopyMethod.Percentage) {
+    mrController.value = TextEditingValue(text: widget.set.repmax.toString());
+    perController.value = TextEditingValue(text: widget.set.percentage.toString());
+    }
 
     if (method == CopyMethod.Static) numSeries = widget.set.series;
   }
@@ -94,24 +98,26 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm>
   }
 
   void submit() {
-    final mr = double.tryParse(mrController.text);
+    final isValidPr = validatePer();
+    final isValidMr = validateMr();
 
-    if (method == null) {
-      setState(() {
+    print(isValidMr);
+    print(isValidPr);
+
+    if (method == null)
+      return setState(() {
         invalidMethod = true;
       });
-      return;
-    }
 
-    if (method == CopyMethod.Percentage && (mr == null || mr == 0.0)) {
-      setState(() {
-        invalidMr = true;
+    if (method == CopyMethod.Percentage && (!isValidMr || !isValidPr))
+      return setState(() {
+        invalidPr = !isValidPr;
+        invalidMr = !isValidMr;
       });
-      return;
-    }
 
     final setRoutine = RoutineSetData(
         id: widget.set == null ? null : widget.set.id,
+        percentage: double.tryParse(perController.text),
         copyMethod: method,
         notes: "",
         exerciseId:
@@ -121,10 +127,20 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm>
             : widget.set.exerciseName,
         routineId: widget.routineId,
         targetRpe: rpe,
-        series: method == CopyMethod.Static ? numSeries : null,
-        repmax: method == CopyMethod.Percentage ? mr : null);
+        series: numSeries,
+        repmax: double.tryParse(mrController.text));
 
     Navigator.of(context).pop(setRoutine);
+  }
+
+  bool validatePer() {
+    final value = double.tryParse(perController.text);
+    return value != null && value >= 0.0 && value <= 100.0;
+  }
+
+  bool validateMr() {
+    final value = double.tryParse(mrController.text);
+    return value != null && value > 0.0;
   }
 
   Container buildHeader(String text, [Color color = Colors.white]) {
@@ -138,6 +154,14 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm>
 
   @override
   Widget build(BuildContext context) {
+    double confHeight = 120;
+
+    if (method == CopyMethod.Percentage) confHeight = 220;
+
+    if (method == CopyMethod.Smart ||
+        method == CopyMethod.Previus ||
+        method == null) confHeight = 60;
+
     return Container(
       width: double.infinity,
       margin: EdgeInsets.only(top: 15),
@@ -193,11 +217,7 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm>
             vsync: this,
             duration: Duration(milliseconds: 300),
             child: Container(
-              height: method == CopyMethod.Smart ||
-                      method == CopyMethod.Previus ||
-                      method == null
-                  ? 60
-                  : 120,
+              height: confHeight,
               child: SingleChildScrollView(
                 child: Column(
                   children: [
@@ -221,7 +241,8 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm>
                                 rpe = newRpe;
                               });
                             })),
-                    if (method == CopyMethod.Static)
+                    if (method == CopyMethod.Static ||
+                        method == CopyMethod.Percentage)
                       Divided(
                           spaceA: 1,
                           spaceB: 1,
@@ -261,24 +282,29 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm>
                             child: TracktionInput(
                               keyboardType: TextInputType.number,
                               controller: mrController,
-                              validator: (v) {
-                                final value = double.tryParse(v);
-                                if (value == null || value < 0.0)
-                                  return "Ivalid number.";
-
-                                return null;
-                              },
-                              change: (value) {
-                                final parsed = double.tryParse(value);
-                                if (parsed != null &&
-                                    parsed > 0.0 &&
-                                    invalidMr) {
-                                  setState(() {
-                                    invalidMr = false;
-                                  });
-                                }
-                              },
                               hint: "0.0",
+                              align: TextAlign.center,
+                            ),
+                          )),
+                    if (method == CopyMethod.Percentage)
+                      Divided(
+                          spaceA: 1,
+                          spaceB: 1,
+                          leftWidget: Text("Percentage",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: invalidPr
+                                      ? Colors.red
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .exercise
+                                          .withOpacity(0.7))),
+                          rightWidget: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: TracktionInput(
+                              keyboardType: TextInputType.number,
+                              controller: perController,
+                              hint: "70.0",
                               align: TextAlign.center,
                             ),
                           )),

@@ -53,5 +53,6 @@ class CopySets extends WorkoutEvent {
 
 class CopyRoutine extends WorkoutEvent {
   final List<RoutineSetData> sets;
-  CopyRoutine(this.sets);
+  final DateTime date;
+  CopyRoutine(this.sets,this.date);
 }

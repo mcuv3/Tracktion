@@ -258,7 +258,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     Expression<int> maxWeigthSetId,
     Expression<int> maxVolumeSetId,
     Expression<String> notes,
-    Expression<int> difficulty,
+    Expression<Difficulty> difficulty,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -641,7 +641,7 @@ class ExerciseBodyPartsCompanion extends UpdateCompanion<ExerciseBodyPart> {
         bodyPart = Value(bodyPart);
   static Insertable<ExerciseBodyPart> custom({
     Expression<int> exerciseId,
-    Expression<int> bodyPart,
+    Expression<BodyPartEnum> bodyPart,
   }) {
     return RawValuesInsertable({
       if (exerciseId != null) 'exercise_id': exerciseId,
@@ -690,8 +690,11 @@ class $ExerciseBodyPartsTable extends ExerciseBodyParts
   @override
   GeneratedIntColumn get exerciseId => _exerciseId ??= _constructExerciseId();
   GeneratedIntColumn _constructExerciseId() {
-    return GeneratedIntColumn('exercise_id', $tableName, false,
-        $customConstraints: 'NOT NULL REFERENCES exercises (id)');
+    return GeneratedIntColumn(
+      'exercise_id',
+      $tableName,
+      false,
+    );
   }
 
   final VerificationMeta _bodyPartMeta = const VerificationMeta('bodyPart');
@@ -2077,7 +2080,7 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
     Expression<String> name,
     Expression<String> description,
     Expression<String> imageUrl,
-    Expression<int> level,
+    Expression<Level> level,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2482,10 +2485,10 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
     Expression<int> groupId,
     Expression<String> name,
     Expression<int> duration,
-    Expression<int> difficulty,
+    Expression<Difficulty> difficulty,
     Expression<String> notes,
     Expression<int> timesCopied,
-    Expression<String> bodyParts,
+    Expression<RoutineBodyParts> bodyParts,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2734,6 +2737,7 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
   final int routineId;
   final int series;
   final double repmax;
+  final double percentage;
   final CopyMethod copyMethod;
   final int targetRpe;
   final String notes;
@@ -2744,6 +2748,7 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
       @required this.routineId,
       @required this.series,
       this.repmax,
+      @required this.percentage,
       @required this.copyMethod,
       @required this.targetRpe,
       @required this.notes});
@@ -2765,6 +2770,8 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
       series: intType.mapFromDatabaseResponse(data['${effectivePrefix}series']),
       repmax:
           doubleType.mapFromDatabaseResponse(data['${effectivePrefix}repmax']),
+      percentage: doubleType
+          .mapFromDatabaseResponse(data['${effectivePrefix}percentage']),
       copyMethod: $RoutineSetTable.$converter0.mapToDart(intType
           .mapFromDatabaseResponse(data['${effectivePrefix}copy_method'])),
       targetRpe:
@@ -2793,6 +2800,9 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
     }
     if (!nullToAbsent || repmax != null) {
       map['repmax'] = Variable<double>(repmax);
+    }
+    if (!nullToAbsent || percentage != null) {
+      map['percentage'] = Variable<double>(percentage);
     }
     if (!nullToAbsent || copyMethod != null) {
       final converter = $RoutineSetTable.$converter0;
@@ -2823,6 +2833,9 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
           series == null && nullToAbsent ? const Value.absent() : Value(series),
       repmax:
           repmax == null && nullToAbsent ? const Value.absent() : Value(repmax),
+      percentage: percentage == null && nullToAbsent
+          ? const Value.absent()
+          : Value(percentage),
       copyMethod: copyMethod == null && nullToAbsent
           ? const Value.absent()
           : Value(copyMethod),
@@ -2844,6 +2857,7 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
       routineId: serializer.fromJson<int>(json['routineId']),
       series: serializer.fromJson<int>(json['series']),
       repmax: serializer.fromJson<double>(json['repmax']),
+      percentage: serializer.fromJson<double>(json['percentage']),
       copyMethod: serializer.fromJson<CopyMethod>(json['copyMethod']),
       targetRpe: serializer.fromJson<int>(json['targetRpe']),
       notes: serializer.fromJson<String>(json['notes']),
@@ -2859,6 +2873,7 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
       'routineId': serializer.toJson<int>(routineId),
       'series': serializer.toJson<int>(series),
       'repmax': serializer.toJson<double>(repmax),
+      'percentage': serializer.toJson<double>(percentage),
       'copyMethod': serializer.toJson<CopyMethod>(copyMethod),
       'targetRpe': serializer.toJson<int>(targetRpe),
       'notes': serializer.toJson<String>(notes),
@@ -2872,6 +2887,7 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
           int routineId,
           int series,
           double repmax,
+          double percentage,
           CopyMethod copyMethod,
           int targetRpe,
           String notes}) =>
@@ -2882,6 +2898,7 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
         routineId: routineId ?? this.routineId,
         series: series ?? this.series,
         repmax: repmax ?? this.repmax,
+        percentage: percentage ?? this.percentage,
         copyMethod: copyMethod ?? this.copyMethod,
         targetRpe: targetRpe ?? this.targetRpe,
         notes: notes ?? this.notes,
@@ -2895,6 +2912,7 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
           ..write('routineId: $routineId, ')
           ..write('series: $series, ')
           ..write('repmax: $repmax, ')
+          ..write('percentage: $percentage, ')
           ..write('copyMethod: $copyMethod, ')
           ..write('targetRpe: $targetRpe, ')
           ..write('notes: $notes')
@@ -2915,8 +2933,12 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
                       series.hashCode,
                       $mrjc(
                           repmax.hashCode,
-                          $mrjc(copyMethod.hashCode,
-                              $mrjc(targetRpe.hashCode, notes.hashCode)))))))));
+                          $mrjc(
+                              percentage.hashCode,
+                              $mrjc(
+                                  copyMethod.hashCode,
+                                  $mrjc(targetRpe.hashCode,
+                                      notes.hashCode))))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -2927,6 +2949,7 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
           other.routineId == this.routineId &&
           other.series == this.series &&
           other.repmax == this.repmax &&
+          other.percentage == this.percentage &&
           other.copyMethod == this.copyMethod &&
           other.targetRpe == this.targetRpe &&
           other.notes == this.notes);
@@ -2939,6 +2962,7 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
   final Value<int> routineId;
   final Value<int> series;
   final Value<double> repmax;
+  final Value<double> percentage;
   final Value<CopyMethod> copyMethod;
   final Value<int> targetRpe;
   final Value<String> notes;
@@ -2949,6 +2973,7 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
     this.routineId = const Value.absent(),
     this.series = const Value.absent(),
     this.repmax = const Value.absent(),
+    this.percentage = const Value.absent(),
     this.copyMethod = const Value.absent(),
     this.targetRpe = const Value.absent(),
     this.notes = const Value.absent(),
@@ -2960,6 +2985,7 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
     @required int routineId,
     this.series = const Value.absent(),
     this.repmax = const Value.absent(),
+    this.percentage = const Value.absent(),
     @required CopyMethod copyMethod,
     @required int targetRpe,
     this.notes = const Value.absent(),
@@ -2975,7 +3001,8 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
     Expression<int> routineId,
     Expression<int> series,
     Expression<double> repmax,
-    Expression<int> copyMethod,
+    Expression<double> percentage,
+    Expression<CopyMethod> copyMethod,
     Expression<int> targetRpe,
     Expression<String> notes,
   }) {
@@ -2986,6 +3013,7 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
       if (routineId != null) 'routine_id': routineId,
       if (series != null) 'series': series,
       if (repmax != null) 'repmax': repmax,
+      if (percentage != null) 'percentage': percentage,
       if (copyMethod != null) 'copy_method': copyMethod,
       if (targetRpe != null) 'target_rpe': targetRpe,
       if (notes != null) 'notes': notes,
@@ -2999,6 +3027,7 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
       Value<int> routineId,
       Value<int> series,
       Value<double> repmax,
+      Value<double> percentage,
       Value<CopyMethod> copyMethod,
       Value<int> targetRpe,
       Value<String> notes}) {
@@ -3009,6 +3038,7 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
       routineId: routineId ?? this.routineId,
       series: series ?? this.series,
       repmax: repmax ?? this.repmax,
+      percentage: percentage ?? this.percentage,
       copyMethod: copyMethod ?? this.copyMethod,
       targetRpe: targetRpe ?? this.targetRpe,
       notes: notes ?? this.notes,
@@ -3036,6 +3066,9 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
     if (repmax.present) {
       map['repmax'] = Variable<double>(repmax.value);
     }
+    if (percentage.present) {
+      map['percentage'] = Variable<double>(percentage.value);
+    }
     if (copyMethod.present) {
       final converter = $RoutineSetTable.$converter0;
       map['copy_method'] = Variable<int>(converter.mapToSql(copyMethod.value));
@@ -3058,6 +3091,7 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
           ..write('routineId: $routineId, ')
           ..write('series: $series, ')
           ..write('repmax: $repmax, ')
+          ..write('percentage: $percentage, ')
           ..write('copyMethod: $copyMethod, ')
           ..write('targetRpe: $targetRpe, ')
           ..write('notes: $notes')
@@ -3133,6 +3167,15 @@ class $RoutineSetTable extends RoutineSet
     );
   }
 
+  final VerificationMeta _percentageMeta = const VerificationMeta('percentage');
+  GeneratedRealColumn _percentage;
+  @override
+  GeneratedRealColumn get percentage => _percentage ??= _constructPercentage();
+  GeneratedRealColumn _constructPercentage() {
+    return GeneratedRealColumn('percentage', $tableName, false,
+        defaultValue: const Constant(0.0));
+  }
+
   final VerificationMeta _copyMethodMeta = const VerificationMeta('copyMethod');
   GeneratedIntColumn _copyMethod;
   @override
@@ -3174,6 +3217,7 @@ class $RoutineSetTable extends RoutineSet
         routineId,
         series,
         repmax,
+        percentage,
         copyMethod,
         targetRpe,
         notes
@@ -3221,6 +3265,12 @@ class $RoutineSetTable extends RoutineSet
     if (data.containsKey('repmax')) {
       context.handle(_repmaxMeta,
           repmax.isAcceptableOrUnknown(data['repmax'], _repmaxMeta));
+    }
+    if (data.containsKey('percentage')) {
+      context.handle(
+          _percentageMeta,
+          percentage.isAcceptableOrUnknown(
+              data['percentage'], _percentageMeta));
     }
     context.handle(_copyMethodMeta, const VerificationResult.success());
     if (data.containsKey('target_rpe')) {

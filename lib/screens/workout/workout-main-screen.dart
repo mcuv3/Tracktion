@@ -30,7 +30,7 @@ class WorkOutScreenService extends InheritedWidget {
     return context.dependOnInheritedWidgetOfExactType<WorkOutScreenService>();
   }
 
-  void routineSelectedHanlder(RoutineSlim routine) async {
+  void routineSelectedHanlder(RoutineSlim routine, DateTime date) async {
     List<dbModels.RoutineSetData> sets = await showAnimatedModal(
         context,
         RoutinesSetConfuguration(
@@ -38,8 +38,7 @@ class WorkOutScreenService extends InheritedWidget {
         ));
 
     if (sets == null) return;
-
-    BlocProvider.of<WorkoutBloc>(context).add(CopyRoutine(sets));
+    BlocProvider.of<WorkoutBloc>(context).add(CopyRoutine(sets, date));
   }
 
   @override
@@ -126,7 +125,6 @@ class _WorkOutScreenState extends State<WorkOutScreen>
   void selectItemHandler(SetWorkout set) {
     setState(() {
       final indexSet = selectedSets.indexWhere((st) => st.id == set.id);
-
       if (indexSet != -1)
         selectedSets.removeAt(indexSet);
       else
