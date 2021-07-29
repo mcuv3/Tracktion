@@ -124,7 +124,7 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
       editMode: editMode,
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Modal Page'),
+          title: Text('Routines'),
           actions: [
             IconButton(
               visualDensity: VisualDensity.compact,

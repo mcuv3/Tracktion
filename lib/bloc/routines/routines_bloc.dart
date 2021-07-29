@@ -37,7 +37,6 @@ class RoutinesBloc extends Bloc<RoutinesEvent, RoutinesState> {
     try {
       final groupId = event.groupId;
       final routines = this.db.findRoutinesByGroup(groupId);
-
       yield Routines(routines);
     } catch (e) {
       print(e);
@@ -49,6 +48,7 @@ class RoutinesBloc extends Bloc<RoutinesEvent, RoutinesState> {
     yield RoutinesLoading();
     try {
       final routines = await this.db.findRoutines();
+      print(routines);
       yield AllRoutines(routines, routines);
     } catch (e) {
       print(e);

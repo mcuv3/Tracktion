@@ -213,6 +213,21 @@ class SQLDatabase extends _$SQLDatabase {
     });
   }
 
+  Future<List<exeApp.Exercise>> streamExerciseByName() {
+    final query = select(exercises).join([
+      leftOuterJoin(exerciseBodyParts,
+          exerciseBodyParts.exerciseId.equalsExp(exercises.id)),
+    ]);
+
+    return query
+        .get()
+        .then((res) => res.fold<List<exeApp.Exercise>>([], (exes, row) {
+              final exercise = row.readTable(exercises);
+              final bodyPart = row.readTable(exerciseBodyParts).bodyPart;
+              return mergeTableExercise(exercise, bodyPart, exes);
+            }).toList());
+  }
+
   List<exeApp.Exercise> mergeTableExercise(
       Exercise exercise, BodyPartEnum bodyPart, List<exeApp.Exercise> exs) {
     final exes = [...exs];
@@ -436,8 +451,8 @@ class SQLDatabase extends _$SQLDatabase {
   Future<List<Rep>> findReps(int setId) =>
       (select(reps)..where((t) => t.setId.equals(setId))).get();
 
-
   Future<List<Exercise>> getAllExercises() => select(exercises).get();
+
   Future<List<Workout>> getAllWorkouts() => select(workouts).get();
   Future<List<Migration>> getAllMigrations() => select(migrations).get();
   Stream<List<Exercise>> watchAllExercises() => select(exercises).watch();

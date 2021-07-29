@@ -152,7 +152,7 @@ class _TracktionAppState extends State<TracktionApp> {
                   visualDensity: VisualDensity.adaptivePlatformDensity,
                   textTheme: TextTheme(
                     headline6:
-                        TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   buttonTheme: const ButtonThemeData(
                     shape: RoundedRectangleBorder(

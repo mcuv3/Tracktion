@@ -19,6 +19,7 @@ class ExerciseItem extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
+        color: Colors.white,
         boxShadow: [
           BoxShadow(
               color: Colors.black45,

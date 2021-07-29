@@ -8,6 +8,9 @@ class FetchExers extends ExerciseEvent {
   FetchExers(this.bodyPart);
 }
 
+class FetchAllExercises extends ExerciseEvent {
+}
+
 class CreateExe extends ExerciseEvent {
   final exeModel.Exercise exe;
   CreateExe(this.exe);

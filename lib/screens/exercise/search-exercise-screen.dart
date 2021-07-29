@@ -9,7 +9,6 @@ import 'package:tracktion/shapes/exercise-search-shape.dart';
 // import 'package:tracktion/models/database.dart';
 import 'package:tracktion/widgets/ErrorMessage.dart';
 import 'package:tracktion/widgets/body-part.dart';
-import 'package:tracktion/widgets/inputs/InputSearch.dart';
 import 'package:tracktion/widgets/items/ExerciseItem.dart';
 
 import '../../colors/custom_colors.dart';
@@ -46,7 +45,6 @@ class _SearchExerciseState extends State<SearchExercise> {
 
   @override
   Widget build(BuildContext context) {
-    final query = MediaQuery.of(context);
     Map<String, dynamic> args = ModalRoute.of(context).settings.arguments;
     bodyPart = args["body"] ?? BodyPartEnum.Arms;
     readOnly = !!args["readOnly"];
@@ -66,27 +64,30 @@ class _SearchExerciseState extends State<SearchExercise> {
         children: [
           AbstractShape(
             width: double.infinity,
-            height: query.size.height,
+            height: MediaQuery.of(context).size.height,
             shape: ExerciseSearchShape(Theme.of(context).colorScheme.routines),
           ),
-          Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 15, horizontal: 0),
-                    child: Hero(
-                        tag: bodyPart,
-                        child: BodyPartWidget(
-                          bodyPart,
-                          withTitle: false,
-                          width: 150,
-                          height: 150,
-                        )),
-                  ),
-                  BlocBuilder<ExerciseBloc, ExerciseState>(
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 0),
+                child: Hero(
+                    tag: bodyPart,
+                    child: BodyPartWidget(
+                      bodyPart,
+                      withTitle: false,
+                      width: 150,
+                      height: 150,
+                    )),
+              ),
+              Expanded(
+                flex: 1,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 25, horizontal: 15),
+                  child: BlocBuilder<ExerciseBloc, ExerciseState>(
                     builder: (ctx, state) {
                       Widget main;
 
@@ -101,6 +102,11 @@ class _SearchExerciseState extends State<SearchExercise> {
                                       .contains(search.toLowerCase()))
                                   .toList();
 
+                              if (!exs.hasData || exes.isEmpty)
+                                return Center(
+                                  child: Text("We don't have exercises here sorry."), // TODO: make it pretty.
+                                );
+
                               return ListView.builder(
                                 shrinkWrap: true,
                                 reverse: true,
@@ -114,7 +120,11 @@ class _SearchExerciseState extends State<SearchExercise> {
                                           ExerciseWorkOut.routeName,
                                           arguments: {"exercise": exes[i]});
                                     },
-                                    child: ExerciseItem(exes[i])),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 5),
+                                      child: ExerciseItem(exes[i]),
+                                    )),
                                 itemCount: exes.length,
                               );
                             }
@@ -143,25 +153,21 @@ class _SearchExerciseState extends State<SearchExercise> {
                             text: state.message);
                       }
 
-                      return Container(
-                        height: query.size.height * 0.46,
-                        width: query.size.width * 0.9,
-                        child: main,
-                      );
+                      return main;
                     },
                   ),
-                  Container(
-                    width: 350,
-                    margin: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
-                    child: InputSearch(
-                        change: searchHandler,
-                        controller: _controller,
-                        textColor: Colors.white,
-                        fillColor: Colors.transparent),
-                  )
-                ],
+                ),
               ),
-            ),
+              // Container(
+              //   width: 350,
+              //   margin: EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+              //   child: InputSearch(
+              //       change: searchHandler,
+              //       controller: _controller,
+              //       textColor: Colors.white,
+              //       fillColor: Colors.transparent),
+              // )
+            ],
           )
         ],
       ),

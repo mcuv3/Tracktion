@@ -7,6 +7,11 @@ class ExercisesLoading extends ExerciseState {}
 
 class ExercisesInitial extends ExerciseState {}
 
+class AllExercises extends ExerciseState {
+  final List<exeApp.Exercise> exes;
+  AllExercises(this.exes);
+}
+
 class Exercises extends ExerciseState {
   // final List<exeModel.Exercise> exs;
   // Exercises(this.exs);

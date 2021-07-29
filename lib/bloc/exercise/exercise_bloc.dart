@@ -24,6 +24,8 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       yield* _fetchExes(event);
     } else if (event is CreateExe) {
       yield* _createExe(event);
+    } else if (event is FetchAllExercises) {
+      yield* _fetchAllExercises(event);
     } else if (event is EditExe) {
       yield* _editExe(event);
     } else if (event is DeleteExe) {
@@ -111,6 +113,16 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       print(e);
       yield ExerciseFailure(
           message: "Cannot create the exercise", statusCode: 400);
+    }
+  }
+
+  Stream<ExerciseState> _fetchAllExercises( FetchAllExercises e ) async* {
+    yield ExercisesLoading();
+    try {
+      final exes = await db.streamExerciseByName();
+      yield AllExercises(exes);
+    } catch (e) {
+      print(e);
     }
   }
 
