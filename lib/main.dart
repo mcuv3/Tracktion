@@ -186,7 +186,9 @@ class _TracktionAppState extends State<TracktionApp> {
                 WorkOutScreen.routeName: (ctx) => WorkOutScreen(),
                 RoutineMainScreen.routeName: (ctx) => RoutineMainScreen(),
                 RoutinesScreen.routeName: (ctx) => RoutinesScreen(),
-                WorkoutRoutinePicker.routeName: (ctx) => WorkoutRoutinePicker()
+                WorkoutRoutinePicker.routeName: (ctx) => WorkoutRoutinePicker(),
+                ConfigurationUserScreen.routeName: (ctx) =>
+                    ConfigurationUserScreen(),
               },
             ),
           )),

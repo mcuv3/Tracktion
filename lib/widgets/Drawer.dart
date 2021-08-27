@@ -68,7 +68,7 @@ class MainDrawer extends StatelessWidget {
             ),
             ListTile(
               leading: FaIcon(
-                FontAwesomeIcons.blog,
+                FontAwesomeIcons.thList,
                 size: 20,
               ),
               title: Text("Routines"),
@@ -80,12 +80,13 @@ class MainDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: FaIcon(FontAwesomeIcons.userAlt),
-              title: Text("Profile"),
+              leading: FaIcon(FontAwesomeIcons.cog),
+              title: Text("Preferences"),
               onTap: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => WorkOutScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => ConfigurationUserScreen()),
                 );
               },
             ),

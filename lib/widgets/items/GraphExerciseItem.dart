@@ -38,12 +38,12 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
   bool showMaxWeigths = false;
 
   List<double> maxWeigthInSets;
-  List<double> maxVolumeInSets;
+  List<double> volumeIntervals;
 
   @override
   void initState() {
     maxWeigthInSets = getMaxWeigth(widget.set.exercise.lastWorkouts);
-    maxVolumeInSets = getMaxVolume(widget.set.exercise.lastWorkouts);
+    volumeIntervals = getVolumeIntervals(widget.set.exercise.lastWorkouts);
     super.initState();
   }
 
@@ -117,7 +117,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                       right: 18.0, left: 12.0, top: 12, bottom: 12),
                   child: LineChart(showMaxWeigths
                       ? maxWeigths(sets, maxWeigthInSets)
-                      : volumens(sets, maxVolumeInSets)),
+                      : volumens(sets, volumeIntervals)),
                 ),
               ),
             ],
@@ -199,9 +199,10 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
     );
   }
 
-  LineChartData volumens(List<SetResume> sets, List<double> bounderies) {
-    var interval = ((bounderies[0] - bounderies[1]) / 8);
-    interval += 10 - (interval % 10);
+  LineChartData volumens(List<SetResume> sets, List<double> intervals) {
+    var interval = ((intervals[1] - intervals[0]) / 10);
+    // interval += 10 - (interval % 10);
+    print(intervals);
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -249,8 +250,8 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
           border: Border.all(color: const Color(0xff37434d), width: 1)),
       minX: 0,
       maxX: sets.length.toDouble() - 1,
-      minY: 0,
-      maxY: bounderies[0],
+      minY: intervals[0],
+      maxY: intervals[1],
       lineBarsData: [
         LineChartBarData(
           spots: sets.reversed
@@ -273,8 +274,8 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
     );
   }
 
-  LineChartData maxWeigths(List<SetResume> sets, List<double> bounderies) {
-    final interval = (bounderies[0] - bounderies[1]) / 8;
+  LineChartData maxWeigths(List<SetResume> sets, List<double> intervals) {
+    final interval = (intervals[0] - intervals[1]) / 8;
     return LineChartData(
       lineTouchData: LineTouchData(enabled: false),
       gridData: FlGridData(
@@ -324,7 +325,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
       minX: 0,
       maxX: sets.length.toDouble() - 1,
       minY: 0,
-      maxY: bounderies[0],
+      maxY: intervals[0],
       lineBarsData: [
         LineChartBarData(
           spots: sets.reversed

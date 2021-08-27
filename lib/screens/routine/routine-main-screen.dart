@@ -6,6 +6,7 @@ import 'package:tracktion/bloc/routine-group/routine_bloc.dart';
 import 'package:tracktion/colors/custom_colors.dart';
 import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/screens/routine/routines-screen.dart';
+import 'package:tracktion/widgets/Drawer.dart';
 import 'package:tracktion/widgets/forms/SaveGroupRoutine.dart';
 import 'package:tracktion/widgets/items/GroupRoutineItem.dart';
 import 'package:tracktion/widgets/modals/showAnimatedModal.dart';
@@ -92,6 +93,7 @@ class _RoutineMainScreenState extends State<RoutineMainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        drawer: MainDrawer(),
         appBar: AppBar(
           title: Text("My Group Routines"),
         ),
