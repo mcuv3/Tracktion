@@ -64,9 +64,8 @@ class BodyPartsScreen extends StatelessWidget {
                     searchMode = false;
 
                     if (exe != null) {
-                      Navigator.of(context).pushNamed(
-                                          ExerciseWorkOut.routeName,
-                                          arguments: {"exercise": exe});
+                      Navigator.of(context).pushNamed(ExerciseWorkOut.routeName,
+                          arguments: {"exercise": exe});
                     }
                   }
                 },
@@ -171,8 +170,7 @@ class DataSearch<T> extends SearchDelegate<T> {
 
     return ListView.builder(
       itemBuilder: (context, i) => GestureDetector(
-          onTap: () => close(ctx,data[i]),
-          child: build(context, items[i])),
+          onTap: () => close(ctx, data[i]), child: build(context, items[i])),
       itemCount: items.length,
     );
   }

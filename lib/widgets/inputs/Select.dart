@@ -2,22 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:tracktion/util/bottomSheetOptions.dart';
 import 'package:tracktion/util/enumToString.dart';
 
-class Select<T> extends StatelessWidget {
-  const Select({Key key, this.value, this.onSelect, this.options})
-      : super(key: key);
+class Select<T> extends StatefulWidget {
+  Select({Key key, this.value, this.onSelect, this.options}) : super(key: key);
 
   final Function(T) onSelect;
   final T value;
   final List<T> options;
 
   @override
+  _SelectState<T> createState() => _SelectState<T>();
+}
+
+class _SelectState<T> extends State<Select<T>> {
+  bool isSelected = false;
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         bottomSheetOptions(
-            options: options,
+            options: widget.options,
             cb: (option) {
-              onSelect(option);
+              widget.onSelect(option);
+              if (!isSelected)
+                setState(() {
+                  isSelected = true;
+                });
             },
             context: context);
       },
@@ -39,8 +49,12 @@ class Select<T> extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 10),
-              child: Text(enumToString(value),
-                  style: TextStyle(color: Colors.black, fontSize: 16)),
+              child: Text(enumToString(widget.value),
+                  style: TextStyle(
+                      color: isSelected
+                          ? Colors.black
+                          : Colors.black.withOpacity(0.6),
+                      fontSize: 16)),
             ),
             Icon(Icons.expand_more)
           ],

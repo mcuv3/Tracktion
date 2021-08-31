@@ -6,6 +6,7 @@ import 'package:tracktion/screens/exercise/body-parts-screen.dart';
 import 'package:tracktion/screens/index.dart';
 import 'package:tracktion/screens/routine/routine-main-screen.dart';
 import 'package:tracktion/widgets/Drawer.dart';
+import 'package:tracktion/widgets/SvgImage.dart';
 
 import '../colors/custom_colors.dart';
 
@@ -13,24 +14,23 @@ class MainScreen extends StatelessWidget {
   static const routeName = "/home";
 
   Widget makeFeatureBox(
-      String text, Color bg, String route, BuildContext context,
+      String text, Color bg, String route, BuildContext context, int n,
       [Color colorText = Colors.black]) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context).pushNamed(route);
-      },
-      child: Container(
-        height: 100,
-        decoration:
-            BoxDecoration(borderRadius: BorderRadius.circular(23), color: bg),
-        child: Center(
-          child: Text(
+    return InkWell(
+        onTap: () {
+          Navigator.of(context).pushNamed(route);
+        },
+        child: SvgImage(
+          "assets/poses/$n.svg",
+          height: 200,
+          width: 200,
+          bgColor: Colors.white,
+          text: Text(
             text,
-            style: TextStyle(color: colorText, fontSize: 24),
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.routines, fontSize: 18),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   @override
@@ -56,8 +56,7 @@ class MainScreen extends StatelessWidget {
             return FaIcon(FontAwesomeIcons.archway);
         }),
         iconTheme: IconThemeData(color: Colors.black),
-        backgroundColor: Colors.white,
-        shadowColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
           IconButton(
@@ -93,28 +92,32 @@ class MainScreen extends StatelessWidget {
                               vertical: 0, horizontal: 20),
                           children: [
                             makeFeatureBox(
-                                'Excercise',
-                                Theme.of(context).colorScheme.exercise,
-                                BodyPartsScreen.routeName,
-                                context,
-                                Colors.white),
+                              'Excercise',
+                              Theme.of(context).colorScheme.exercise,
+                              BodyPartsScreen.routeName,
+                              context,
+                              1,
+                              Colors.white,
+                            ),
                             makeFeatureBox(
                                 'Routines',
                                 Theme.of(context).colorScheme.routines,
                                 RoutineMainScreen.routeName,
                                 context,
+                                5,
                                 Colors.white),
                             makeFeatureBox(
-                              'Workouts',
-                              Theme.of(context).colorScheme.workouts,
-                              WorkOutScreen.routeName,
-                              context,
-                            ),
+                                'Workouts',
+                                Theme.of(context).colorScheme.workouts,
+                                WorkOutScreen.routeName,
+                                context,
+                                3),
                             makeFeatureBox(
                                 'Analysis',
                                 Theme.of(context).colorScheme.analysis,
                                 BodyPartsScreen.routeName,
-                                context)
+                                context,
+                                6)
                           ],
                           crossAxisCount: 2,
                           crossAxisSpacing: 6,

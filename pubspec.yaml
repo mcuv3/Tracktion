@@ -68,6 +68,15 @@ flutter:
     - assets/vectors/routines/5.svg
     - assets/vectors/routines/6.svg
     - assets/icons/google_light.png
+    - assets/poses/1.svg
+    - assets/poses/2.svg
+    - assets/poses/3.svg
+    - assets/poses/4.svg
+    - assets/poses/5.svg
+    - assets/poses/6.svg
+    - assets/poses/7.svg
+    - assets/poses/8.svg
+    - assets/poses/9.svg
 
   fonts:
     - family: CarterOne

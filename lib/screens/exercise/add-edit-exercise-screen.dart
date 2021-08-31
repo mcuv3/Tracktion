@@ -153,13 +153,14 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
             ),
             StackAppBar(
               actions: [
-                IconButton(
-                  icon: Icon(
-                    Icons.delete_forever,
-                    size: 35,
-                  ),
-                  onPressed: deleteHandler,
-                )
+                if (editMode)
+                  IconButton(
+                    icon: Icon(
+                      Icons.delete_forever,
+                      size: 35,
+                    ),
+                    onPressed: deleteHandler,
+                  )
               ],
             ),
             Form(
@@ -175,8 +176,7 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
                       SizedBox(
                         height: 90,
                       ),
-                      Text('Body Part',
-                          style: Theme.of(context).textTheme.headline6),
+                      Text('Body Part', style: TextStyle(fontSize: 26)),
                       Container(
                         height: 120,
                         child: ListView.builder(
@@ -235,17 +235,20 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
                   context, ModalRoute.withName(SearchExercise.routeName));
             }
           },
-          child: Builder(
-            builder: (ctx) => Padding(
-              padding: EdgeInsets.all(8),
-              child: TextButton.icon(
-                onPressed: () => submit(ctx),
-                icon: Icon(Icons.save,
-                    color: Theme.of(context).colorScheme.exercise),
-                label: Text('Save',
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.exercise)),
+          child: Padding(
+            padding: EdgeInsets.all(8),
+            child: TextButton.icon(
+              style: TextButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.exercise),
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamed(AddEditBodyPartsScreen.routeName);
+              },
+              icon: Icon(
+                Icons.save,
+                color: Colors.white,
               ),
+              label: Text('Save', style: TextStyle(color: Colors.white)),
             ),
           ),
         ));
