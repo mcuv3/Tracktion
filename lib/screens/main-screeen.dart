@@ -28,7 +28,8 @@ class MainScreen extends StatelessWidget {
           text: Text(
             text,
             style: TextStyle(
-                color: Theme.of(context).colorScheme.routines, fontSize: 18),
+                color: Theme.of(context).colorScheme.routinesLight,
+                fontSize: 18),
           ),
         ));
   }

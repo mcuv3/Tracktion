@@ -8,3 +8,6 @@ List<BoxShadow> shadowList = [
     offset: Offset(0, 3), // changes position of shadow
   )
 ];
+
+BoxDecoration boxDecoration = BoxDecoration(
+    boxShadow: shadowList, borderRadius: BorderRadius.circular(5));

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tracktion/colors/constants.dart';
 import 'package:tracktion/models/app/body-parts.dart';
 
 import '../colors/custom_colors.dart';
@@ -69,9 +70,8 @@ class BodyPartWidget extends StatelessWidget {
                       ? bgColor
                       : Theme.of(context).colorScheme.routinesLight
                   : textColor,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                  width: 0.5, color: Theme.of(context).colorScheme.exercise)),
+              borderRadius: BorderRadius.circular(5),
+              boxShadow: shadowList),
           padding: EdgeInsets.all(8),
           width: width,
           height: height,

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/exercise-stream/exercisestream_cubit.dart';
+import 'package:tracktion/colors/constants.dart';
+import "package:tracktion/colors/custom_colors.dart";
 import 'package:tracktion/models/app/index.dart';
+import 'package:tracktion/util/enumToString.dart';
 import 'package:tracktion/widgets/body-part.dart';
-import 'package:tracktion/widgets/ui/Difficulty.dart';
-import 'package:tracktion/widgets/ui/ExerciseWkTitle.dart';
 
 class ExerciseStreamWidget extends StatelessWidget {
   final Function(Exercise) onLoadExercise;
@@ -61,6 +62,76 @@ class ExerciseStreamWidget extends StatelessWidget {
 
         return Text("");
       }),
+    );
+  }
+}
+
+class ExerciseWorkoutTitle extends StatelessWidget {
+  const ExerciseWorkoutTitle({
+    Key key,
+    @required this.exs,
+  }) : super(key: key);
+
+  final Exercise exs;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Colors.white,
+            boxShadow: shadowList),
+        padding: EdgeInsets.all(4),
+        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+        child: Text(
+          exs.name,
+          style: Theme.of(context).textTheme.headline6,
+          textAlign: TextAlign.start,
+        ),
+      ),
+    );
+  }
+}
+
+class DifficultyWidget extends StatelessWidget {
+  const DifficultyWidget({
+    Key key,
+    @required this.exs,
+  }) : super(key: key);
+
+  final Exercise exs;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            color: Colors.white,
+            boxShadow: shadowList),
+        padding: EdgeInsets.all(3),
+        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        child: RichText(
+          text: TextSpan(
+            children: <TextSpan>[
+              TextSpan(
+                  text: 'Difficulty : ',
+                  style: TextStyle(
+                      fontFamily: "CarterOne",
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.exercise)),
+              TextSpan(
+                  text: ' ${enumToString(exs.difficulty)}',
+                  style: TextStyle(
+                      fontFamily: "CarterOne",
+                      color: Theme.of(context).colorScheme.routines)),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

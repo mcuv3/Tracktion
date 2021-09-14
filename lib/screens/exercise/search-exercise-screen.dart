@@ -104,7 +104,8 @@ class _SearchExerciseState extends State<SearchExercise> {
 
                               if (!exs.hasData || exes.isEmpty)
                                 return Center(
-                                  child: Text("We don't have exercises here sorry."), // TODO: make it pretty.
+                                  child: Text(
+                                      "We don't have exercises here sorry."), // TODO: make it pretty.
                                 );
 
                               return ListView.builder(

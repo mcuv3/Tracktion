@@ -15,6 +15,7 @@ import 'package:tracktion/widgets/items/reps-item.dart';
 import 'package:tracktion/widgets/modals/NoteInput.dart';
 import 'package:tracktion/widgets/modals/RepInputs.dart';
 import 'package:tracktion/widgets/modals/shouldSave.dart';
+import 'package:tracktion/widgets/modals/showAnimatedModal.dart';
 import 'package:tracktion/widgets/streams/ExerciseStream.dart';
 import 'package:tracktion/widgets/ui/TracktionButton.dart';
 
@@ -89,11 +90,16 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
     });
   }
 
-  void editRepHandler(Rep rep, int indexRep) {
-    repInputsModal(context, rep).then((repUpadated) {
-      setState(() {
-        reps[indexRep] = repUpadated;
-      });
+  void editRepHandler(Rep rep, int indexRep) async {
+    var values = {
+      "reps": rep.reps,
+      "weight": rep.weight,
+      "rpe": rep.rpe,
+    };
+
+    Rep newRep = await showAnimatedModal(context, WorkoutRepConfiguration(rep));
+    setState(() {
+      reps[indexRep] = newRep;
     });
   }
 
@@ -147,7 +153,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
               width: double.infinity,
               height: query.size.height,
               shape:
-                  ShapeAddExerciseDown(Theme.of(context).colorScheme.analysis),
+                  ShapeAddExerciseDown(Theme.of(context).colorScheme.exercise),
             ),
             StackAppBar(
               actions: [
@@ -158,7 +164,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                     }
                     return GestureDetector(
                       onTap: () {
-                         // TODO: change to a different library date time picker
+                        // TODO: change to a different library date time picker
                         // DatePicker.showDatePicker(context,
                         //     initialDateTime: date, onConfirm: (date, ints) {
                         //   setState(() {
@@ -176,7 +182,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                               border: Border.all(color: Colors.black, width: 2),
-                              borderRadius: BorderRadius.circular(10)),
+                              borderRadius: BorderRadius.circular(5)),
                           padding: EdgeInsets.all(5),
                           child: Text(
                             DateFormat('dd/MM/yyyy').format(date),
@@ -186,12 +192,15 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                   },
                 ),
                 IconButton(
-                  icon: Icon(Icons.info),
+                  icon: Icon(
+                    Icons.info,
+                    color: Colors.white,
+                  ),
                   iconSize: 26,
                   onPressed: () {},
                 ),
                 IconButton(
-                  icon: Icon(Icons.edit),
+                  icon: Icon(Icons.edit, color: Colors.white),
                   iconSize: 26,
                   onPressed: () {
                     Navigator.of(context).pushNamed(
@@ -224,13 +233,14 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                             itemBuilder: (ctx, i) => Dismissible(
                               key: Key(reps[i].id.toString()),
                               onDismissed: (_) => removeRepHandler(i),
-                              child: GestureDetector(
-                                onTap: () => editRepHandler(reps[i], i),
+                              child: Container(
+                                margin: EdgeInsets.symmetric(vertical: 5),
                                 child: RepItem(
                                   reps: reps[i].reps,
                                   weight: reps[i].weight,
                                   rpe: reps[i].rpe,
                                   isExpanded: true,
+                                  onTap: () => editRepHandler(reps[i], i),
                                   actions: IconButton(
                                     visualDensity: VisualDensity.compact,
                                     icon: Icon(

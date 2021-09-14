@@ -3,59 +3,67 @@ import 'package:tracktion/models/app/rep.dart';
 
 import '../../colors/custom_colors.dart';
 
-Future<Rep> repInputsModal(BuildContext context, Rep rep) {
-  var values = {
-    "reps": rep.reps,
-    "weight": rep.weight,
-    "rpe": rep.rpe,
-  };
+class WorkoutRepConfiguration extends StatelessWidget {
+  const WorkoutRepConfiguration(this.rep);
 
-  return showDialog(
-      context: context,
-      builder: (_) => SimpleDialog(
-            children: [
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                width: double.infinity,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TitleRepInput(title: "Reps"),
-                    Container(
-                      height: 100,
-                      child: RepInput(
-                        values: values,
-                        inputName: "reps",
-                      ),
-                    ),
-                    TitleRepInput(title: "Weight (kg)"),
-                    Container(
-                      height: 100,
-                      child: RepInput(
-                        values: values,
-                        inputName: "weight",
-                        isFloat: true,
-                      ),
-                    ),
-                    TitleRepInput(title: "RPE"),
-                    Container(
-                      height: 100,
-                      child: RepInput(
-                        values: values,
-                        inputName: "rpe",
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          )).then((_) => Rep(
-      id: rep.id,
-      reps: values["reps"],
-      weight: values["weight"],
-      rpe: values["rpe"],
-      notes: rep.notes,
-      setId: rep.setId));
+  final Rep rep;
+
+  @override
+  Widget build(BuildContext context) {
+    var values = {
+      "reps": rep.reps,
+      "weight": rep.weight,
+      "rpe": rep.rpe,
+    };
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pop(Rep(
+            id: rep.id,
+            reps: values["reps"],
+            weight: values["weight"],
+            rpe: values["rpe"],
+            notes: rep.notes,
+            setId: rep.setId));
+        return true;
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        width: double.infinity,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TitleRepInput(title: "Reps"),
+            Container(
+              height: 100,
+              child: RepInput(
+                values: values,
+                inputName: "reps",
+              ),
+            ),
+            TitleRepInput(title: "Weight (kg)"),
+            Container(
+              height: 100,
+              child: RepInput(
+                values: values,
+                inputName: "weight",
+                isFloat: true,
+              ),
+            ),
+            TitleRepInput(title: "RPE"),
+            Container(
+              height: 100,
+              child: RepInput(
+                values: values,
+                inputName: "rpe",
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class TitleRepInput extends StatelessWidget {
@@ -65,18 +73,13 @@ class TitleRepInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-        decoration:
-            BoxDecoration(border: Border.all(width: 0.2, color: Colors.black)),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 22,
-          ),
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 22,
         ),
       ),
     );
@@ -136,57 +139,60 @@ class _RepInputState extends State<RepInput> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Container(
-        height: 60,
-        decoration: BoxDecoration(color: Colors.black),
-        child: IconButton(
-          color: Colors.black,
-          icon: Icon(
-            Icons.horizontal_rule,
-            color: Colors.white,
+    return Container(
+      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Container(
+          height: 60,
+          decoration: BoxDecoration(color: Colors.black),
+          child: IconButton(
+            color: Colors.black,
+            icon: Icon(
+              Icons.horizontal_rule,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              changeValueHandler(
+                  value: controller.text,
+                  increment: widget.isFloat ? -2.5 : -1);
+            },
           ),
-          onPressed: () {
-            changeValueHandler(
-                value: controller.text, increment: widget.isFloat ? -2.5 : -1);
-          },
         ),
-      ),
-      Container(
-        decoration:
-            BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
-        width: 100,
-        height: 60,
-        child: TextFormField(
-          textAlign: TextAlign.center,
-          controller: controller,
-          onFieldSubmitted: (val) {
-            changeValueHandler(value: val);
-          },
-          showCursor: false,
-          cursorColor: Colors.black,
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.analysis, fontSize: 26),
-          keyboardType: TextInputType.number,
-          decoration: InputDecoration(
-              border: InputBorder.none, contentPadding: EdgeInsets.all(10)),
-        ),
-      ),
-      Container(
-        height: 60,
-        decoration: BoxDecoration(color: Colors.black),
-        child: IconButton(
-          color: Colors.black,
-          icon: Icon(
-            Icons.add,
-            color: Colors.white,
+        Container(
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.black, width: 0.5)),
+          width: 100,
+          height: 60,
+          child: TextFormField(
+            textAlign: TextAlign.center,
+            controller: controller,
+            onFieldSubmitted: (val) {
+              changeValueHandler(value: val);
+            },
+            showCursor: false,
+            cursorColor: Colors.black,
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.analysis, fontSize: 26),
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+                border: InputBorder.none, contentPadding: EdgeInsets.all(10)),
           ),
-          onPressed: () {
-            changeValueHandler(
-                value: controller.text, increment: widget.isFloat ? 2.5 : 1);
-          },
         ),
-      ),
-    ]);
+        Container(
+          height: 60,
+          decoration: BoxDecoration(color: Colors.black),
+          child: IconButton(
+            color: Colors.black,
+            icon: Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              changeValueHandler(
+                  value: controller.text, increment: widget.isFloat ? 2.5 : 1);
+            },
+          ),
+        ),
+      ]),
+    );
   }
 }

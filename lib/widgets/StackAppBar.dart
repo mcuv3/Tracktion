@@ -14,7 +14,8 @@ class StackAppBar extends StatelessWidget {
         SliverAppBar(
           actions: actions,
           backgroundColor: Colors.transparent,
-          floating: true,
+          floating: false,
+          backwardsCompatibility: false,
           iconTheme: IconThemeData(
             color: Colors.black,
           ),

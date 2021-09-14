@@ -8,6 +8,7 @@ import 'package:tracktion/models/app/set.dart';
 import 'package:tracktion/widgets/items/WorkoutItem.dart';
 import 'package:tracktion/widgets/modals/RepInputs.dart';
 import 'package:tracktion/widgets/modals/confirmationModal.dart';
+import 'package:tracktion/widgets/modals/showAnimatedModal.dart';
 
 class WorkoutPickedScreen extends StatefulWidget {
   final DateTime datePicked;
@@ -70,7 +71,8 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
   }
 
   void saveRepHandler({Rep rep, int setIndex, int repIndex}) async {
-    final updatedRep = await repInputsModal(context, rep);
+    final updatedRep =
+        await showAnimatedModal(context, WorkoutRepConfiguration(rep));
     BlocProvider.of<WorkoutpickerBloc>(context).add(
         SaveRepPicker(rep: updatedRep, setIndex: setIndex, repIndex: repIndex));
   }

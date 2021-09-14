@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/models/app/body-parts.dart';
 import 'package:tracktion/models/app/exercise.dart';
@@ -9,7 +10,6 @@ import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/create-exercise.dart';
 import 'package:tracktion/util/showMessage.dart';
 import 'package:tracktion/util/showModalConfirmation.dart';
-import 'package:tracktion/widgets/StackAppBar.dart';
 import 'package:tracktion/widgets/body-part.dart';
 import 'package:tracktion/widgets/inputs/Select.dart';
 import 'package:tracktion/widgets/inputs/input.dart';
@@ -151,18 +151,6 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
               shape:
                   CreateExerciseShape(Theme.of(context).colorScheme.routines),
             ),
-            StackAppBar(
-              actions: [
-                if (editMode)
-                  IconButton(
-                    icon: Icon(
-                      Icons.delete_forever,
-                      size: 35,
-                    ),
-                    onPressed: deleteHandler,
-                  )
-              ],
-            ),
             Form(
               key: form,
               child: Padding(
@@ -219,6 +207,14 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
                   ),
                 ),
               ),
+            ),
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 25, horizontal: 10),
+              child: IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: FaIcon(FontAwesomeIcons.arrowLeft)),
             )
           ],
         ),
