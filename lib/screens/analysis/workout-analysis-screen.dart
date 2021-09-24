@@ -10,6 +10,7 @@ class WorkoutAnalysisScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      shrinkWrap: true,
       itemBuilder: (context, i) => GraphExerciseItem(sets[i]),
       itemCount: sets.length,
     );

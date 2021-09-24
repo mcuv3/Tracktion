@@ -17,10 +17,18 @@ Future<dynamic> showAnimatedModal<T>(BuildContext context, Widget widget) {
       },
       transitionDuration: Duration(milliseconds: 300),
       pageBuilder: (context, animation1, animation2) {
-        return AlertDialog(
-          shape: OutlineInputBorder(borderRadius: BorderRadius.circular(16.0)),
-          contentPadding: EdgeInsets.all(0),
-          content: widget,
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: AlertDialog(
+            shape:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(16.0)),
+            contentPadding: EdgeInsets.all(0),
+            content: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white),
+                child: widget),
+          ),
         );
       });
 }

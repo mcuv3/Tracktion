@@ -123,6 +123,7 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
     return RoutinesService(
       editMode: editMode,
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text('Routines'),
           actions: [

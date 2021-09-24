@@ -37,6 +37,7 @@ class ConfigurationUserScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       drawer: MainDrawer(),
       appBar: AppBar(
         title: Text("Preferences"),

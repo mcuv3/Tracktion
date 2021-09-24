@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/models/app/body-parts.dart';
 import 'package:tracktion/models/app/exercise.dart';
+import 'package:tracktion/screens/exercise/add-edit-exercise-screen.dart';
 import 'package:tracktion/screens/workout/exercise-workout-screen.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/exercise-search-shape.dart';
@@ -49,6 +50,7 @@ class _SearchExerciseState extends State<SearchExercise> {
     bodyPart = args["body"] ?? BodyPartEnum.Arms;
     readOnly = !!args["readOnly"];
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
           elevation: 0,
           iconTheme: IconThemeData(
@@ -104,8 +106,36 @@ class _SearchExerciseState extends State<SearchExercise> {
 
                               if (!exs.hasData || exes.isEmpty)
                                 return Center(
-                                  child: Text(
-                                      "We don't have exercises here sorry."), // TODO: make it pretty.
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        "No exercises found :(",
+                                        style: TextStyle(
+                                          color: Colors.white.withOpacity(0.8),
+                                          fontSize: 18,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      OutlinedButton.icon(
+                                        label: Text('Add exercises'),
+                                        icon: Icon(Icons.add),
+                                        style: OutlinedButton.styleFrom(
+                                          primary: Theme.of(context)
+                                              .colorScheme
+                                              .exercise,
+                                          backgroundColor: Colors.white,
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).pushNamed(
+                                              AddEditBodyPartsScreen.routeName);
+                                        },
+                                      ),
+                                      SizedBox(
+                                        height: 50,
+                                      )
+                                    ],
+                                  ),
                                 );
 
                               return ListView.builder(

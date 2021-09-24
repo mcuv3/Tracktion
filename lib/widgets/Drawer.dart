@@ -11,6 +11,7 @@ class MainDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 190,
+      decoration: BoxDecoration(color: Colors.white),
       child: Drawer(
         elevation: 3,
         child: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {

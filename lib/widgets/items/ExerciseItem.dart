@@ -45,6 +45,7 @@ class ExerciseItem extends StatelessWidget {
             exs.name,
             style: TextStyle(
               fontSize: 20,
+              color: Theme.of(context).colorScheme.exercise,
             ),
             textAlign: TextAlign.start,
           ),

@@ -22,6 +22,7 @@ class SvgImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 3,
+      color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5),
       ),

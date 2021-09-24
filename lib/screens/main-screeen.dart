@@ -28,7 +28,10 @@ class MainScreen extends StatelessWidget {
           text: Text(
             text,
             style: TextStyle(
-                color: Theme.of(context).colorScheme.routinesLight,
+                color: Theme.of(context)
+                    .colorScheme
+                    .routinesLight
+                    .withOpacity(0.8),
                 fontSize: 18),
           ),
         ));
@@ -36,7 +39,12 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Theme.of(context).textTheme.apply(
+          bodyColor: Colors.pink,
+          displayColor: Colors.pink,
+        );
     return Scaffold(
+      backgroundColor: Colors.white,
       drawer: MainDrawer(),
       appBar: AppBar(
         leading: BlocBuilder<AuthCubit, AuthState>(builder: (context, state) {
@@ -70,68 +78,56 @@ class MainScreen extends StatelessWidget {
               }),
         ],
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 20, horizontal: 20),
-                      child: Text("Start hitting your PR’s",
-                          style: TextStyle(color: Colors.black, fontSize: 24)),
-                    ),
-                    Expanded(
-                      child: Container(
-                        child: GridView.count(
-                          primary: false,
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 0, horizontal: 20),
-                          children: [
-                            makeFeatureBox(
-                              'Excercise',
-                              Theme.of(context).colorScheme.exercise,
-                              BodyPartsScreen.routeName,
-                              context,
-                              1,
-                              Colors.white,
-                            ),
-                            makeFeatureBox(
-                                'Routines',
-                                Theme.of(context).colorScheme.routines,
-                                RoutineMainScreen.routeName,
-                                context,
-                                5,
-                                Colors.white),
-                            makeFeatureBox(
-                                'Workouts',
-                                Theme.of(context).colorScheme.workouts,
-                                WorkOutScreen.routeName,
-                                context,
-                                3),
-                            makeFeatureBox(
-                                'Analysis',
-                                Theme.of(context).colorScheme.analysis,
-                                BodyPartsScreen.routeName,
-                                context,
-                                6)
-                          ],
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 6,
-                          mainAxisSpacing: 12,
-                        ),
-                      ),
-                    )
-                  ],
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            child: Text("Start hitting your PR’s",
+                style: TextStyle(color: Colors.black, fontSize: 24)),
+          ),
+          Container(
+            height: 400,
+            child: GridView.count(
+              primary: false,
+              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+              children: [
+                makeFeatureBox(
+                  'Exercises',
+                  Theme.of(context).colorScheme.exercise,
+                  BodyPartsScreen.routeName,
+                  context,
+                  1,
+                  Colors.white,
                 ),
-              ),
+                makeFeatureBox(
+                    'Routines',
+                    Theme.of(context).colorScheme.routines,
+                    RoutineMainScreen.routeName,
+                    context,
+                    5,
+                    Colors.white),
+                makeFeatureBox(
+                    'Workouts',
+                    Theme.of(context).colorScheme.workouts,
+                    WorkOutScreen.routeName,
+                    context,
+                    3),
+                makeFeatureBox(
+                    'Analysis',
+                    Theme.of(context).colorScheme.analysis,
+                    BodyPartsScreen.routeName,
+                    context,
+                    6)
+              ],
+              crossAxisCount: 2,
+              crossAxisSpacing: 6,
+              mainAxisSpacing: 12,
             ),
-          ],
-        ),
+          ),
+          SizedBox(height: AppBar().preferredSize.height)
+        ],
       ),
     );
   }

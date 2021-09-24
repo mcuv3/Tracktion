@@ -143,6 +143,7 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
     final query = MediaQuery.of(context);
 
     return Scaffold(
+        backgroundColor: Colors.white,
         body: Stack(
           children: [
             AbstractShape(
@@ -164,7 +165,10 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
                       SizedBox(
                         height: 90,
                       ),
-                      Text('Body Part', style: TextStyle(fontSize: 26)),
+                      Text('Body Part',
+                          style: TextStyle(
+                              fontSize: 26,
+                              color: Theme.of(context).colorScheme.exercise)),
                       Container(
                         height: 120,
                         child: ListView.builder(
@@ -214,7 +218,10 @@ class _AddEditBodyPartsScreenState extends State<AddEditBodyPartsScreen> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  icon: FaIcon(FontAwesomeIcons.arrowLeft)),
+                  icon: FaIcon(
+                    FontAwesomeIcons.arrowLeft,
+                    color: Colors.black,
+                  )),
             )
           ],
         ),

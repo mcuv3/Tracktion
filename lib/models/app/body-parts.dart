@@ -11,18 +11,6 @@ enum BodyPartEnum {
   Calfs,
 }
 
-// BODY_PART_CHOICES = (
-//     (1, 'CHEST'),
-//     (2, 'BICEP'),
-//     (3, 'CALFS'),
-//     (4, 'HASTRINGS'),
-//     (5, 'QUADRICEPS'),
-//     (6, 'FEMORALS'),
-//     (7, 'SHOULDERS'),
-//     (8, 'Gluteus'),
-//     (9, 'BACK'),
-// )
-
 // TODO: migrate this to the new form.
 
 List<BodyPartEnum> toBodyPart(List<dynamic> bodyParts) => bodyParts.map((i) {

@@ -192,6 +192,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
       context: context,
       child: SafeArea(
         child: Scaffold(
+            backgroundColor: Colors.white,
             appBar: AppBar(
               actions: (delitionMode | sortMode)
                   ? [
@@ -239,8 +240,8 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                           child: IconDropDown(
                         icons: [
                           Icon(Icons.timeline),
-                          Icon(Icons.view_agenda),
-                          Icon(Icons.settings),
+                          // Icon(Icons.view_agenda
+                          // Icon(Icons.settings),
                         ],
                         backgroundColor: Theme.of(context).colorScheme.analysis,
                         iconColor: Colors.white,

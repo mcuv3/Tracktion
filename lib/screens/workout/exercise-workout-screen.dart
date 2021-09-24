@@ -2,15 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:tracktion/bloc/exercise-stream/exercisestream_cubit.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/app/exercise.dart';
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/app/rep.dart';
 import 'package:tracktion/screens/index.dart';
+import 'package:tracktion/screens/workout/calendar-picker-screen.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/add-exercise.dart';
 import 'package:tracktion/widgets/StackAppBar.dart';
+import 'package:tracktion/widgets/items/TracktionHeader.dart';
 import 'package:tracktion/widgets/items/reps-item.dart';
 import 'package:tracktion/widgets/modals/NoteInput.dart';
 import 'package:tracktion/widgets/modals/RepInputs.dart';
@@ -32,7 +35,9 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
   Exercise exs;
   List<Rep> reps = [];
   int setId;
-  var date = DateTime.now();
+
+  DateTime date =
+      DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
   var init = false;
 
   var fromWorkout = false;
@@ -110,24 +115,25 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
   }
 
   Future<bool> onPopHandler() async {
-    var shouldSave = true;
-    var willDelete = reps.length == 0 && fromWorkout;
+    var noReps = reps.length == 0;
 
-    if (!fromWorkout || willDelete)
-      shouldSave = await shouldSaveModal(
-          context, willDelete ? "This set will be deleted." : null);
+    if (noReps && !fromWorkout) return true;
 
-    if (!shouldSave && willDelete) return false;
+    var _set = SetWorkout(
+        id: setId, exercise: exs, reps: reps, maxWeigth: 0, volume: 0);
 
-    if (shouldSave) {
-      final set = SetWorkout(
-          id: setId, exercise: exs, reps: reps, maxWeigth: 0, volume: 0);
-      if (reps.length == 0 && fromWorkout)
-        BlocProvider.of<WorkoutBloc>(context).add(DeleteSet(set));
-      else
-        BlocProvider.of<WorkoutBloc>(context)
-            .add(SaveSet(set: set, date: date, isEdit: fromWorkout));
+    if (fromWorkout && noReps) {
+      var willDelete =
+          await shouldSaveModal(context, "This set will be deleted.");
+      if (willDelete) {
+        BlocProvider.of<WorkoutBloc>(context).add(DeleteSet(_set));
+        return true;
+      } else
+        return false;
     }
+
+    BlocProvider.of<WorkoutBloc>(context)
+        .add(SaveSet(set: _set, date: date, isEdit: fromWorkout));
     return true;
   }
 
@@ -143,6 +149,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
       onWillPop: onPopHandler,
       child: SafeArea(
         child: Scaffold(
+          backgroundColor: Colors.white,
           body: Stack(children: [
             AbstractShape(
               width: double.infinity,
@@ -163,17 +170,20 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                       date = state.date;
                     }
                     return GestureDetector(
-                      onTap: () {
-                        // TODO: change to a different library date time picker
-                        // DatePicker.showDatePicker(context,
-                        //     initialDateTime: date, onConfirm: (date, ints) {
-                        //   setState(() {
-                        //     date = date;
-                        //   });
-                        // },
-                        //     pickerTheme: DateTimePickerTheme(
-                        //         itemTextStyle:
-                        //             TextStyle(fontFamily: "CarterOne")));
+                      onTap: () async {
+                        DateTime selectedDate =
+                            await showCupertinoModalBottomSheet(
+                          expand: false,
+                          context: context,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) =>
+                              CalendarScreen(currentDate: date),
+                        );
+                        if (selectedDate == null) return;
+
+                        setState(() {
+                          date = selectedDate;
+                        });
                       },
                       child: Container(
                           margin:
@@ -181,12 +191,21 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                           height: 10,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black, width: 2),
+                              border: Border.all(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .exercise
+                                      .withOpacity(0.8),
+                                  width: 2),
                               borderRadius: BorderRadius.circular(5)),
                           padding: EdgeInsets.all(5),
                           child: Text(
                             DateFormat('dd/MM/yyyy').format(date),
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .exercise
+                                    .withOpacity(0.8)),
                           )),
                     );
                   },
@@ -194,13 +213,26 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                 IconButton(
                   icon: Icon(
                     Icons.info,
-                    color: Colors.white,
+                    color:
+                        Theme.of(context).colorScheme.exercise.withOpacity(0.8),
                   ),
                   iconSize: 26,
-                  onPressed: () {},
+                  onPressed: () {
+                    showAnimatedModal(
+                        context,
+                        TracktionNotifyModal(
+                          title: "Description",
+                          type: NotifyType.Info,
+                          description: exs.notes,
+                        ));
+                  },
                 ),
                 IconButton(
-                  icon: Icon(Icons.edit, color: Colors.white),
+                  icon: Icon(Icons.edit,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .exercise
+                          .withOpacity(0.8)),
                   iconSize: 26,
                   onPressed: () {
                     Navigator.of(context).pushNamed(

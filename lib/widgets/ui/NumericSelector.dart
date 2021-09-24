@@ -19,7 +19,7 @@ class NumericSelector extends StatelessWidget {
               size: 14,
             ),
             onPressed: () => onPress("left")),
-        Text(value.toString()),
+        Text(value.toString(), style: const TextStyle(color: Colors.black)),
         IconButton(
             visualDensity: VisualDensity.compact,
             icon: FaIcon(

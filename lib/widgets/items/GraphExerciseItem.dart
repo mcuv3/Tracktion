@@ -1,25 +1,18 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import "package:tracktion/colors/custom_colors.dart";
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/app/set.dart';
 import 'package:tracktion/util/analysis/getSetMaxWeigth.dart';
 
 import '../../util/mapWithIndex.dart';
 
-String getYLabel(double value) {
-  // var isCentenary = false;
-  // if (value > 100) {
-  //   value = value / 100;
-  //   isCentenary = true;
-  // }
-
-  return value.toInt().toString() + 'kg';
-}
-
+String getYLabel(double value) => value.toInt().toString() + 'kg';
 String getXLabel(DateTime date) =>
     date.month.toString() + '/' + date.day.toString();
 
+// TODO: make sure this works on every escenario.
 class GraphExerciseItem extends StatefulWidget {
   final SetWorkout set;
 
@@ -35,14 +28,14 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
     const Color(0xff02d39a),
   ];
 
-  bool showMaxWeigths = false;
+  bool showMaxWeights = false;
 
-  List<double> maxWeigthInSets;
+  List<double> maxWeightInSets;
   List<double> volumeIntervals;
 
   @override
   void initState() {
-    maxWeigthInSets = getMaxWeigth(widget.set.exercise.lastWorkouts);
+    maxWeightInSets = getMaxWeight(widget.set.exercise.lastWorkouts);
     volumeIntervals = getVolumeIntervals(widget.set.exercise.lastWorkouts);
     super.initState();
   }
@@ -76,34 +69,44 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   FittedBox(
-                    child: Text(
-                      widget.set.exercise.name,
-                      style: TextStyle(color: Colors.white, fontSize: 24),
+                      child: RichText(
+                    text: TextSpan(
+                      text: widget.set.exercise.name,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontFamily: "CarterOne"),
+                      children: <TextSpan>[
+                        TextSpan(
+                            text:
+                                showMaxWeights ? " weights/day" : " volume/day",
+                            style: TextStyle(
+                                color:
+                                    Theme.of(context).colorScheme.routinesLight,
+                                fontSize: 17)),
+                      ],
                     ),
-                  ),
+                  )),
                   Row(
                     children: [
                       IconButton(
                         visualDensity: VisualDensity.compact,
                         onPressed: () {
                           setState(() {
-                            showMaxWeigths = !showMaxWeigths;
+                            showMaxWeights = !showMaxWeights;
                           });
                         },
                         icon: FaIcon(
-                            showMaxWeigths
-                                ? FontAwesomeIcons.trophy
-                                : FontAwesomeIcons.weightHanging,
-                            color: showMaxWeigths ? Colors.red : Colors.white),
+                          showMaxWeights
+                              ? FontAwesomeIcons.toggleOn
+                              : FontAwesomeIcons.toggleOff,
+                          color: showMaxWeights
+                              ? Theme.of(context).colorScheme.routines
+                              : Colors.white,
+                          size: 28,
+                        ),
                       ),
-                      IconButton(
-                        visualDensity: VisualDensity.compact,
-                        onPressed: () {
-                          // TODO:  go to the full details screen
-                        },
-                        icon: FaIcon(FontAwesomeIcons.chartBar,
-                            color: Colors.white),
-                      ),
+                      // TODO:  go to the full details screen
                     ],
                   )
                 ]),
@@ -115,9 +118,9 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                 child: Container(
                   padding: const EdgeInsets.only(
                       right: 18.0, left: 12.0, top: 12, bottom: 12),
-                  child: LineChart(showMaxWeigths
-                      ? maxWeigths(sets, maxWeigthInSets)
-                      : volumens(sets, volumeIntervals)),
+                  child: LineChart(showMaxWeights
+                      ? maxWeights(sets, maxWeightInSets)
+                      : volumes(sets, volumeIntervals)),
                 ),
               ),
             ],
@@ -166,7 +169,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                     width: width * 0.45,
                     child: Column(
                       children: [
-                        Text("Max Weigth",
+                        Text("Max Weight",
                             style: TextStyle(
                                 color: Colors.white.withOpacity(0.5))),
                         Text("${widget.set.exercise.maxWeigth} kg",
@@ -199,10 +202,11 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
     );
   }
 
-  LineChartData volumens(List<SetResume> sets, List<double> intervals) {
+  LineChartData volumes(List<SetResume> sets, List<double> intervals) {
     var interval = ((intervals[1] - intervals[0]) / 10);
-    // interval += 10 - (interval % 10);
-    print(intervals);
+
+    if (interval < 1) interval = 1;
+
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -240,7 +244,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
             fontWeight: FontWeight.bold,
             fontSize: 15,
           ),
-          getTitles: (value) => getYLabel(value),
+          getTitles: getYLabel,
           reservedSize: 40,
           margin: 12,
         ),
@@ -274,8 +278,12 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
     );
   }
 
-  LineChartData maxWeigths(List<SetResume> sets, List<double> intervals) {
-    final interval = (intervals[0] - intervals[1]) / 8;
+  LineChartData maxWeights(List<SetResume> sets, List<double> intervals) {
+    var interval = (intervals[0] - intervals[1]) / 10;
+    print("object");
+    print(intervals);
+    if (interval < 1) interval = 1;
+
     return LineChartData(
       lineTouchData: LineTouchData(enabled: false),
       gridData: FlGridData(
@@ -314,7 +322,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
             fontWeight: FontWeight.bold,
             fontSize: 15,
           ),
-          getTitles: (value) => getYLabel(value),
+          getTitles: getYLabel,
           reservedSize: 28,
           margin: 12,
         ),
@@ -325,7 +333,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
       minX: 0,
       maxX: sets.length.toDouble() - 1,
       minY: 0,
-      maxY: intervals[0],
+      maxY: intervals[1],
       lineBarsData: [
         LineChartBarData(
           spots: sets.reversed

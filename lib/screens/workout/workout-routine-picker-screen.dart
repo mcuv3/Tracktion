@@ -46,6 +46,7 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         iconTheme: IconThemeData(color: Theme.of(context).primaryColor),
         automaticallyImplyLeading: false,

@@ -25,12 +25,12 @@ List<double> getVolumeIntervals(List<SetResume> sets) {
   return [_sets[0].volume, _sets[_sets.length - 1].volume];
 }
 
-List<double> getMaxWeigth(List<SetResume> sets) {
+List<double> getMaxWeight(List<SetResume> sets) {
   var _sets = [...sets];
 
-  if (_sets.length == 0) return [0.0, 0.0];
+  if (_sets.length == 0) return [0.0, 100.0];
 
-  if (_sets.length == 1) return [sets[0].maxWeigth, sets[0].maxWeigth];
+  if (_sets.length == 1) return [0.0, sets[0].maxWeigth];
 
   _sets.sort((s1, s2) => s2.maxWeigth.compareTo(s1.maxWeigth));
 

@@ -20,7 +20,7 @@ class GroupRoutineItem extends StatelessWidget {
       ClipRRect(
         child: Column(
           children: <Widget>[
-            Text(group.name),
+            Text(group.name, style: TextStyle(color: Colors.black)),
             buildVector(),
           ],
         ),

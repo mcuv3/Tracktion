@@ -54,62 +54,65 @@ class _RoutinesSetConfugurationState extends State<RoutinesSetConfuguration> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<RoutineBloc, RoutineState>(
-      builder: (context, state) {
-        if (state is Routine) {
-          return StreamBuilder(
-              stream: state.routine,
-              builder: (context, stream) {
-                final List<RoutineSetData> sets = stream.data;
+    return DefaultTextStyle(
+      style: TextStyle(color: Colors.black),
+      child: BlocBuilder<RoutineBloc, RoutineState>(
+        builder: (context, state) {
+          if (state is Routine) {
+            return StreamBuilder(
+                stream: state.routine,
+                builder: (context, stream) {
+                  final List<RoutineSetData> sets = stream.data;
 
-                if (stream.connectionState == ConnectionState.waiting)
-                  return Text("Waiting");
+                  if (stream.connectionState == ConnectionState.waiting)
+                    return Text("Waiting");
 
-                if (setsConfigured.isEmpty) {
-                  setsConfigured = sets;
-                }
+                  if (setsConfigured.isEmpty) {
+                    setsConfigured = sets;
+                  }
 
-                return Container(
-                  width: double.maxFinite,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                          width: double.maxFinite,
-                          margin: EdgeInsets.only(top: 12),
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                          decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.exercise),
-                          child: Text("Configure your sets",
-                              style: TextStyle(
-                                  fontSize: 18, color: Colors.white))),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.all(0),
-                        itemBuilder: (context, i) => SetRoutineItem(
-                          editMode: true,
-                          actionIcon: FontAwesomeIcons.edit,
-                          onDeleteSet: (r) => editHanlder(r, i),
-                          onTapSet: (r) {},
-                          set: setsConfigured[i],
+                  return Container(
+                    width: double.maxFinite,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                            width: double.maxFinite,
+                            margin: EdgeInsets.only(top: 12),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 4),
+                            decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.exercise),
+                            child: Text("Configure your sets",
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white))),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.all(0),
+                          itemBuilder: (context, i) => SetRoutineItem(
+                            editMode: true,
+                            actionIcon: FontAwesomeIcons.edit,
+                            onDeleteSet: (r) => editHanlder(r, i),
+                            onTapSet: (r) {},
+                            set: setsConfigured[i],
+                          ),
+                          itemCount: setsConfigured.length,
                         ),
-                        itemCount: setsConfigured.length,
-                      ),
-                      SaveFormActions(
-                          onCancel: () {
-                            Navigator.of(context).pop();
-                          },
-                          onSave: submitHanlder)
-                    ],
-                  ),
-                );
-              });
-        }
+                        SaveFormActions(
+                            onCancel: () {
+                              Navigator.of(context).pop();
+                            },
+                            onSave: submitHanlder)
+                      ],
+                    ),
+                  );
+                });
+          }
 
-        return Center(
-            child: CircularProgressIndicator(backgroundColor: Colors.red));
-      },
+          return Center(
+              child: CircularProgressIndicator(backgroundColor: Colors.red));
+        },
+      ),
     );
   }
 }

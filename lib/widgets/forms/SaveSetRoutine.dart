@@ -6,6 +6,7 @@ import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/models/tables/Routines.dart';
 import 'package:tracktion/util/enumToString.dart';
 import 'package:tracktion/widgets/inputs/input.dart';
+import 'package:tracktion/widgets/items/TracktionHeader.dart';
 import 'package:tracktion/widgets/modals/showAnimatedModal.dart';
 import 'package:tracktion/widgets/ui/Divided.dart';
 import 'package:tracktion/widgets/ui/NumericSelector.dart';
@@ -66,8 +67,9 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm>
     method = widget.set.copyMethod;
 
     if (method == CopyMethod.Percentage) {
-    mrController.value = TextEditingValue(text: widget.set.repmax.toString());
-    perController.value = TextEditingValue(text: widget.set.percentage.toString());
+      mrController.value = TextEditingValue(text: widget.set.repmax.toString());
+      perController.value =
+          TextEditingValue(text: widget.set.percentage.toString());
     }
 
     if (method == CopyMethod.Static) numSeries = widget.set.series;
@@ -75,26 +77,13 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm>
 
   void showDetails(CopyMethod copyMethod) {
     showAnimatedModal(
-        context,
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              height: 15,
-            ),
-            buildHeader(enumToString(copyMethod)),
-            SizedBox(
-              height: 10,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Text(
-                copyMethods[enumToString(copyMethod)],
-                textAlign: TextAlign.justify,
-              ),
-            ),
-          ],
-        ));
+      context,
+      TracktionNotifyModal(
+        type: NotifyType.Info,
+        title: enumToString(copyMethod),
+        description: copyMethods[enumToString(copyMethod)],
+      ),
+    );
   }
 
   void submit() {

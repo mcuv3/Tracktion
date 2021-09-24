@@ -42,6 +42,7 @@ class TracktionInput extends StatelessWidget {
         borderRadius: BorderRadius.circular(5),
       ),
       child: TextFormField(
+          style: TextStyle(color: Colors.black),
           validator: validator,
           initialValue: initialValue,
           controller: controller,
@@ -55,6 +56,7 @@ class TracktionInput extends StatelessWidget {
           keyboardType: keyboardType,
           decoration: InputDecoration(
               isCollapsed: true,
+              hintStyle: TextStyle(color: Colors.black.withOpacity(0.6)),
               errorStyle: TextStyle(color: errorColor, fontSize: 14),
               fillColor: Colors.white,
               filled: true,

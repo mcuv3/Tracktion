@@ -4,13 +4,12 @@ import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/auth-button.dart';
 import 'package:tracktion/widgets/forms/AuthForm.dart';
 
-// TODO: refactor all the login page to be more frendly with OAuth implmentation
-
 class AuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final query = MediaQuery.of(context);
     return Scaffold(
+        backgroundColor: Colors.white,
         resizeToAvoidBottomInset: false,
         body: Container(
           width: double.infinity,

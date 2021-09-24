@@ -4,6 +4,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import "package:tracktion/colors/custom_colors.dart";
 import 'package:tracktion/screens/index.dart';
 import 'package:tracktion/screens/workout/calendar-picker-screen.dart';
+import 'package:tracktion/screens/workout/workout-picker-screen.dart';
 import 'package:tracktion/screens/workout/workout-routine-picker-screen.dart';
 
 class WorkoutEmpty extends StatelessWidget {
@@ -49,12 +50,25 @@ class WorkoutEmpty extends StatelessWidget {
                   ),
                   label: Text('Add exercises')),
               TextButton.icon(
-                  onPressed: () {
-                    showCupertinoModalBottomSheet(
+                  onPressed: () async {
+                    DateTime date = await showCupertinoModalBottomSheet(
                       expand: false,
                       context: context,
                       backgroundColor: Colors.transparent,
-                      builder: (context) => CalendarScreen(currentDate),
+                      builder: (context) =>
+                          CalendarScreen(currentDate: currentDate),
+                    );
+                    if (date == null) return;
+
+                    showCupertinoModalBottomSheet(
+                      expand: true,
+                      isDismissible: false,
+                      context: context,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) => WorkoutPickedScreen(
+                        targetDate: currentDate,
+                        datePicked: date,
+                      ),
                     );
                   },
                   icon: FaIcon(
@@ -71,11 +85,11 @@ class WorkoutEmpty extends StatelessWidget {
                     .pushNamed(WorkoutRoutinePicker.routeName)
                     .then((routine) => routine != null
                         ? WorkOutScreenService.of(context)
-                            .routineSelectedHanlder(routine,currentDate)
+                            .routineSelectedHanlder(routine, currentDate)
                         : null);
               },
               icon: FaIcon(
-                FontAwesomeIcons.route,
+                FontAwesomeIcons.list,
                 size: 25,
                 color: Theme.of(context).colorScheme.analysis.withOpacity(0.7),
               ),

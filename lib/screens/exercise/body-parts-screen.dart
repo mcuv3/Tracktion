@@ -29,6 +29,7 @@ class BodyPartsScreen extends StatelessWidget {
     final readOnly = args != null && args["readOnly"] == true;
 
     return Scaffold(
+        backgroundColor: Colors.white,
         drawer: args != null ? null : MainDrawer(),
         appBar: AppBar(
           iconTheme: IconThemeData(color: Colors.black),
@@ -104,6 +105,7 @@ class BodyPartsScreen extends StatelessWidget {
                                 Hero(tag: body, child: BodyPartWidget(body))))
                         .toList(),
                   ),
+                  SizedBox(height: AppBar().preferredSize.height)
                 ],
               ),
             ))
@@ -168,10 +170,13 @@ class DataSearch<T> extends SearchDelegate<T> {
     final items =
         this.data.where((item) => onSearch(query.toLowerCase(), item)).toList();
 
-    return ListView.builder(
-      itemBuilder: (context, i) => GestureDetector(
-          onTap: () => close(ctx, data[i]), child: build(context, items[i])),
-      itemCount: items.length,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: ListView.builder(
+        itemBuilder: (context, i) => GestureDetector(
+            onTap: () => close(ctx, data[i]), child: build(context, items[i])),
+        itemCount: items.length,
+      ),
     );
   }
 }

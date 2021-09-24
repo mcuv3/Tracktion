@@ -31,7 +31,8 @@ class _RoutineMainScreenState extends State<RoutineMainScreen> {
       expand: false,
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Scaffold(body: SaveGroupRoutineForm()),
+      builder: (context) =>
+          Scaffold(backgroundColor: Colors.white, body: SaveGroupRoutineForm()),
     );
   }
 
@@ -39,6 +40,8 @@ class _RoutineMainScreenState extends State<RoutineMainScreen> {
     final shouldDelete = await showAnimatedModal<bool>(
         context,
         Container(
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(16)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -59,6 +62,7 @@ class _RoutineMainScreenState extends State<RoutineMainScreen> {
               Divider(
                 height: 0,
                 thickness: 1,
+                color: Colors.black,
               ),
               Container(
                 width: double.infinity,
@@ -86,13 +90,15 @@ class _RoutineMainScreenState extends State<RoutineMainScreen> {
       expand: false,
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Scaffold(body: SaveGroupRoutineForm(group)),
+      builder: (context) => Scaffold(
+          backgroundColor: Colors.white, body: SaveGroupRoutineForm(group)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         drawer: MainDrawer(),
         appBar: AppBar(
           title: Text("My Group Routines"),

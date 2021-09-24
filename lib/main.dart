@@ -23,6 +23,8 @@ import 'bloc/routine/routine_bloc.dart';
 import 'bloc/routines/routines_bloc.dart';
 import 'plugins/desktop/desktop.dart';
 
+// TODO: migrate to null safety
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -135,6 +137,7 @@ class _TracktionAppState extends State<TracktionApp> {
             ],
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
+              color: Colors.black,
               builder: (BuildContext context, Widget widget) {
                 Widget error = Text('...rendering error...');
                 if (widget is Scaffold || widget is Navigator)
@@ -150,9 +153,14 @@ class _TracktionAppState extends State<TracktionApp> {
                   primaryColor: Color(0xFFB71C1C),
                   accentColor: Color(0xFF9E9E9E),
                   visualDensity: VisualDensity.adaptivePlatformDensity,
+                  iconTheme: IconThemeData(color: Colors.black),
                   textTheme: TextTheme(
+                    caption: TextStyle(color: Colors.black),
                     headline6:
                         TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ).apply(
+                    bodyColor: Colors.red,
+                    displayColor: Colors.black,
                   ),
                   buttonTheme: const ButtonThemeData(
                     shape: RoundedRectangleBorder(

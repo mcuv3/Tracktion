@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:tracktion/colors/custom_colors.dart';
+import "package:tracktion/colors/custom_colors.dart";
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/screens/routine/routines-screen.dart';
@@ -61,6 +61,7 @@ class _RoutineItemState extends State<RoutineItem>
             Divider(
               thickness: 1,
               height: 1,
+              color: Colors.black.withOpacity(0.2),
             ),
           AnimatedSize(
               key: widget.key,
@@ -103,6 +104,7 @@ class _RoutineItemState extends State<RoutineItem>
                             Divider(
                               thickness: 1,
                               height: 1,
+                              color: Colors.black.withOpacity(0.2),
                             ),
                             InkWell(
                               onTap: expand,
@@ -112,6 +114,7 @@ class _RoutineItemState extends State<RoutineItem>
                                   isExpanded
                                       ? FontAwesomeIcons.chevronUp
                                       : FontAwesomeIcons.chevronDown,
+                                  color: Colors.black,
                                 ),
                               ),
                             ),
@@ -181,9 +184,13 @@ class SetRoutineItem extends StatelessWidget {
         visualDensity: VisualDensity.compact,
         leading: FaIcon(FontAwesomeIcons.dumbbell,
             color: Theme.of(context).colorScheme.analysisLight),
-        title: Text(set.exerciseName.toString()),
+        title: Text(set.exerciseName.toString(),
+            style: const TextStyle(color: Colors.black)),
         subtitle: Text(
-            "Type: ${enumToString(set.copyMethod)} - RPE:${set.targetRpe.toString()}"),
+            "Type: ${enumToString(set.copyMethod)} - RPE:${set.targetRpe.toString()}",
+            style: TextStyle(
+                color:
+                    Theme.of(context).colorScheme.analysis.withOpacity(0.7))),
         trailing: AnimatedOpacity(
           opacity: editMode ? 1.0 : 0.0,
           duration: Duration(milliseconds: 400),
