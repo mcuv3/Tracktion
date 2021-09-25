@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracktion/colors/constants.dart';
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/app/set.dart';
 import 'package:tracktion/widgets/items/reps-item.dart';
@@ -44,6 +45,7 @@ class WorkoutItem extends StatelessWidget {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.exercise,
+        boxShadow: shadowList,
       ),
       child: Row(
         mainAxisAlignment: (selectable || editable)
@@ -91,6 +93,7 @@ class WorkoutItem extends StatelessWidget {
         {Rep rep, bool selectedValue, int index, bool hasComment}) {
       if (selectable) {
         return Checkbox(
+          fillColor: MaterialStateProperty.all(Colors.black),
           value: selectedValue,
           onChanged: (newValue) {
             onCheckRep(setId: set.id, repIndex: index);
@@ -120,24 +123,12 @@ class WorkoutItem extends StatelessWidget {
       );
     }
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(15),
-      child: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(delitionMode ? 0.5 : 0.2),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: Offset(0, 3), // changes position of shadow
-            ),
-          ],
-          border: delitionMode
-              ? Border.all(
-                  color: isSelected ? Colors.red : Colors.transparent, width: 1)
-              : null,
-        ),
-        // margin: EdgeInsets.only(bottom: 15),
+    return Container(
+      decoration: BoxDecoration(
+          boxShadow:
+              delitionMode && isSelected ? shadowListDanger : shadowList),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(5),
         child: isSortMode
             ? Container(
                 padding: EdgeInsets.all(4),

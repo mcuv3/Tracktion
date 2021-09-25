@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:tracktion/screens/workout/calendar-picker-screen.dart';
 
 import '../../colors/custom_colors.dart';
 
@@ -7,7 +9,7 @@ class DatePicker extends StatelessWidget {
       {Key key, @required this.changeDate, @required this.currentDate})
       : super(key: key);
 
-  final void Function(bool) changeDate;
+  final void Function(DateTime) changeDate;
   final DateTime currentDate;
 
   @override
@@ -38,9 +40,24 @@ class DatePicker extends StatelessWidget {
                 color: Theme.of(context).colorScheme.analysis,
               ),
               onPressed: () {
-                changeDate(false);
+                changeDate(DateTime(
+                    currentDate.year, currentDate.month, currentDate.day - 1));
               }),
-          Text('${currentDate.day}-${currentDate.month}-${currentDate.year}'),
+          GestureDetector(
+            onTap: () async {
+              DateTime date = await showCupertinoModalBottomSheet(
+                expand: false,
+                context: context,
+                backgroundColor: Colors.transparent,
+                builder: (context) => CalendarScreen(currentDate: currentDate),
+              );
+              if (date == null) return;
+              changeDate(date);
+            },
+            child: Text(
+                '${currentDate.day}-${currentDate.month}-${currentDate.year}',
+                style: TextStyle(color: Colors.black)),
+          ),
           IconButton(
               icon: Icon(
                 Icons.chevron_right,
@@ -48,7 +65,8 @@ class DatePicker extends StatelessWidget {
                 color: Theme.of(context).colorScheme.analysis,
               ),
               onPressed: () {
-                changeDate(true);
+                changeDate(DateTime(
+                    currentDate.year, currentDate.month, currentDate.day + 1));
               }),
         ],
       ),

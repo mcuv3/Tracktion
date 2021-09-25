@@ -1,30 +1,10 @@
-import 'package:tracktion/models/app-models.dart';
-import 'package:tracktion/models/db/database.dart';
+import 'package:tracktion/models/db/database.dart' as db;
 import 'package:tracktion/models/tables/Routines.dart';
 
-List<ExerciseBodyPart> bodyPartsMigration = [
-  ExerciseBodyPart(exerciseId: 1, bodyPart: BodyPartEnum.Legs),
-  ExerciseBodyPart(exerciseId: 1, bodyPart: BodyPartEnum.Quadriceps),
-  ExerciseBodyPart(exerciseId: 2, bodyPart: BodyPartEnum.Chest),
-  ExerciseBodyPart(exerciseId: 2, bodyPart: BodyPartEnum.Arms),
-  ExerciseBodyPart(exerciseId: 2, bodyPart: BodyPartEnum.Shoulders),
-  ExerciseBodyPart(exerciseId: 3, bodyPart: BodyPartEnum.Legs),
-  ExerciseBodyPart(exerciseId: 3, bodyPart: BodyPartEnum.Quadriceps),
-  ExerciseBodyPart(exerciseId: 3, bodyPart: BodyPartEnum.Gluteus),
-  ExerciseBodyPart(exerciseId: 4, bodyPart: BodyPartEnum.Shoulders),
-  ExerciseBodyPart(exerciseId: 4, bodyPart: BodyPartEnum.Arms),
-  ExerciseBodyPart(exerciseId: 5, bodyPart: BodyPartEnum.Abs),
-  ExerciseBodyPart(exerciseId: 6, bodyPart: BodyPartEnum.Chest),
-  ExerciseBodyPart(exerciseId: 6, bodyPart: BodyPartEnum.Arms),
-  ExerciseBodyPart(exerciseId: 7, bodyPart: BodyPartEnum.Quadriceps),
-  ExerciseBodyPart(exerciseId: 8, bodyPart: BodyPartEnum.Back),
-  ExerciseBodyPart(exerciseId: 8, bodyPart: BodyPartEnum.Shoulders)
-];
-
-List<Exercise> exercisesMigration = [
-  Exercise(
+List<db.Exercise> exercisesMigration = [
+  db.Exercise(
       id: 1,
-      name: "Deadlift",
+      name: "DeadLift",
       notes: "Protect your lower back when you go up.",
       difficulty: Difficulty.Hard,
       lastWorkouts: "",
@@ -32,7 +12,7 @@ List<Exercise> exercisesMigration = [
       maxVolume: 0.0,
       maxVolumeSetId: null,
       maxWeigthSetId: null),
-  Exercise(
+  db.Exercise(
       id: 2,
       name: "BenchPress",
       notes: "Really good for chest building.",
@@ -42,17 +22,17 @@ List<Exercise> exercisesMigration = [
       maxVolume: 0.0,
       maxVolumeSetId: null,
       maxWeigthSetId: null),
-  Exercise(
+  db.Exercise(
       id: 3,
       name: "Squat",
-      notes: "Really good for quads and glute.",
+      notes: "Really good for quads and butt.",
       difficulty: Difficulty.Hard,
       lastWorkouts: "",
       maxWeigth: 0.0,
       maxVolume: 0.0,
       maxVolumeSetId: null,
       maxWeigthSetId: null),
-  Exercise(
+  db.Exercise(
       id: 4,
       name: "OverHeadPress",
       notes: "Shoulders focus",
@@ -62,7 +42,7 @@ List<Exercise> exercisesMigration = [
       maxVolume: 0.0,
       maxVolumeSetId: null,
       maxWeigthSetId: null),
-  Exercise(
+  db.Exercise(
       id: 5,
       name: "Leg Rise",
       notes: "Abs dominant",
@@ -72,9 +52,9 @@ List<Exercise> exercisesMigration = [
       maxVolume: 0.0,
       maxVolumeSetId: null,
       maxWeigthSetId: null),
-  Exercise(
+  db.Exercise(
       id: 6,
-      name: "Incline Dumbell Press",
+      name: "Incline Dumbbell Press",
       notes: "Chest focus",
       difficulty: Difficulty.Normal,
       lastWorkouts: "",
@@ -82,7 +62,7 @@ List<Exercise> exercisesMigration = [
       maxVolume: 0.0,
       maxVolumeSetId: null,
       maxWeigthSetId: null),
-  Exercise(
+  db.Exercise(
       id: 7,
       name: "Front Squad",
       notes: "Heavily use for growth",
@@ -92,7 +72,7 @@ List<Exercise> exercisesMigration = [
       maxVolume: 0.0,
       maxVolumeSetId: null,
       maxWeigthSetId: null),
-  Exercise(
+  db.Exercise(
       id: 8,
       name: "Pull Up",
       notes: "Back builder",
@@ -102,7 +82,143 @@ List<Exercise> exercisesMigration = [
       maxVolume: 0.0,
       maxVolumeSetId: null,
       maxWeigthSetId: null),
+  db.Exercise(
+      id: 9,
+      name: "Lat PullDown",
+      notes: "Good for lats.",
+      difficulty: Difficulty.Normal,
+      lastWorkouts: "",
+      maxWeigth: 0.0,
+      maxVolume: 0.0,
+      maxVolumeSetId: null,
+      maxWeigthSetId: null),
+  db.Exercise(
+      id: 10,
+      name: "Arnold Press",
+      notes: "",
+      difficulty: Difficulty.Easy,
+      lastWorkouts: "",
+      maxWeigth: 0.0,
+      maxVolume: 0.0,
+      maxVolumeSetId: null,
+      maxWeigthSetId: null),
+  db.Exercise(
+      id: 11,
+      name: "FacePull",
+      notes: "",
+      difficulty: Difficulty.Easy,
+      lastWorkouts: "",
+      maxWeigth: 0.0,
+      maxVolume: 0.0,
+      maxVolumeSetId: null,
+      maxWeigthSetId: null),
+  db.Exercise(
+      id: 12,
+      name: "Lateral Rise",
+      notes: "",
+      difficulty: Difficulty.Easy,
+      lastWorkouts: "",
+      maxWeigth: 0.0,
+      maxVolume: 0.0,
+      maxVolumeSetId: null,
+      maxWeigthSetId: null),
+  db.Exercise(
+      id: 13,
+      name: "UpRight Row",
+      notes: "",
+      difficulty: Difficulty.Easy,
+      lastWorkouts: "",
+      maxWeigth: 0.0,
+      maxVolume: 0.0,
+      maxVolumeSetId: null,
+      maxWeigthSetId: null),
+  db.Exercise(
+      id: 14,
+      name: "Barbell Curl",
+      notes: "",
+      difficulty: Difficulty.Easy,
+      lastWorkouts: "",
+      maxWeigth: 0.0,
+      maxVolume: 0.0,
+      maxVolumeSetId: null,
+      maxWeigthSetId: null),
+  db.Exercise(
+      id: 15,
+      name: "Hammer Curl",
+      notes: "",
+      difficulty: Difficulty.Easy,
+      lastWorkouts: "",
+      maxWeigth: 0.0,
+      maxVolume: 0.0,
+      maxVolumeSetId: null,
+      maxWeigthSetId: null),
+  db.Exercise(
+      id: 16,
+      name: "Dips",
+      notes: "",
+      difficulty: Difficulty.Normal,
+      lastWorkouts: "",
+      maxWeigth: 0.0,
+      maxVolume: 0.0,
+      maxVolumeSetId: null,
+      maxWeigthSetId: null),
+  db.Exercise(
+      id: 17,
+      name: "Cable Crossover",
+      notes: "",
+      difficulty: Difficulty.Easy,
+      lastWorkouts: "",
+      maxWeigth: 0.0,
+      maxVolume: 0.0,
+      maxVolumeSetId: null,
+      maxWeigthSetId: null),
+  db.Exercise(
+      id: 18,
+      name: "Push Ups",
+      notes: "",
+      difficulty: Difficulty.Easy,
+      lastWorkouts: "",
+      maxWeigth: 0.0,
+      maxVolume: 0.0,
+      maxVolumeSetId: null,
+      maxWeigthSetId: null),
 ];
+
+List<db.RoutineGroupCompanion> routineGroupMigrations = [
+  db.RoutineGroupData(
+    id: 1,
+    name: "PPL Advance",
+    description: "Push pull legs for advance folks.",
+    level: Level.Advance,
+    imageUrl: "",
+  ).toCompanion(true),
+];
+
+List<db.RoutineCompanion> routinesMigrations = [
+  db.RoutineData(
+          id: 1,
+          name: "Push #1",
+          difficulty: Difficulty.Hard,
+          duration: 60,
+          timesCopied: 0,
+          notes: "Push day number 1.",
+          groupId: 1)
+      .toCompanion(true),
+];
+List<db.RoutineSetCompanion> routineSetsMigrations = [
+  db.RoutineSetData(
+    id: 1,
+    targetRpe: 8,
+    routineId: 1,
+    copyMethod: CopyMethod.Previous,
+    exerciseName: "DeadLift",
+    exerciseId: 1,
+    series: 3,
+    percentage: null,
+    notes: "Push day number 1.",
+  ).toCompanion(true),
+];
+
 
 
 // TODO: add routines routine sets etc. 

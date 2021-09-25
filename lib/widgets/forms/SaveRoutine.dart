@@ -67,130 +67,133 @@ class _SaveRoutineFormState extends State<SaveRoutineForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(top: 10),
-      width: double.maxFinite,
-      child: Form(
-        key: form,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.analysis),
-                  child: Text("New Routine",
-                      style: TextStyle(fontSize: 18, color: Colors.white))),
-              Divided(
-                  leftWidget: Text("Name"),
-                  rightWidget: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: TracktionInput(
-                      align: TextAlign.center,
-                      initialValue: fields["name"],
-                      errorColor: Theme.of(context).colorScheme.routines,
-                      validator: (value) {
-                        if (value.isEmpty) return "Name is required";
-                        return null;
+    return DefaultTextStyle(
+      style: Theme.of(context).textTheme.caption,
+      child: Container(
+        padding: EdgeInsets.only(top: 10),
+        width: double.maxFinite,
+        child: Form(
+          key: form,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.analysis),
+                    child: Text("New Routine",
+                        style: TextStyle(fontSize: 18, color: Colors.white))),
+                Divided(
+                    leftWidget: Text("Name"),
+                    rightWidget: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: TracktionInput(
+                        align: TextAlign.center,
+                        initialValue: fields["name"],
+                        errorColor: Theme.of(context).colorScheme.routines,
+                        validator: (value) {
+                          if (value.isEmpty) return "Name is required";
+                          return null;
+                        },
+                        change: (v) => setState(() {
+                          fields["name"] = v;
+                        }),
+                        hint: "Pull #1",
+                      ),
+                    )),
+                Divided(
+                    leftWidget: Text("Duration"),
+                    rightWidget: NumericSelector(
+                      value: "$duration min",
+                      onPress: (v) {
+                        if (duration <= 0) return;
+                        setState(() {
+                          duration = v == "left" ? duration - 5 : duration + 5;
+                        });
                       },
-                      change: (v) => setState(() {
-                        fields["name"] = v;
-                      }),
-                      hint: "Pull #1",
-                    ),
-                  )),
-              Divided(
-                  leftWidget: Text("Duration"),
-                  rightWidget: NumericSelector(
-                    value: "$duration min",
-                    onPress: (v) {
-                      if (duration <= 0) return;
-                      setState(() {
-                        duration = v == "left" ? duration - 5 : duration + 5;
-                      });
-                    },
-                  )),
-              Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.analysis),
-                  child: RichText(
-                    text: TextSpan(
-                        style: TextStyle(fontFamily: "CarterOne"),
-                        children: <TextSpan>[
-                          TextSpan(
-                              text: "Difficulty",
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white)),
-                          if (difficultyRequired)
+                    )),
+                Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.analysis),
+                    child: RichText(
+                      text: TextSpan(
+                          style: TextStyle(fontFamily: "CarterOne"),
+                          children: <TextSpan>[
                             TextSpan(
-                                text: "\t\tis required.",
+                                text: "Difficulty",
                                 style: TextStyle(
-                                    fontSize: 12,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .routinesLight)),
-                        ]),
-                  )),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: Difficulty.values
-                      .map((e) => Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Radio(
-                                value: e,
-                                activeColor:
-                                    Theme.of(context).colorScheme.routines,
-                                groupValue: difficulty,
-                                onChanged: (val) {
-                                  setState(() {
-                                    difficulty = val;
-                                    if (difficultyRequired) {
-                                      difficultyRequired = false;
-                                    }
-                                  });
-                                },
-                              ),
-                              Text(enumToString(e),
-                                  style: TextStyle(fontSize: 13))
-                            ],
-                          ))
-                      .toList(),
+                                    fontSize: 18, color: Colors.white)),
+                            if (difficultyRequired)
+                              TextSpan(
+                                  text: "\t\tis required.",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .routinesLight)),
+                          ]),
+                    )),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: Difficulty.values
+                        .map((e) => Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Radio(
+                                  value: e,
+                                  fillColor: MaterialStateProperty.all(
+                                      Theme.of(context).colorScheme.routines),
+                                  groupValue: difficulty,
+                                  onChanged: (val) {
+                                    setState(() {
+                                      difficulty = val;
+                                      if (difficultyRequired) {
+                                        difficultyRequired = false;
+                                      }
+                                    });
+                                  },
+                                ),
+                                Text(enumToString(e),
+                                    style: TextStyle(fontSize: 13))
+                              ],
+                            ))
+                        .toList(),
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.analysis),
-                  child: Text("Notes",
-                      style: TextStyle(fontSize: 18, color: Colors.white))),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TracktionInput(
-                  maxlines: 3,
-                  errorColor: Theme.of(context).colorScheme.routines,
-                  change: (v) => setState(() {
-                    fields["notes"] = v;
-                  }),
-                  initialValue: fields["notes"],
+                SizedBox(
+                  height: 5,
                 ),
-              ),
-              SaveFormActions(
-                  onCancel: () {
-                    Navigator.of(context).pop();
-                  },
-                  onSave: onSubmit)
-            ],
+                Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.analysis),
+                    child: Text("Notes",
+                        style: TextStyle(fontSize: 18, color: Colors.white))),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TracktionInput(
+                    maxlines: 3,
+                    errorColor: Theme.of(context).colorScheme.routines,
+                    change: (v) => setState(() {
+                      fields["notes"] = v;
+                    }),
+                    initialValue: fields["notes"],
+                  ),
+                ),
+                SaveFormActions(
+                    onCancel: () {
+                      Navigator.of(context).pop();
+                    },
+                    onSave: onSubmit)
+              ],
+            ),
           ),
         ),
       ),

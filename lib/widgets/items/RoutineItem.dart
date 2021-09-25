@@ -5,6 +5,8 @@ import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/screens/routine/routines-screen.dart';
 import 'package:tracktion/util/enumToString.dart';
+import 'package:tracktion/widgets/items/TracktionHeader.dart';
+import 'package:tracktion/widgets/modals/showAnimatedModal.dart';
 import 'package:tracktion/widgets/ui/IconDetail.dart';
 
 class RoutineItem extends StatefulWidget {
@@ -352,7 +354,12 @@ class RoutineHeader extends StatelessWidget {
                       visualDensity: VisualDensity.compact,
                       icon: FaIcon(FontAwesomeIcons.infoCircle,
                           color: Colors.white),
-                      onPressed: () {}),
+                      onPressed: () => showAnimatedModal(
+                          context,
+                          TracktionNotifyModal(
+                              description: routine.notes,
+                              title: "Notes",
+                              type: NotifyType.Info))),
                 )
             ],
           ),

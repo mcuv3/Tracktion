@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -8,6 +10,10 @@ import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/screens/routine/routine-preview-screen.dart';
 import 'package:tracktion/util/enumToString.dart';
 import 'package:tracktion/widgets/modals/showAnimatedModal.dart';
+
+final _random = new Random();
+
+int ran(int min, int max) => min + _random.nextInt(max - min);
 
 class WorkoutRoutinePicker extends StatefulWidget {
   static const routeName = "/workout/routine/picker";
@@ -71,13 +77,18 @@ class _WorkoutRoutinePickerState extends State<WorkoutRoutinePicker> {
             controller: searchController,
             keyboardType: TextInputType.text,
             decoration: InputDecoration(
+              hintStyle: TextStyle(color: Colors.grey),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.black.withOpacity(0.2)),
+              ),
               prefixIcon: Icon(
                 Icons.search,
                 size: 24,
+                color: Colors.black,
               ),
               hintText: 'Push day ..',
             ),
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(fontSize: 16, color: Colors.black),
           ),
         ),
       ),
@@ -174,6 +185,7 @@ class RoutineSlimWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final poseNumber = ran(1, 9);
     return GestureDetector(
       onTap: onPress,
       child: Container(
@@ -192,7 +204,7 @@ class RoutineSlimWidget extends StatelessWidget {
           ],
         ),
         child: ListTile(
-          leading: Column(
+          title: Column(
             children: [
               Text(routine.routineName,
                   style: TextStyle(color: Colors.white, fontSize: 18)),
@@ -201,13 +213,13 @@ class RoutineSlimWidget extends StatelessWidget {
                       color: Colors.white.withOpacity(0.5), fontSize: 12)),
             ],
           ),
-          title: Row(
+          leading: Row(
             children: [
               SvgPicture.asset(
-                'assets/vectors/legs.svg',
-                width: 30,
-                height: 30,
-                color: Colors.black,
+                'assets/poses/$poseNumber.svg',
+                width: 40,
+                height: 40,
+                color: Colors.white,
               ),
             ],
             mainAxisSize: MainAxisSize.min,
@@ -216,7 +228,7 @@ class RoutineSlimWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               FaIcon(
-                FontAwesomeIcons.gamepad,
+                FontAwesomeIcons.signal,
                 color: Theme.of(context).colorScheme.routines.withOpacity(0.8),
               ),
               Text(enumToString(routine.difficulty),

@@ -4,8 +4,8 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import "package:tracktion/colors/custom_colors.dart";
 import 'package:tracktion/screens/index.dart';
 import 'package:tracktion/screens/workout/calendar-picker-screen.dart';
-import 'package:tracktion/screens/workout/workout-picker-screen.dart';
-import 'package:tracktion/screens/workout/workout-routine-picker-screen.dart';
+import 'package:tracktion/screens/workout/workout-copy-screen.dart';
+import 'package:tracktion/screens/workout/workout-routine-search-screen.dart';
 
 class WorkoutEmpty extends StatelessWidget {
   final DateTime currentDate;

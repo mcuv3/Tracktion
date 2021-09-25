@@ -2,7 +2,7 @@ import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tracktion/models/tables/Converts.dart';
 
-enum CopyMethod { Previus, Static, Smart, Percentage }
+enum CopyMethod { Previous, Static, Smart, Percentage }
 enum Level { Pro, Advance, Normal, Beginner }
 enum Difficulty { Easy, Normal, Hard, Pro }
 

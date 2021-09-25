@@ -68,46 +68,55 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  FittedBox(
-                      child: RichText(
-                    text: TextSpan(
-                      text: widget.set.exercise.name,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24,
-                          fontFamily: "CarterOne"),
-                      children: <TextSpan>[
-                        TextSpan(
-                            text:
-                                showMaxWeights ? " weights/day" : " volume/day",
-                            style: TextStyle(
-                                color:
-                                    Theme.of(context).colorScheme.routinesLight,
-                                fontSize: 17)),
+                  Expanded(
+                    flex: 8,
+                    child: FittedBox(
+                        child: RichText(
+                      text: TextSpan(
+                        text: widget.set.exercise.name,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontFamily: "CarterOne"),
+                        children: <TextSpan>[
+                          TextSpan(
+                              text: showMaxWeights
+                                  ? " weights/day"
+                                  : " volume/day",
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .routinesLight,
+                                  fontSize: 17)),
+                        ],
+                      ),
+                    )),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(
+                          visualDensity: VisualDensity.compact,
+                          onPressed: () {
+                            setState(() {
+                              showMaxWeights = !showMaxWeights;
+                            });
+                          },
+                          icon: FaIcon(
+                            showMaxWeights
+                                ? FontAwesomeIcons.toggleOn
+                                : FontAwesomeIcons.toggleOff,
+                            color: showMaxWeights
+                                ? Theme.of(context).colorScheme.routines
+                                : Colors.white,
+                            size: 28,
+                          ),
+                        ),
+                        // TODO:  go to the full details screen
                       ],
                     ),
-                  )),
-                  Row(
-                    children: [
-                      IconButton(
-                        visualDensity: VisualDensity.compact,
-                        onPressed: () {
-                          setState(() {
-                            showMaxWeights = !showMaxWeights;
-                          });
-                        },
-                        icon: FaIcon(
-                          showMaxWeights
-                              ? FontAwesomeIcons.toggleOn
-                              : FontAwesomeIcons.toggleOff,
-                          color: showMaxWeights
-                              ? Theme.of(context).colorScheme.routines
-                              : Colors.white,
-                          size: 28,
-                        ),
-                      ),
-                      // TODO:  go to the full details screen
-                    ],
                   )
                 ]),
           ),
@@ -206,6 +215,9 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
     var interval = ((intervals[1] - intervals[0]) / 10);
 
     if (interval < 1) interval = 1;
+
+    print("Volumes ");
+    print(intervals);
 
     return LineChartData(
       gridData: FlGridData(

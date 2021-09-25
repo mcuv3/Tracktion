@@ -148,7 +148,7 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm>
     if (method == CopyMethod.Percentage) confHeight = 220;
 
     if (method == CopyMethod.Smart ||
-        method == CopyMethod.Previus ||
+        method == CopyMethod.Previous ||
         method == null) confHeight = 60;
 
     return Container(

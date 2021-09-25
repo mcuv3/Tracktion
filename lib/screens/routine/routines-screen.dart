@@ -134,7 +134,8 @@ class _RoutinesScreenState extends State<RoutinesScreen> {
             ),
             IconButton(
                 visualDensity: VisualDensity.compact,
-                icon: FaIcon(FontAwesomeIcons.edit),
+                icon: FaIcon(
+                    !editMode ? FontAwesomeIcons.edit : FontAwesomeIcons.times),
                 onPressed: () {
                   setState(() {
                     editMode = !editMode;

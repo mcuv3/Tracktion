@@ -195,7 +195,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       for (final set in event.sets) {
         final exe = await this.db.findExercise(set.exerciseId);
         final reps = await this._getRoutineReps(set, exe);
-        
+
         sets.add(modelsApp.SetWorkout(
             maxWeigth: 0,
             volume: 0,
@@ -218,7 +218,6 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       await Future.wait(sets.map((s) =>
           this._saveSet(SaveSet(date: event.date, isEdit: false, set: s))));
     } catch (e) {
-      
       print("Copy Routine");
       print(e);
     }
@@ -232,25 +231,29 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
 
     switch (set.copyMethod) {
       case CopyMethod.Static:
-        reps = List.filled(set.series, 0).map((_) =>
-            modelsApp.Rep(id: null, reps: 0, rpe: set.targetRpe, weight: 0)).toList();
+        reps = List.filled(set.series, 0)
+            .map((_) =>
+                modelsApp.Rep(id: null, reps: 0, rpe: set.targetRpe, weight: 0))
+            .toList();
         break;
-      case CopyMethod.Previus:
-        if (prevs.length != 0)  {
+      case CopyMethod.Previous:
+        if (prevs.length != 0) {
           final setId = prevs[prevs.length - 1].setId;
           final _reps = await this.db.findReps(setId);
-          reps = _reps.map((r) => modelsApp.Rep(
-              id: null,
-              reps: r.reps,
-              rpe: r.rpe,
-              weight: r.weight,
-              notes: r.note,
-              setId: null)).toList();
+          reps = _reps
+              .map((r) => modelsApp.Rep(
+                  id: null,
+                  reps: r.reps,
+                  rpe: r.rpe,
+                  weight: r.weight,
+                  notes: r.note,
+                  setId: null))
+              .toList();
         }
 
         break;
       case CopyMethod.Smart:
-        if (prevs.length != 0)  {
+        if (prevs.length != 0) {
           final setId = prevs[prevs.length - 1].setId;
           final _reps = await this.db.findReps(setId);
           double weigth = 0;
@@ -262,24 +265,27 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
           });
 
           reps = List.filled(
-              _reps.length,
-              modelsApp.Rep(
-                  id: null,
-                  reps: rps ~/ _reps.length,
-                  rpe: set.targetRpe,
-                  weight: weigth / _reps.length,
-                  notes: "",
-                  setId: null)).toList();
+                  _reps.length,
+                  modelsApp.Rep(
+                      id: null,
+                      reps: rps ~/ _reps.length,
+                      rpe: set.targetRpe,
+                      weight: weigth / _reps.length,
+                      notes: "",
+                      setId: null))
+              .toList();
         }
 
         break;
       case CopyMethod.Percentage:
         final mr = set.repmax;
-        reps = List.filled(set.series, 0).map((_) => modelsApp.Rep(
-            id: null,
-            reps: set.series,
-            rpe: set.targetRpe,
-            weight: (mr * set.percentage) / 100)).toList();
+        reps = List.filled(set.series, 0)
+            .map((_) => modelsApp.Rep(
+                id: null,
+                reps: set.series,
+                rpe: set.targetRpe,
+                weight: (mr * set.percentage) / 100))
+            .toList();
         break;
     }
 

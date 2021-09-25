@@ -100,14 +100,13 @@ class _WorkOutScreenState extends State<WorkOutScreen>
       BlocProvider.of<WorkoutBloc>(context).add(SaveRep(rep: updatedRep));
   }
 
-  void changeDateHandler(bool isRight) {
+  void changeDateHandler(DateTime newDate) {
     // isRight ? _pageController.forward() : _pageController.reverse();
     setState(() {
-      direction = isRight;
-      currentDate = DateTime(currentDate.year, currentDate.month,
-          currentDate.day + (isRight ? 1 : -1));
+      // direction = isRight;
+      currentDate = newDate;
     });
-    BlocProvider.of<WorkoutBloc>(context).add(FetchWorkout(date: currentDate));
+    BlocProvider.of<WorkoutBloc>(context).add(FetchWorkout(date: newDate));
   }
 
   void showSetDetails({@required int setId, @required List<SetWorkout> sets}) {
@@ -239,7 +238,7 @@ class _WorkOutScreenState extends State<WorkOutScreen>
                       Container(
                           child: IconDropDown(
                         icons: [
-                          Icon(Icons.timeline),
+                          Icon(analysisMode ? Icons.reorder : Icons.timeline),
                           // Icon(Icons.view_agenda
                           // Icon(Icons.settings),
                         ],

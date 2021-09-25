@@ -14,7 +14,7 @@ import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/screens/routine/routine-main-screen.dart';
 import 'package:tracktion/screens/routine/routines-screen.dart';
-import 'package:tracktion/screens/workout/workout-routine-picker-screen.dart';
+import 'package:tracktion/screens/workout/workout-routine-search-screen.dart';
 
 import './screens/index.dart';
 import 'bloc/exercise-stream/exercisestream_cubit.dart';

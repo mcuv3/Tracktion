@@ -32,7 +32,7 @@ List<double> getMaxWeight(List<SetResume> sets) {
 
   if (_sets.length == 1) return [0.0, sets[0].maxWeigth];
 
-  _sets.sort((s1, s2) => s2.maxWeigth.compareTo(s1.maxWeigth));
+  _sets.sort((s1, s2) => s1.maxWeigth.compareTo(s2.maxWeigth));
 
   return [_sets[0].maxWeigth, _sets[_sets.length - 1].maxWeigth];
 }

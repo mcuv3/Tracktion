@@ -12,6 +12,7 @@ class CalendarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     print(currentDate);
     return Material(
+      color: Colors.white,
       child: SafeArea(
           top: false,
           child: Container(
@@ -40,7 +41,9 @@ class CalendarScreen extends StatelessWidget {
                       child: Text(date.day.toString(),
                           style: TextStyle(color: Colors.white)),
                     ))
-                  : Center(child: Text(date.day.toString())),
+                  : Center(
+                      child: Text(date.day.toString(),
+                          style: TextStyle(color: Colors.black))),
               eventColor: Colors.redAccent,
               dayOfWeekStyle: TextStyle(
                   color: Colors.black,

@@ -78,9 +78,7 @@ class TitleRepInput extends StatelessWidget {
       decoration: BoxDecoration(),
       child: Text(
         title,
-        style: TextStyle(
-          fontSize: 22,
-        ),
+        style: TextStyle(fontSize: 22, color: Colors.black),
       ),
     );
   }

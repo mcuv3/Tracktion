@@ -3,6 +3,7 @@ import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tracktion/models/app/RoutineSlim.dart';
 import 'package:tracktion/models/app/body-parts.dart';
 import 'package:tracktion/models/db/migration.dart';
+import 'package:tracktion/models/db/migration2.dart';
 import 'package:tracktion/models/tables/Routines.dart';
 import 'package:tracktion/models/tables/WorkOut.dart';
 

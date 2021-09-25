@@ -23,7 +23,7 @@ class RepItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = TextStyle(fontSize: 18);
+    final textStyle = TextStyle(fontSize: 18, color: Colors.black);
     final deviceWidth = MediaQuery.of(context).size.width;
     //TODO: fix this is logic please
     return CardInkwell(
