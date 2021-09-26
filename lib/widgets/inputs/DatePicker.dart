@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:tracktion/screens/workout/calendar-picker-screen.dart';
+import 'package:tracktion/widgets/items/TracktionCalendar.dart';
 
 import '../../colors/custom_colors.dart';
 
@@ -49,7 +49,7 @@ class DatePicker extends StatelessWidget {
                 expand: false,
                 context: context,
                 backgroundColor: Colors.transparent,
-                builder: (context) => CalendarScreen(currentDate: currentDate),
+                builder: (context) => TracktionCalendar(currentDate),
               );
               if (date == null) return;
               changeDate(date);

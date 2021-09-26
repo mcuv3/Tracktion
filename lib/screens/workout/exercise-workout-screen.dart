@@ -9,10 +9,10 @@ import 'package:tracktion/models/app/exercise.dart';
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/app/rep.dart';
 import 'package:tracktion/screens/index.dart';
-import 'package:tracktion/screens/workout/calendar-picker-screen.dart';
 import 'package:tracktion/shapes/AbstractShape.dart';
 import 'package:tracktion/shapes/add-exercise.dart';
 import 'package:tracktion/widgets/StackAppBar.dart';
+import 'package:tracktion/widgets/items/TracktionCalendar.dart';
 import 'package:tracktion/widgets/items/TracktionHeader.dart';
 import 'package:tracktion/widgets/items/reps-item.dart';
 import 'package:tracktion/widgets/modals/NoteInput.dart';
@@ -39,7 +39,6 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
   DateTime date =
       DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.now()));
   var init = false;
-
   var fromWorkout = false;
 
   @override
@@ -127,13 +126,22 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
           await shouldSaveModal(context, "This set will be deleted.");
       if (willDelete) {
         BlocProvider.of<WorkoutBloc>(context).add(DeleteSet(_set));
+        BlocProvider.of<WorkoutBloc>(context).add(UpdateWorkoutMetadata(
+          exesIds: [exs.id],
+          bodyParts: exs.bodyParts,
+          type: RequestType.Create,
+          workoutDate: date,
+        ));
         return true;
       } else
         return false;
     }
 
-    BlocProvider.of<WorkoutBloc>(context)
-        .add(SaveSet(set: _set, date: date, isEdit: fromWorkout));
+    var shouldSave = await shouldSaveModal(context);
+    if (shouldSave) {
+      BlocProvider.of<WorkoutBloc>(context)
+          .add(SaveSet(set: _set, date: date, isEdit: fromWorkout));
+    }
     return true;
   }
 
@@ -176,8 +184,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
                           expand: false,
                           context: context,
                           backgroundColor: Colors.transparent,
-                          builder: (context) =>
-                              CalendarScreen(currentDate: date),
+                          builder: (context) => TracktionCalendar(date),
                         );
                         if (selectedDate == null) return;
 

@@ -13,6 +13,17 @@ class DeleteWorkout extends WorkoutEvent {
   DeleteWorkout(this.workoutId);
 }
 
+enum RequestType { Delete, Create, Update }
+
+class UpdateWorkoutMetadata extends WorkoutEvent {
+  final List<modelsApp.BodyPartEnum> bodyParts;
+  final RequestType type;
+  List<int> exesIds = [];
+  final DateTime workoutDate;
+  UpdateWorkoutMetadata(
+      {this.bodyParts, this.type, this.exesIds, this.workoutDate});
+}
+
 class SaveSet extends WorkoutEvent {
   final modelsApp.SetWorkout set;
   final DateTime date;
@@ -54,5 +65,5 @@ class CopySets extends WorkoutEvent {
 class CopyRoutine extends WorkoutEvent {
   final List<RoutineSetData> sets;
   final DateTime date;
-  CopyRoutine(this.sets,this.date);
+  CopyRoutine(this.sets, this.date);
 }

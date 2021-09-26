@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_twitter_login/flutter_twitter_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -104,9 +105,12 @@ class AuthCubit extends Cubit<AuthState> {
 
   Future<UserCredential> _signInWithTwitter() async {
     // Create a TwitterLogin instance
+    final consumerKey = dotenv.env['TWITTER_CUSTOMER_KEY'];
+    final consumerSecret = dotenv.env['TWITTER_CUSTOMER_SECRET'];
+
     final TwitterLogin twitterLogin = new TwitterLogin(
-      consumerKey: 'xxx',
-      consumerSecret: 'xxx',
+      consumerKey: consumerKey,
+      consumerSecret: consumerSecret,
     );
 
     // Trigger the sign-in flow
@@ -135,55 +139,9 @@ class AuthCubit extends Cubit<AuthState> {
     return authenticate(email: email, password: password);
   }
 
-  logut() async {
+  logout() async {
     emit(AuthLoading());
     await FirebaseAuth.instance.signOut();
     emit(AuthInitial());
   }
 }
-
-//  Future<void> login({LoginType type, String email, String password}) async {
-//     emit(AuthLoading());
-//     Response response;
-//     try {
-//       final parserJson = json.encode({"email": email, "password": password});
-//       response = await Ht.post('/api/user/token/', body: parserJson);
-//     } catch (e) {
-//       print(e);
-//       return emit(AuthFailed());
-//     }
-
-//     if (response.statusCode == 401 || response.statusCode == 400) {
-//       return emit(AuthFailed());
-//     }
-
-//     var data = json.decode(response.body);
-
-//     final prefs = await SharedPreferences.getInstance();
-
-//     Ht.token = data['token'];
-
-//     await prefs.setString('token', data['token']);
-
-//     emit(AuthSuccess(
-//         email: email, token: data['token'], expiryDate: DateTime.now()));
-//   }
-
-//   Future<bool> register(String email, String name, String password) async {
-//     Response res;
-
-//     emit(AuthLoading());
-//     try {
-//       final parserJson =
-//           json.encode({"email": email, "password": password, "name": name});
-//       res = await Ht.post('/api/user/create/', body: parserJson);
-//     } catch (e) {
-//       print(e);
-//       return true;
-//     }
-
-//     if (res.statusCode == 400) return false;
-
-//     emit(AuthFailed());
-//     return true;
-//   }

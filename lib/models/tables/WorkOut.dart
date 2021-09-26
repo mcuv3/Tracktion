@@ -4,6 +4,8 @@ import 'package:moor_flutter/moor_flutter.dart';
 class Workouts extends Table {
   IntColumn get id => integer().autoIncrement()();
   DateTimeColumn get date => dateTime()();
+  TextColumn get metadata =>
+      text()(); //  exes :Map<ExerciseID,List<BodyPartValue>> , bodyPats: List<int>
 }
 
 class SetWorkouts extends Table {

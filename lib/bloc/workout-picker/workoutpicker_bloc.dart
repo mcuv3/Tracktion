@@ -21,6 +21,8 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
       yield* _pickWorkout(event);
     } else if (event is DeleteSetPicker) {
       yield* _deleteSet(event);
+    } else if (event is FetchWorkoutMonth) {
+      yield* _workoutsOfMonth(event);
     } else {
       yield* _saveRep(event);
     }
@@ -33,6 +35,16 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
       final sets = await this.db.findSets(date);
 
       yield Workout(date: date, sets: sets);
+    } catch (e) {
+      print(e);
+      yield WorkoutPickerFailure("Cannot fetch that workout");
+    }
+  }
+
+  Stream<WorkoutpickerState> _workoutsOfMonth(FetchWorkoutMonth event) async* {
+    yield WorkoutLoading();
+    try {
+      final workouts = await this.db.findWorkoutsOfMonth(event.date);
     } catch (e) {
       print(e);
       yield WorkoutPickerFailure("Cannot fetch that workout");

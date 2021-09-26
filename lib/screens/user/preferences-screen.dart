@@ -77,7 +77,10 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
                         Text("Nickname", style: TextStyle(fontSize: 18)),
                     rightWidget: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: TracktionInput())),
+                        child: TracktionInput(
+                          change: (v) => onChangeForm("nickname", v),
+                          hint: "mcuve",
+                        ))),
                 SizedBox(
                   height: 10,
                 ),

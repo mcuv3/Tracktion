@@ -116,7 +116,7 @@ class MainDrawer extends StatelessWidget {
                   leading: FaIcon(FontAwesomeIcons.signOutAlt,
                       color: Theme.of(context).colorScheme.routines),
                   title: Text("LogOut"),
-                  onTap: () => BlocProvider.of<AuthCubit>(context).logut()),
+                  onTap: () => BlocProvider.of<AuthCubit>(context).logout()),
             ],
           );
         }),

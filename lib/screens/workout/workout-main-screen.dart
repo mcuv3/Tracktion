@@ -134,6 +134,11 @@ class _WorkOutScreenState extends State<WorkOutScreen>
   void deleteSetsHandler() {
     if (selectedSets.length > 0) {
       BlocProvider.of<WorkoutBloc>(context).add(DeleteSets(selectedSets));
+      BlocProvider.of<WorkoutBloc>(context).add(UpdateWorkoutMetadata(
+          type: RequestType.Delete,
+          workoutDate: currentDate,
+          exesIds: selectedSets.map((e) => e.exercise.id).toList()));
+
       setState(() {
         selectedSets = [];
         delitionMode = false;

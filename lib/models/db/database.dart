@@ -48,6 +48,11 @@ class SQLDatabase extends _$SQLDatabase {
         print("Updating database");
         await m.createAll();
       }, beforeOpen: (details) async {
+        print("Was created");
+        print(details.wasCreated);
+        await delete(workouts).go();
+        await delete(setWorkouts).go();
+        await delete(reps).go();
         if (!details.wasCreated) return;
 
         final exes = exercisesMigration.map((e) => into(exercises).insert(e));
@@ -263,11 +268,24 @@ class SQLDatabase extends _$SQLDatabase {
 
       if (wk.length > 0) return wk[0];
 
-      final workout = WorkoutsCompanion.insert(date: shortDate);
+      final workout = WorkoutsCompanion.insert(
+        date: shortDate,
+        metadata: "",
+      );
       final workoutId = await into(workouts).insert(workout);
 
-      return Workout(id: workoutId, date: shortDate);
+      return Workout(id: workoutId, date: shortDate, metadata: "");
     });
+  }
+
+  Future<modelsApp.WorkoutApp> findWorkoutByDate(DateTime date) async {
+    final wk =
+        await (select(workouts)..where((e) => e.date.equals(date))).getSingle();
+
+    return modelsApp.WorkoutApp(
+        date: wk.date,
+        id: wk.id,
+        metadata: modelsApp.WorkoutMetadata.parse(wk.metadata));
   }
 
   Future<List> findMaxVolume(int exerciseId, int setId) async {
@@ -303,6 +321,8 @@ class SQLDatabase extends _$SQLDatabase {
     }).getSingle();
   }
 
+  Future<dynamic> findWorkoutsOfMonth(DateTime date) async {}
+
   // UPDATES AND CRETIONS
 
   Future<void> saveExercise(ExerciseWithBodyParts entry) {
@@ -326,7 +346,6 @@ class SQLDatabase extends _$SQLDatabase {
     return transaction(() async {
       final exeId = set.exercise.id;
       final repsSet = set.reps;
-
       final setId = await into(setWorkouts).insert(
           SetWorkout(
               maxWeigth: set.maxWeigth,

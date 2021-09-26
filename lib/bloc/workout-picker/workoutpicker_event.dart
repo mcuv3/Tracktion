@@ -8,6 +8,11 @@ class PickWorkout extends WorkoutpickerEvent {
   PickWorkout(this.date);
 }
 
+class FetchWorkoutMonth extends WorkoutpickerEvent {
+  final DateTime date;
+  FetchWorkoutMonth(this.date);
+}
+
 class DeleteSetPicker extends WorkoutpickerEvent {
   final int setId;
   DeleteSetPicker(this.setId);

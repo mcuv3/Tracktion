@@ -1375,16 +1375,20 @@ class $SetWorkoutsTable extends SetWorkouts
 class Workout extends DataClass implements Insertable<Workout> {
   final int id;
   final DateTime date;
-  Workout({@required this.id, @required this.date});
+  final String metadata;
+  Workout({@required this.id, @required this.date, @required this.metadata});
   factory Workout.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final dateTimeType = db.typeSystem.forDartType<DateTime>();
+    final stringType = db.typeSystem.forDartType<String>();
     return Workout(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       date:
           dateTimeType.mapFromDatabaseResponse(data['${effectivePrefix}date']),
+      metadata: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}metadata']),
     );
   }
   @override
@@ -1396,6 +1400,9 @@ class Workout extends DataClass implements Insertable<Workout> {
     if (!nullToAbsent || date != null) {
       map['date'] = Variable<DateTime>(date);
     }
+    if (!nullToAbsent || metadata != null) {
+      map['metadata'] = Variable<String>(metadata);
+    }
     return map;
   }
 
@@ -1403,6 +1410,9 @@ class Workout extends DataClass implements Insertable<Workout> {
     return WorkoutsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       date: date == null && nullToAbsent ? const Value.absent() : Value(date),
+      metadata: metadata == null && nullToAbsent
+          ? const Value.absent()
+          : Value(metadata),
     );
   }
 
@@ -1412,6 +1422,7 @@ class Workout extends DataClass implements Insertable<Workout> {
     return Workout(
       id: serializer.fromJson<int>(json['id']),
       date: serializer.fromJson<DateTime>(json['date']),
+      metadata: serializer.fromJson<String>(json['metadata']),
     );
   }
   @override
@@ -1420,55 +1431,70 @@ class Workout extends DataClass implements Insertable<Workout> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'date': serializer.toJson<DateTime>(date),
+      'metadata': serializer.toJson<String>(metadata),
     };
   }
 
-  Workout copyWith({int id, DateTime date}) => Workout(
+  Workout copyWith({int id, DateTime date, String metadata}) => Workout(
         id: id ?? this.id,
         date: date ?? this.date,
+        metadata: metadata ?? this.metadata,
       );
   @override
   String toString() {
     return (StringBuffer('Workout(')
           ..write('id: $id, ')
-          ..write('date: $date')
+          ..write('date: $date, ')
+          ..write('metadata: $metadata')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, date.hashCode));
+  int get hashCode =>
+      $mrjf($mrjc(id.hashCode, $mrjc(date.hashCode, metadata.hashCode)));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
-      (other is Workout && other.id == this.id && other.date == this.date);
+      (other is Workout &&
+          other.id == this.id &&
+          other.date == this.date &&
+          other.metadata == this.metadata);
 }
 
 class WorkoutsCompanion extends UpdateCompanion<Workout> {
   final Value<int> id;
   final Value<DateTime> date;
+  final Value<String> metadata;
   const WorkoutsCompanion({
     this.id = const Value.absent(),
     this.date = const Value.absent(),
+    this.metadata = const Value.absent(),
   });
   WorkoutsCompanion.insert({
     this.id = const Value.absent(),
     @required DateTime date,
-  }) : date = Value(date);
+    @required String metadata,
+  })  : date = Value(date),
+        metadata = Value(metadata);
   static Insertable<Workout> custom({
     Expression<int> id,
     Expression<DateTime> date,
+    Expression<String> metadata,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (date != null) 'date': date,
+      if (metadata != null) 'metadata': metadata,
     });
   }
 
-  WorkoutsCompanion copyWith({Value<int> id, Value<DateTime> date}) {
+  WorkoutsCompanion copyWith(
+      {Value<int> id, Value<DateTime> date, Value<String> metadata}) {
     return WorkoutsCompanion(
       id: id ?? this.id,
       date: date ?? this.date,
+      metadata: metadata ?? this.metadata,
     );
   }
 
@@ -1481,6 +1507,9 @@ class WorkoutsCompanion extends UpdateCompanion<Workout> {
     if (date.present) {
       map['date'] = Variable<DateTime>(date.value);
     }
+    if (metadata.present) {
+      map['metadata'] = Variable<String>(metadata.value);
+    }
     return map;
   }
 
@@ -1488,7 +1517,8 @@ class WorkoutsCompanion extends UpdateCompanion<Workout> {
   String toString() {
     return (StringBuffer('WorkoutsCompanion(')
           ..write('id: $id, ')
-          ..write('date: $date')
+          ..write('date: $date, ')
+          ..write('metadata: $metadata')
           ..write(')'))
         .toString();
   }
@@ -1519,8 +1549,20 @@ class $WorkoutsTable extends Workouts with TableInfo<$WorkoutsTable, Workout> {
     );
   }
 
+  final VerificationMeta _metadataMeta = const VerificationMeta('metadata');
+  GeneratedTextColumn _metadata;
   @override
-  List<GeneratedColumn> get $columns => [id, date];
+  GeneratedTextColumn get metadata => _metadata ??= _constructMetadata();
+  GeneratedTextColumn _constructMetadata() {
+    return GeneratedTextColumn(
+      'metadata',
+      $tableName,
+      false,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [id, date, metadata];
   @override
   $WorkoutsTable get asDslTable => this;
   @override
@@ -1540,6 +1582,12 @@ class $WorkoutsTable extends Workouts with TableInfo<$WorkoutsTable, Workout> {
           _dateMeta, date.isAcceptableOrUnknown(data['date'], _dateMeta));
     } else if (isInserting) {
       context.missing(_dateMeta);
+    }
+    if (data.containsKey('metadata')) {
+      context.handle(_metadataMeta,
+          metadata.isAcceptableOrUnknown(data['metadata'], _metadataMeta));
+    } else if (isInserting) {
+      context.missing(_metadataMeta);
     }
     return context;
   }

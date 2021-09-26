@@ -74,7 +74,7 @@ class MainScreen extends StatelessWidget {
                 color: Colors.black,
               ),
               onPressed: () {
-                BlocProvider.of<AuthCubit>(context).logut();
+                BlocProvider.of<AuthCubit>(context).logout();
               }),
         ],
       ),

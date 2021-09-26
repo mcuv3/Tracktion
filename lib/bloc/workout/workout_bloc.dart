@@ -44,6 +44,33 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       _copySets(event);
     } else if (event is CopyRoutine) {
       _copyRoutine(event);
+    } else if (event is UpdateWorkoutMetadata) {
+      _updateWorkoutMetadata(event);
+    }
+  }
+
+  Future<void> _updateWorkoutMetadata(UpdateWorkoutMetadata event) async {
+    try {
+      final workout = await db.findWorkoutByDate(event.workoutDate);
+      if (event.type == RequestType.Delete) {
+        workout.metadata.exesToBodyParts
+            .removeWhere((key, value) => event.exesIds.contains(key));
+      } else if (event.exesIds.isNotEmpty) {
+        workout.metadata.exesToBodyParts[event.exesIds[0]] =
+            event.bodyParts.toSet();
+      }
+      workout.metadata.syncBodyParts();
+      await db.saveWorkOut(Workout(
+              id: workout.id,
+              metadata: workout.metadata.toJson(),
+              date: workout.date)
+          .toCompanion(true));
+      print(Workout(
+          id: workout.id,
+          metadata: workout.metadata.toJson(),
+          date: workout.date));
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -143,6 +170,10 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
           workout.id);
 
       if (isCreation) {
+        this._updateWorkoutMetadata(UpdateWorkoutMetadata(
+          exesIds: [exe.id],
+          bodyParts: exe.bodyParts,
+        ));
         exe.lastWorkouts[0].setId = setId;
         if (exe.lastWorkouts.length == 1) {
           exe.maxVolumeSetId = setId;
