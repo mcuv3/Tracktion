@@ -72,6 +72,29 @@ class Exercise {
     }
   }
 
+  removeSet(int setId) {
+    this.lastWorkouts.removeWhere((wk) => wk.setId == setId);
+  }
+
+  syncMaxes(
+      {double volume, double maxWeigth, bool willDelete = false, int setId}) {
+    if (this.lastWorkouts.length == 0) {
+      this.maxVolumeSetId = null;
+      this.maxWeigthSetId = null;
+      this.maxVolume = 0.0;
+      this.maxWeigth = 0.0;
+    } else if (!willDelete) {
+      if (volume > this.maxVolume) {
+        this.maxVolume = volume;
+        this.maxVolumeSetId = setId;
+      }
+      if (maxWeigth > this.maxWeigth) {
+        this.maxWeigth = maxWeigth;
+        this.maxWeigthSetId = setId;
+      }
+    }
+  }
+
   Exercise copy() => Exercise(
       id: this.id,
       difficulty: this.difficulty,

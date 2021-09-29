@@ -138,6 +138,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
     }
 
     var shouldSave = await shouldSaveModal(context);
+    if (shouldSave == null) return false;
     if (shouldSave) {
       BlocProvider.of<WorkoutBloc>(context)
           .add(SaveSet(set: _set, date: date, isEdit: fromWorkout));

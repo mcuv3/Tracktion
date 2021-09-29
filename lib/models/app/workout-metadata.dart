@@ -18,6 +18,7 @@ class WorkoutMetadata {
   WorkoutMetadata({this.bodyParts, this.exesToBodyParts});
 
   syncBodyParts() {
+    this.bodyParts = Set();
     this.exesToBodyParts.forEach((key, value) => this.bodyParts.addAll(value));
   }
 
@@ -28,7 +29,8 @@ class WorkoutMetadata {
       });
 
   static WorkoutMetadata parse(String str) {
-    if (str == "") return WorkoutMetadata();
+    if (str == "")
+      return WorkoutMetadata(bodyParts: Set(), exesToBodyParts: {});
 
     try {
       final js = json.decode(str) as Map<String, dynamic>;

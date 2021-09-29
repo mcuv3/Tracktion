@@ -97,7 +97,7 @@ class _SearchExerciseState extends State<SearchExercise> {
                         main = StreamBuilder(
                           builder: (context, exs) {
                             if (exs.connectionState == ConnectionState.active) {
-                              List<Exercise> exes = exs.data ?? [];
+                              List<Exercise> exes = exs?.data ?? [];
                               exes
                                   .where((ex) => ex.name
                                       .toLowerCase()

@@ -494,7 +494,7 @@ class SQLDatabase extends _$SQLDatabase {
   Future<void> saveSetRoutine(RoutineSetCompanion set) =>
       into(routineSet).insert(set, mode: InsertMode.replace);
 
-  Future<int> saveWorkOut(WorkoutsCompanion wk) =>
+  Future<int> saveWorkOut(Workout wk) =>
       into(workouts).insert(wk, mode: InsertMode.replace);
 }
 

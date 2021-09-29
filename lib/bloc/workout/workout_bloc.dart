@@ -56,15 +56,14 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
         workout.metadata.exesToBodyParts
             .removeWhere((key, value) => event.exesIds.contains(key));
       } else if (event.exesIds.isNotEmpty) {
-        workout.metadata.exesToBodyParts[event.exesIds[0]] =
-            event.bodyParts.toSet();
+        workout.metadata.exesToBodyParts
+            .addEntries([MapEntry(event.exesIds[0], event.bodyParts.toSet())]);
       }
       workout.metadata.syncBodyParts();
       await db.saveWorkOut(Workout(
-              id: workout.id,
-              metadata: workout.metadata.toJson(),
-              date: workout.date)
-          .toCompanion(true));
+          id: workout.id,
+          metadata: workout.metadata.toJson(),
+          date: workout.date));
       print(Workout(
           id: workout.id,
           metadata: workout.metadata.toJson(),
@@ -98,14 +97,18 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
 
   Future<void> _deleteSet(DeleteSet event) async {
     try {
-      var exe = event.set.exercise.copy();
+      var exe = event.set.exercise.copy(); //bug
       var setId = event.set.id;
-      exe.lastWorkouts.removeWhere((wk) => wk.setId == setId);
-      exe = await _verifyMaxWeigth(exe: exe, setId: setId, newSetWeigth: null);
+      print("Deleting set ID");
+      print(setId);
+
+      exe.removeSet(setId);
+      exe = await _verifyMaxWeight(exe: exe, setId: setId, newSetWeight: null);
       exe = await _verifyMaxVolume(exe: exe, setId: setId, newSetVolume: null);
-      exe = consenceMaxes(exe: exe, willDelete: true, setId: setId);
+      exe.syncMaxes(willDelete: true, setId: setId);
       await _saveExercise(exe);
       await this.db.deleteSet(setId);
+      return event.set;
     } catch (e) {
       print(e);
     }
@@ -145,16 +148,16 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
             exe: exe,
             newSetVolume: newOrUpdatedSet.volume,
             setId: newOrUpdatedSet.setId);
-        exe = await _verifyMaxWeigth(
+        exe = await _verifyMaxWeight(
             exe: exe,
-            newSetWeigth: newOrUpdatedSet.maxWeigth,
+            newSetWeight: newOrUpdatedSet.maxWeigth,
             setId: newOrUpdatedSet.setId);
       } else {
         if (exe.lastWorkouts.length >= 12) exe.lastWorkouts.removeAt(11);
         exe.lastWorkouts.insert(0, newOrUpdatedSet);
       }
 
-      exe = consenceMaxes(
+      exe = syncMaxes(
           setId: newOrUpdatedSet.setId,
           exe: exe,
           maxWeigth: maxWeigth,
@@ -171,9 +174,10 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
 
       if (isCreation) {
         this._updateWorkoutMetadata(UpdateWorkoutMetadata(
-          exesIds: [exe.id],
-          bodyParts: exe.bodyParts,
-        ));
+            exesIds: [exe.id],
+            bodyParts: exe.bodyParts,
+            type: RequestType.Create,
+            workoutDate: event.date));
         exe.lastWorkouts[0].setId = setId;
         if (exe.lastWorkouts.length == 1) {
           exe.maxVolumeSetId = setId;
@@ -340,7 +344,14 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
 
   Future<void> _deleteSets(DeleteSets event) async {
     try {
-      for (final set in event.sets) await this._deleteSet(DeleteSet(set));
+      Map<int, modelsApp.Exercise> exes = {};
+      for (final set in event.sets) {
+        if (exes[set.exercise.id] == null) {
+          exes[set.exercise.id] = set.exercise;
+        } else
+          set.exercise = exes[set.exercise.id];
+        await this._deleteSet(DeleteSet(set));
+      }
     } catch (e) {
       print(e);
     }
@@ -370,21 +381,21 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     return _exe;
   }
 
-  Future<modelsApp.Exercise> _verifyMaxWeigth(
-      {modelsApp.Exercise exe, int setId, double newSetWeigth}) async {
+  Future<modelsApp.Exercise> _verifyMaxWeight(
+      {modelsApp.Exercise exe, int setId, double newSetWeight}) async {
     var _exe = exe.copy();
-    var delete = newSetWeigth == null;
+    var delete = newSetWeight == null;
 
     if (exe.maxWeigthSetId == setId &&
-        ((!delete && newSetWeigth < exe.maxWeigth) || delete)) {
+        ((!delete && newSetWeight < exe.maxWeigth) || delete)) {
       final results = await this.db.findMaxWeigth(exe.id, setId);
       if (results == null) return _exe;
 
       final nextMaxWeigth = results[1];
 
-      if (!delete && newSetWeigth >= nextMaxWeigth) {
+      if (!delete && newSetWeight >= nextMaxWeigth) {
         _exe.maxWeigthSetId = setId;
-        _exe.maxWeigth = newSetWeigth;
+        _exe.maxWeigth = newSetWeight;
       } else {
         _exe.maxWeigthSetId = results[0];
         _exe.maxWeigth = results[1];

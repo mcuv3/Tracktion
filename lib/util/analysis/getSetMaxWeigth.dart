@@ -16,7 +16,7 @@ double getSetMaxWeigth(List<Rep> reps) {
 List<double> getVolumeIntervals(List<SetResume> sets) {
   var _sets = [...sets];
 
-  if (_sets.length == 0) return [0.0, 0.0];
+  if (_sets.length == 0) return [0.0, 100.0];
 
   if (_sets.length == 1) return [0.0, sets[0].volume];
 

@@ -4,7 +4,7 @@ import './index.dart';
 
 class SetWorkout {
   int id;
-  final Exercise exercise;
+  Exercise exercise;
   double maxWeigth;
   double volume;
   List<Rep> reps;

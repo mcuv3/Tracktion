@@ -291,9 +291,9 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
   }
 
   LineChartData maxWeights(List<SetResume> sets, List<double> intervals) {
-    var interval = (intervals[0] - intervals[1]) / 10;
-    print("object");
-    print(intervals);
+    var interval = ((intervals[1] - intervals[0]) / 10).ceil().toDouble();
+    print("Max Weights");
+    print(interval);
     if (interval < 1) interval = 1;
 
     return LineChartData(
