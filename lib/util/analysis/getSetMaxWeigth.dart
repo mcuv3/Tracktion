@@ -1,6 +1,6 @@
 import 'package:tracktion/models/app/index.dart';
 
-double getSetMaxWeigth(List<Rep> reps) {
+double getSetMaxWeight(List<Rep> reps) {
   var _reps = [...reps];
 
   if (_reps.length == 0) return 0.0;

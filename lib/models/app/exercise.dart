@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/models/tables/Routines.dart';
 
 import 'body-parts.dart';
@@ -74,6 +75,48 @@ class Exercise {
 
   removeSet(int setId) {
     this.lastWorkouts.removeWhere((wk) => wk.setId == setId);
+  }
+
+  Future<void> verifyMaxWeight(
+      {SQLDatabase db, int setId, double newSetWeight}) async {
+    var delete = newSetWeight == null;
+
+    if (this.maxWeigthSetId == setId &&
+        ((!delete && newSetWeight < this.maxWeigth) || delete)) {
+      final results = await db.findMaxWeigth(this.id, setId);
+      if (results == null) return this;
+
+      final nextMaxWeigth = results[1];
+
+      if (!delete && newSetWeight >= nextMaxWeigth) {
+        this.maxWeigthSetId = setId;
+        this.maxWeigth = newSetWeight;
+      } else {
+        this.maxWeigthSetId = results[0];
+        this.maxWeigth = results[1];
+      }
+    }
+  }
+
+  Future<void> verifyMaxVolume(
+      {SQLDatabase db, int setId, double newSetVolume}) async {
+    var delete = newSetVolume == null;
+
+    if (this.maxVolumeSetId == setId &&
+        ((!delete && newSetVolume < this.maxVolume) || delete)) {
+      final results = await db.findMaxVolume(this.id, setId);
+      if (results == null) return this;
+
+      final nextMaxVolume = results[1];
+
+      if (!delete && newSetVolume >= nextMaxVolume) {
+        this.maxVolumeSetId = setId;
+        this.maxVolume = newSetVolume;
+      } else {
+        this.maxVolumeSetId = results[0];
+        this.maxVolume = results[1];
+      }
+    }
   }
 
   syncMaxes(

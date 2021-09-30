@@ -14,7 +14,7 @@ List<SetResume> mergeSetLastWorkouts(
 Exercise syncMaxes(
     {Exercise exe,
     double volume,
-    double maxWeigth,
+    double maxWeight,
     bool willDelete = false,
     int setId}) {
   if (exe.lastWorkouts.length == 0) {
@@ -27,8 +27,8 @@ Exercise syncMaxes(
       exe.maxVolume = volume;
       exe.maxVolumeSetId = setId;
     }
-    if (maxWeigth > exe.maxWeigth) {
-      exe.maxWeigth = maxWeigth;
+    if (maxWeight > exe.maxWeigth) {
+      exe.maxWeigth = maxWeight;
       exe.maxWeigthSetId = setId;
     }
   }

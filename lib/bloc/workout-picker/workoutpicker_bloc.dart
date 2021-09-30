@@ -21,7 +21,7 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
       yield* _pickWorkout(event);
     } else if (event is DeleteSetPicker) {
       yield* _deleteSet(event);
-    } else if (event is FetchWorkoutMonth) {
+    } else if (event is FetchWorkoutByDate) {
       yield* _workoutsOfMonth(event);
     } else {
       yield* _saveRep(event);
@@ -41,10 +41,24 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
     }
   }
 
-  Stream<WorkoutpickerState> _workoutsOfMonth(FetchWorkoutMonth event) async* {
+  Stream<WorkoutpickerState> _workoutsOfMonth(FetchWorkoutByDate event) async* {
+    Map<DateTime, List<appModels.WorkoutApp>> mapWorkouts = {};
+
+    if (state is WorkoutCalendar)
+      mapWorkouts = (state as WorkoutCalendar).workoutsMonth;
+    print("Start");
+    print(event.start);
+    print("End");
+
+    print(event.end);
+    if (mapWorkouts[event.start] != null) return;
+
     yield WorkoutLoading();
     try {
-      final workouts = await this.db.findWorkoutsOfMonth(event.date);
+      final workouts =
+          await this.db.findWorkoutsOfMonth(event.start, event.end);
+      mapWorkouts[event.start] = workouts;
+      yield WorkoutCalendar(workoutsMonth: mapWorkouts);
     } catch (e) {
       print(e);
       yield WorkoutPickerFailure("Cannot fetch that workout");

@@ -321,7 +321,19 @@ class SQLDatabase extends _$SQLDatabase {
     }).getSingle();
   }
 
-  Future<dynamic> findWorkoutsOfMonth(DateTime date) async {}
+  Future<List<modelsApp.WorkoutApp>> findWorkoutsOfMonth(
+      DateTime start, DateTime end) async {
+    final wks = await (select(workouts)
+          ..where((e) => e.date.isBetweenValues(start, end)))
+        .get();
+
+    return wks
+        .map((wk) => modelsApp.WorkoutApp(
+            date: wk.date,
+            id: wk.id,
+            metadata: modelsApp.WorkoutMetadata.parse(wk.metadata)))
+        .toList();
+  }
 
   // UPDATES AND CRETIONS
 

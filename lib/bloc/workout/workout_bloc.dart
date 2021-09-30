@@ -97,14 +97,12 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
 
   Future<void> _deleteSet(DeleteSet event) async {
     try {
-      var exe = event.set.exercise.copy(); //bug
+      var exe = event.set.exercise;
       var setId = event.set.id;
-      print("Deleting set ID");
-      print(setId);
 
       exe.removeSet(setId);
-      exe = await _verifyMaxWeight(exe: exe, setId: setId, newSetWeight: null);
-      exe = await _verifyMaxVolume(exe: exe, setId: setId, newSetVolume: null);
+      await exe.verifyMaxWeight(setId: setId, newSetWeight: null);
+      await exe.verifyMaxVolume(setId: setId, newSetVolume: null);
       exe.syncMaxes(willDelete: true, setId: setId);
       await _saveExercise(exe);
       await this.db.deleteSet(setId);
@@ -130,12 +128,12 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
 
       var exe = currentExe.copy();
       var volume = getSetVolume(event.set.reps);
-      var maxWeigth = getSetMaxWeigth(event.set.reps);
+      var maxWeight = getSetMaxWeight(event.set.reps);
 
       var newOrUpdatedSet = modelsApp.SetResume(
           setId: event.set.id,
           date: event.date,
-          maxWeigth: maxWeigth,
+          maxWeigth: maxWeight,
           volume: volume,
           reps: event.set.reps.length);
 
@@ -144,12 +142,9 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
             exe.lastWorkouts.indexWhere((set) => set.setId == event.set.id);
         if (indexLastWorkout != -1)
           exe.lastWorkouts[indexLastWorkout] = newOrUpdatedSet;
-        exe = await _verifyMaxVolume(
-            exe: exe,
-            newSetVolume: newOrUpdatedSet.volume,
-            setId: newOrUpdatedSet.setId);
-        exe = await _verifyMaxWeight(
-            exe: exe,
+        await exe.verifyMaxVolume(
+            newSetVolume: newOrUpdatedSet.volume, setId: newOrUpdatedSet.setId);
+        await exe.verifyMaxWeight(
             newSetWeight: newOrUpdatedSet.maxWeigth,
             setId: newOrUpdatedSet.setId);
       } else {
@@ -160,7 +155,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       exe = syncMaxes(
           setId: newOrUpdatedSet.setId,
           exe: exe,
-          maxWeigth: maxWeigth,
+          maxWeight: maxWeight,
           volume: volume);
 
       final setId = await this.db.saveSet(
@@ -168,7 +163,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
               id: event.set.id,
               exercise: exe,
               volume: volume,
-              maxWeigth: maxWeigth,
+              maxWeigth: maxWeight,
               reps: event.set.reps),
           workout.id);
 
@@ -345,64 +340,16 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   Future<void> _deleteSets(DeleteSets event) async {
     try {
       Map<int, modelsApp.Exercise> exes = {};
-      for (final set in event.sets) {
-        if (exes[set.exercise.id] == null) {
-          exes[set.exercise.id] = set.exercise;
-        } else
-          set.exercise = exes[set.exercise.id];
-        await this._deleteSet(DeleteSet(set));
+      for (final setWk in event.sets) {
+        if (exes[setWk.exercise.id] == null)
+          exes[setWk.exercise.id] = setWk.exercise;
+        else
+          setWk.exercise = exes[setWk.exercise.id];
+        await this._deleteSet(DeleteSet(setWk));
       }
     } catch (e) {
       print(e);
     }
-  }
-
-  Future<modelsApp.Exercise> _verifyMaxVolume(
-      {modelsApp.Exercise exe, int setId, double newSetVolume}) async {
-    var _exe = exe.copy();
-    var delete = newSetVolume == null;
-
-    if (exe.maxVolumeSetId == setId &&
-        ((!delete && newSetVolume < exe.maxVolume) || delete)) {
-      final results = await this.db.findMaxVolume(exe.id, setId);
-      if (results == null) return _exe;
-
-      final nextMaxVolume = results[1];
-
-      if (!delete && newSetVolume >= nextMaxVolume) {
-        _exe.maxVolumeSetId = setId;
-        _exe.maxVolume = newSetVolume;
-      } else {
-        _exe.maxVolumeSetId = results[0];
-        _exe.maxVolume = results[1];
-      }
-    }
-
-    return _exe;
-  }
-
-  Future<modelsApp.Exercise> _verifyMaxWeight(
-      {modelsApp.Exercise exe, int setId, double newSetWeight}) async {
-    var _exe = exe.copy();
-    var delete = newSetWeight == null;
-
-    if (exe.maxWeigthSetId == setId &&
-        ((!delete && newSetWeight < exe.maxWeigth) || delete)) {
-      final results = await this.db.findMaxWeigth(exe.id, setId);
-      if (results == null) return _exe;
-
-      final nextMaxWeigth = results[1];
-
-      if (!delete && newSetWeight >= nextMaxWeigth) {
-        _exe.maxWeigthSetId = setId;
-        _exe.maxWeigth = newSetWeight;
-      } else {
-        _exe.maxWeigthSetId = results[0];
-        _exe.maxWeigth = results[1];
-      }
-    }
-
-    return _exe;
   }
 
   Future<dynamic> _saveExercise(modelsApp.Exercise exe) =>
