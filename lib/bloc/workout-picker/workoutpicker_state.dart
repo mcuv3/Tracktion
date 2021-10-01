@@ -6,7 +6,7 @@ abstract class WorkoutpickerState {}
 class WorkoutLoading extends WorkoutpickerState {}
 
 class WorkoutCalendar extends WorkoutpickerState {
-  final Map<DateTime, List<appModels.WorkoutApp>> workoutsMonth;
+  final Map<DateTime, Map<DateTime, appModels.WorkoutApp>> workoutsMonth;
   final List<appModels.Exercise> currentExercise;
   WorkoutCalendar({this.workoutsMonth, this.currentExercise});
 }

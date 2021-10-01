@@ -8,6 +8,8 @@ class PickWorkout extends WorkoutpickerEvent {
   PickWorkout(this.date);
 }
 
+class ResetWorkoutCalendar extends WorkoutpickerEvent {}
+
 class FetchWorkoutByDate extends WorkoutpickerEvent {
   final DateTime start;
   final DateTime end;

@@ -48,11 +48,11 @@ class SQLDatabase extends _$SQLDatabase {
         print("Updating database");
         await m.createAll();
       }, beforeOpen: (details) async {
-        print("Was created");
-        print(details.wasCreated);
-        await delete(workouts).go();
-        await delete(setWorkouts).go();
-        await delete(reps).go();
+        // print("Was created");
+        // print(details.wasCreated);
+        // await delete(workouts).go();
+        // await delete(setWorkouts).go();
+        // await delete(reps).go();
         if (!details.wasCreated) return;
 
         final exes = exercisesMigration.map((e) => into(exercises).insert(e));
@@ -321,18 +321,21 @@ class SQLDatabase extends _$SQLDatabase {
     }).getSingle();
   }
 
-  Future<List<modelsApp.WorkoutApp>> findWorkoutsOfMonth(
+  Future<Map<DateTime, modelsApp.WorkoutApp>> findWorkoutsOfMonth(
       DateTime start, DateTime end) async {
     final wks = await (select(workouts)
           ..where((e) => e.date.isBetweenValues(start, end)))
         .get();
+    Map<DateTime, modelsApp.WorkoutApp> wksMap = {};
 
-    return wks
-        .map((wk) => modelsApp.WorkoutApp(
-            date: wk.date,
-            id: wk.id,
-            metadata: modelsApp.WorkoutMetadata.parse(wk.metadata)))
-        .toList();
+    wks.forEach((wk) {
+      wksMap[wk.date] = modelsApp.WorkoutApp(
+          date: wk.date,
+          id: wk.id,
+          metadata: modelsApp.WorkoutMetadata.parse(wk.metadata));
+    });
+
+    return wksMap;
   }
 
   // UPDATES AND CRETIONS

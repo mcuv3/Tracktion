@@ -3,9 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:tracktion/bloc/workout-picker/workoutpicker_bloc.dart';
+import "package:tracktion/colors/custom_colors.dart";
+import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/app/workout-metadata.dart';
+import 'package:tracktion/util/enumToString.dart';
 
 final kToday = DateTime.now();
+final now = DateTime.now();
+final last = DateTime(now.year, now.month + 1, 0);
+final start = DateTime(now.year, now.month, 1);
 final kFirstDay = DateTime(kToday.year, kToday.month - 3, kToday.day);
 final kLastDay = DateTime(kToday.year, kToday.month + 3, kToday.day);
 
@@ -20,32 +26,29 @@ class CalendarWorkoutScreen extends StatefulWidget {
 }
 
 class _CalendarWorkoutScreenState extends State<CalendarWorkoutScreen> {
-  ValueNotifier<List<String>> _selectedEvents = ValueNotifier([]);
-  ValueNotifier<Map<DateTime, List<WorkoutApp>>> _workouts =
+  ValueNotifier<List<BodyPartEnum>> _selectedEvents = ValueNotifier([]);
+  ValueNotifier<Map<DateTime, Map<DateTime, WorkoutApp>>> _workouts =
       ValueNotifier(Map());
   CalendarFormat _calendarFormat = CalendarFormat.month;
 
+  var copyable = false;
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay;
 
   @override
   void initState() {
     super.initState();
-
     _selectedDay = _focusedDay;
     Future.delayed(Duration.zero).then((_) {
-      var now = new DateTime.now();
-
-// Find the last day of the month.
-      var start = (now.month < 12)
-          ? DateTime(now.year, now.month + 1, 1)
-          : DateTime(now.year + 1, 1, 1);
-      var endDay = start.subtract(new Duration(days: 1)).day;
-      var end = DateTime(now.year, now.month, endDay);
       BlocProvider.of<WorkoutpickerBloc>(context)
-          .add(FetchWorkoutByDate(start, end));
+          .add(FetchWorkoutByDate(start, last));
     });
-    // _selectedEvents = ValueNotifier(_getEventsForDay(_selectedDay));
+  }
+
+  @override
+  void deactivate() {
+    BlocProvider.of<WorkoutpickerBloc>(context).add(ResetWorkoutCalendar());
+    super.deactivate();
   }
 
   @override
@@ -56,30 +59,52 @@ class _CalendarWorkoutScreenState extends State<CalendarWorkoutScreen> {
     super.dispose();
   }
 
-  List<String> _getEventsForDay(DateTime day) {
-    // FIXME:  this triggers on days that have exercises.
-    return [];
+  List<BodyPartEnum> _getEventsForDay(DateTime day) {
+    final wk = getWorkoutForDate(day);
+    if (wk == null) return [];
+    return wk.metadata.bodyParts.toList();
+  }
+
+  WorkoutApp getWorkoutForDate(DateTime day) {
+    final month = _workouts.value[start];
+    if (month == null) return null;
+    final wk = month[DateTime(day.year, day.month, day.day)];
+    if (wk == null) return null;
+    return wk;
   }
 
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
-    _selectedEvents.value = ["1", "2", "3"];
+    final wk = getWorkoutForDate(selectedDay);
+    _selectedEvents.value = wk != null ? wk.metadata.bodyParts.toList() : [];
     // if (!isSameDay(_selectedDay, selectedDay)) {
     // Navigator.of(context).pop(selectedDay);
-    // setState(() {
-    //   _selectedDay = selectedDay;
-    //   _focusedDay = focusedDay;
-    // });
+    setState(() {
+      _selectedDay = selectedDay;
+      _focusedDay = focusedDay;
+      copyable = wk != null;
+    });
 
     // _selectedEvents.value = _getEventsForDay(selectedDay);
     // }
   }
 
+  List<DateTime> _getMonthIntervals(DateTime date) => [
+        DateTime(date.year, date.month, 1),
+        DateTime(date.year, date.month + 1, 0)
+      ];
+
+  void onChangeMonth(DateTime date) {
+    final dates = _getMonthIntervals(date);
+    BlocProvider.of<WorkoutpickerBloc>(context)
+        .add(FetchWorkoutByDate(dates[0], dates[1]));
+  }
+
   @override
   Widget build(BuildContext context) {
     print(widget.currentDate);
-    return Material(
-      color: Colors.white,
-      child: BlocListener<WorkoutpickerBloc, WorkoutpickerState>(
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: BlocListener<WorkoutpickerBloc, WorkoutpickerState>(
           listener: (context, state) {
             if (state is WorkoutCalendar) {
               print(state.workoutsMonth);
@@ -88,9 +113,9 @@ class _CalendarWorkoutScreenState extends State<CalendarWorkoutScreen> {
           },
           child: Column(
             children: [
-              ValueListenableBuilder<Map<DateTime, List<WorkoutApp>>>(
+              ValueListenableBuilder<Map<DateTime, Map<DateTime, WorkoutApp>>>(
                 valueListenable: _workouts,
-                builder: (context, value, _) => TableCalendar<String>(
+                builder: (context, value, _) => TableCalendar<BodyPartEnum>(
                   firstDay: kFirstDay,
                   lastDay: kLastDay,
                   focusedDay: _focusedDay,
@@ -99,24 +124,40 @@ class _CalendarWorkoutScreenState extends State<CalendarWorkoutScreen> {
                   eventLoader: _getEventsForDay,
                   startingDayOfWeek: StartingDayOfWeek.monday,
                   calendarStyle: CalendarStyle(
-                    outsideDaysVisible: false,
-                  ),
+                      outsideDaysVisible: false,
+                      // markerSize: 2.0,
+                      todayDecoration: BoxDecoration(
+                        color: Theme.of(context)
+                            .colorScheme
+                            .exercise
+                            .withOpacity(0.5),
+                        shape: BoxShape.circle,
+                      ),
+                      todayTextStyle: TextStyle(color: Colors.white),
+                      selectedDecoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.exercise,
+                        shape: BoxShape.circle,
+                      ),
+                      selectedTextStyle: TextStyle(color: Colors.white),
+                      markerDecoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.routines,
+                        shape: BoxShape.circle,
+                      )),
                   onDaySelected: _onDaySelected,
                   onFormatChanged: (format) {
-                    if (_calendarFormat != format) {
-                      setState(() {
-                        _calendarFormat = format;
-                      });
-                    }
+                    setState(() {
+                      _calendarFormat = format;
+                    });
                   },
                   onPageChanged: (focusedDay) {
+                    if (focusedDay.day == 1) onChangeMonth(focusedDay);
                     _focusedDay = focusedDay;
                   },
                 ),
               ),
               const SizedBox(height: 8.0),
               Expanded(
-                child: ValueListenableBuilder<List<String>>(
+                child: ValueListenableBuilder<List<BodyPartEnum>>(
                   valueListenable: _selectedEvents,
                   builder: (context, value, _) {
                     return ListView.builder(
@@ -133,7 +174,7 @@ class _CalendarWorkoutScreenState extends State<CalendarWorkoutScreen> {
                           ),
                           child: ListTile(
                             onTap: () => print('${value[index]}'),
-                            title: Text('${value[index]}'),
+                            title: Text(enumToString(value[index])),
                           ),
                         );
                       },
@@ -143,6 +184,15 @@ class _CalendarWorkoutScreenState extends State<CalendarWorkoutScreen> {
               ),
             ],
           )),
+      floatingActionButton: copyable
+          ? ElevatedButton.icon(
+              onPressed: () {},
+              label: Text('Copy Workout'),
+              icon: Icon(Icons.copy),
+              style: ElevatedButton.styleFrom(
+                  primary: Theme.of(context).colorScheme.routines),
+            )
+          : null,
     );
   }
 }

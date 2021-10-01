@@ -23,9 +23,10 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
       yield* _deleteSet(event);
     } else if (event is FetchWorkoutByDate) {
       yield* _workoutsOfMonth(event);
-    } else {
+    } else if (event is ResetWorkoutCalendar) {
+      yield* _reset();
+    } else
       yield* _saveRep(event);
-    }
   }
 
   Stream<WorkoutpickerState> _pickWorkout(PickWorkout event) async* {
@@ -41,18 +42,22 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
     }
   }
 
+  Stream<WorkoutpickerState> _reset() async* {
+    yield WorkoutLoading();
+  }
+
   Stream<WorkoutpickerState> _workoutsOfMonth(FetchWorkoutByDate event) async* {
-    Map<DateTime, List<appModels.WorkoutApp>> mapWorkouts = {};
+    Map<DateTime, Map<DateTime, appModels.WorkoutApp>> mapWorkouts = {};
+
+    print("First");
+    print(event.start);
+    print("Last");
+    print(event.end);
 
     if (state is WorkoutCalendar)
       mapWorkouts = (state as WorkoutCalendar).workoutsMonth;
-    print("Start");
-    print(event.start);
-    print("End");
 
-    print(event.end);
     if (mapWorkouts[event.start] != null) return;
-
     yield WorkoutLoading();
     try {
       final workouts =
@@ -89,6 +94,4 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
       yield WorkoutPickerFailure("Cannot sava the rep");
     }
   }
-
-  Future<List<Map<DateTime, List<int>>>> allWorkouts() {}
 }
