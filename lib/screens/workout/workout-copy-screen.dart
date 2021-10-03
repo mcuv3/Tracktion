@@ -145,11 +145,14 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
                                 )),
                       ),
                     ),
+                    Divider(
+                      thickness: 1,
+                    ),
                     AnimatedContainer(
                       duration: Duration(milliseconds: 200),
-                      padding: EdgeInsets.all(8),
+                      padding: EdgeInsets.all(4),
                       height: editMode ? 50 : 70,
-                      decoration: BoxDecoration(color: Colors.black),
+                      decoration: BoxDecoration(color: Colors.white),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -159,6 +162,7 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
                                   visualDensity: VisualDensity.compact,
                                   icon: FaIcon(
                                     FontAwesomeIcons.times,
+                                    color: Theme.of(context).colorScheme.error,
                                   ),
                                   onPressed: () {
                                     setState(() {
@@ -171,7 +175,7 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
                                 )
                               ]
                             : [
-                                TextButton.icon(
+                                ElevatedButton.icon(
                                     onPressed: () async {
                                       final shouldCopy = await confirmationModal(
                                           context: context,
@@ -190,14 +194,14 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
                                       }
                                     },
                                     icon: FaIcon(
-                                      FontAwesomeIcons.plus,
+                                      FontAwesomeIcons.check,
                                       size: 12,
                                     ),
                                     label: Text("Apply")),
                                 Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 4, vertical: 0),
-                                  child: TextButton.icon(
+                                  child: ElevatedButton.icon(
                                       onPressed: () {
                                         setState(() {
                                           editMode = !editMode;
@@ -212,7 +216,7 @@ class _WorkoutPickedScreenState extends State<WorkoutPickedScreen> {
                                       ),
                                       label: Text("Edit")),
                                 ),
-                                TextButton.icon(
+                                ElevatedButton.icon(
                                     onPressed: () {
                                       Navigator.of(context).pop(false);
                                     },

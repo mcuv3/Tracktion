@@ -7,8 +7,10 @@ class WorkoutLoading extends WorkoutpickerState {}
 
 class WorkoutCalendar extends WorkoutpickerState {
   final Map<DateTime, Map<DateTime, appModels.WorkoutApp>> workoutsMonth;
-  final List<appModels.Exercise> currentExercise;
-  WorkoutCalendar({this.workoutsMonth, this.currentExercise});
+  final List<Exercise> workoutExercise;
+  final int selectedWorkoutId;
+  WorkoutCalendar(
+      {this.workoutsMonth, this.workoutExercise, this.selectedWorkoutId});
 }
 
 class Workout extends WorkoutpickerState {

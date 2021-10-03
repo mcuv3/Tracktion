@@ -11,6 +11,7 @@ part 'workoutpicker_state.dart';
 
 class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
   SQLDatabase db;
+  WorkoutCalendar prevCachedState;
   WorkoutpickerBloc({this.db}) : super(WorkoutLoading());
 
   @override
@@ -25,6 +26,10 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
       yield* _workoutsOfMonth(event);
     } else if (event is ResetWorkoutCalendar) {
       yield* _reset();
+    } else if (event is FetchWorkoutExercises) {
+      yield* _fetchWorkoutExercises(event);
+    } else if (event is RestoreWorkoutCalendar) {
+      yield* _restore();
     } else
       yield* _saveRep(event);
   }
@@ -42,17 +47,37 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
     }
   }
 
+  Stream<WorkoutpickerState> _fetchWorkoutExercises(
+      FetchWorkoutExercises event) async* {
+    print(state);
+    if (!(state is WorkoutCalendar)) return;
+
+    final workoutsMonth = (state as WorkoutCalendar).workoutsMonth;
+    yield WorkoutLoading();
+    try {
+      final exes = await this.db.findWorkoutExercise(event.workoutId);
+      final wkc = WorkoutCalendar(
+          workoutsMonth: workoutsMonth,
+          workoutExercise: exes,
+          selectedWorkoutId: event.workoutId);
+      prevCachedState = wkc;
+      yield wkc;
+    } catch (e) {
+      print(e);
+      yield WorkoutPickerFailure("Cannot fetch that workout");
+    }
+  }
+
   Stream<WorkoutpickerState> _reset() async* {
     yield WorkoutLoading();
   }
 
+  Stream<WorkoutpickerState> _restore() async* {
+    yield prevCachedState;
+  }
+
   Stream<WorkoutpickerState> _workoutsOfMonth(FetchWorkoutByDate event) async* {
     Map<DateTime, Map<DateTime, appModels.WorkoutApp>> mapWorkouts = {};
-
-    print("First");
-    print(event.start);
-    print("Last");
-    print(event.end);
 
     if (state is WorkoutCalendar)
       mapWorkouts = (state as WorkoutCalendar).workoutsMonth;
@@ -63,7 +88,10 @@ class WorkoutpickerBloc extends Bloc<WorkoutpickerEvent, WorkoutpickerState> {
       final workouts =
           await this.db.findWorkoutsOfMonth(event.start, event.end);
       mapWorkouts[event.start] = workouts;
-      yield WorkoutCalendar(workoutsMonth: mapWorkouts);
+      final wkc =
+          WorkoutCalendar(workoutsMonth: mapWorkouts, workoutExercise: []);
+      prevCachedState = wkc;
+      yield wkc;
     } catch (e) {
       print(e);
       yield WorkoutPickerFailure("Cannot fetch that workout");

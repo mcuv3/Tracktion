@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:tracktion/bloc/workout-picker/workoutpicker_bloc.dart';
 import "package:tracktion/colors/custom_colors.dart";
 import 'package:tracktion/screens/index.dart';
 import 'package:tracktion/screens/workout/calendar-workouts-screen.dart';
@@ -50,27 +52,32 @@ class WorkoutEmpty extends StatelessWidget {
                   ),
                   label: Text('Add exercises')),
               TextButton.icon(
-                  onPressed: () async {
-                    DateTime date = await showCupertinoModalBottomSheet(
-                      expand: false,
-                      context: context,
-                      backgroundColor: Colors.transparent,
-                      builder: (context) =>
-                          CalendarWorkoutScreen(currentDate: currentDate),
-                    );
-                    if (date == null) return;
+                  onPressed: () => showCupertinoModalBottomSheet(
+                        expand: false,
+                        context: context,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => CalendarWorkoutScreen(
+                          actionIcon: Icons.copy,
+                          actionLabel: "Copy Workout",
+                          onWorkoutSelected: (date) async {
+                            final applied = await showCupertinoModalBottomSheet(
+                              expand: true,
+                              isDismissible: false,
+                              context: context,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) => WorkoutPickedScreen(
+                                targetDate: currentDate,
+                                datePicked: date,
+                              ),
+                            );
 
-                    showCupertinoModalBottomSheet(
-                      expand: true,
-                      isDismissible: false,
-                      context: context,
-                      backgroundColor: Colors.transparent,
-                      builder: (context) => WorkoutPickedScreen(
-                        targetDate: currentDate,
-                        datePicked: date,
+                            if (applied is bool && !applied) {
+                              BlocProvider.of<WorkoutpickerBloc>(context)
+                                  .add(RestoreWorkoutCalendar());
+                            }
+                          },
+                        ),
                       ),
-                    );
-                  },
                   icon: FaIcon(
                     FontAwesomeIcons.copy,
                     size: 25,

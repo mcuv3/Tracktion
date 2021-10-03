@@ -42,16 +42,16 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm>
   final perController = TextEditingController(text: "0.0");
   var numSeries = 3;
 
-  final Map<String, String> copyMethods = {
-    "Smart":
-        "Base of your prevous workouts with this exercise we provide al list of sets of reps intelligentlly selected for to make progress week by week."
+  final Map<CopyMethod, String> copyMethods = {
+    CopyMethod.Smart:
+        "Base of your previous workouts with this exercise we provide al list of sets of reps intelligently selected for to make progress week by week."
             "",
-    "Static":
+    CopyMethod.Static:
         "Provide a number of sets that will be copied every time you select this routine, you can provide a RPE target as well.",
-    "Previus":
+    CopyMethod.Previous:
         "Every time you select this routine the most recent and previous set of this exercise  will be copied. ",
-    "Percentage":
-        "For compund exercise like Squat or Deadlift this option allow you to set a percentage target base of your 1MR(Max Repetition) every time you select this routine it will propump with the required value, note that can provide 1MR for flexibility.",
+    CopyMethod.Percentage:
+        "For compound exercise like Squat or DeadLift this option allow you to set a percentage target base of your 1MR(Max Repetition) every time you select this routine it will popup with the required value, note that can provide 1MR for flexibility.",
   };
 
   @override
@@ -81,7 +81,7 @@ class _SaveSetRoutineFormState extends State<SaveSetRoutineForm>
       TracktionNotifyModal(
         type: NotifyType.Info,
         title: enumToString(copyMethod),
-        description: copyMethods[enumToString(copyMethod)],
+        description: copyMethods[copyMethod],
       ),
     );
   }

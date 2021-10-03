@@ -13,9 +13,11 @@ class BodyPartWidget extends StatelessWidget {
   final bool active;
   final Color textColor;
   final Color bgColor;
+  final EdgeInsets padding;
   BodyPartWidget(this.bodyPart,
       {this.withTitle = true,
       this.width = 110,
+      this.padding = const EdgeInsets.all(8),
       this.height = 110,
       this.active = false,
       this.textColor = Colors.white,
@@ -72,7 +74,7 @@ class BodyPartWidget extends StatelessWidget {
                   : textColor,
               borderRadius: BorderRadius.circular(5),
               boxShadow: shadowList),
-          padding: EdgeInsets.all(8),
+          padding: padding,
           width: width,
           height: height,
           child: Column(

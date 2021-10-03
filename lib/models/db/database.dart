@@ -288,6 +288,16 @@ class SQLDatabase extends _$SQLDatabase {
         metadata: modelsApp.WorkoutMetadata.parse(wk.metadata));
   }
 
+  Future<List<Exercise>> findWorkoutExercise(int workoutId) async {
+    final query = await (select(setWorkouts).join([
+      innerJoin(exercises, exercises.id.equalsExp(setWorkouts.exerciseId)),
+    ])
+          ..where(setWorkouts.workOutId.equals(workoutId)))
+        .get();
+
+    return query.map((row) => row.readTable(exercises)).toList();
+  }
+
   Future<List> findMaxVolume(int exerciseId, int setId) async {
     final max = setWorkouts.volume.max();
     final id = setWorkouts.id;

@@ -10,10 +10,17 @@ class PickWorkout extends WorkoutpickerEvent {
 
 class ResetWorkoutCalendar extends WorkoutpickerEvent {}
 
+class RestoreWorkoutCalendar extends WorkoutpickerEvent {}
+
 class FetchWorkoutByDate extends WorkoutpickerEvent {
   final DateTime start;
   final DateTime end;
   FetchWorkoutByDate(this.start, this.end);
+}
+
+class FetchWorkoutExercises extends WorkoutpickerEvent {
+  final int workoutId;
+  FetchWorkoutExercises(this.workoutId);
 }
 
 class DeleteSetPicker extends WorkoutpickerEvent {
