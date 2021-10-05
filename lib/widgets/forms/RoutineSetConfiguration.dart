@@ -85,7 +85,9 @@ class _RoutinesSetConfugurationState extends State<RoutinesSetConfuguration> {
                                 color: Theme.of(context).colorScheme.exercise),
                             child: Text("Configure your sets",
                                 style: TextStyle(
-                                    fontSize: 18, color: Colors.white))),
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                    fontFamily: "CarterOne"))),
                         ListView.builder(
                           shrinkWrap: true,
                           padding: EdgeInsets.all(0),

@@ -1,6 +1,15 @@
 import 'package:tracktion/models/db/database.dart' as db;
 import 'package:tracktion/models/tables/Routines.dart';
 
+List<db.Preference> preferencesList = [
+  db.Preference(id: 1, key: "name", value: ""),
+  db.Preference(id: 2, key: "nickname", value: ""),
+  db.Preference(id: 3, key: "age", value: ""),
+  db.Preference(id: 4, key: "defaultIncrement", value: "2.5"),
+  db.Preference(id: 5, key: "metric", value: "kg"),
+  db.Preference(id: 6, key: "weight", value: "0.0"),
+];
+
 List<db.Exercise> exercisesMigration = [
   db.Exercise(
       id: 1,

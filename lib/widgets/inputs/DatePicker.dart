@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:tracktion/widgets/items/TracktionCalendar.dart';
+import 'package:tracktion/screens/workout/calendar-workouts-screen.dart';
 
 import '../../colors/custom_colors.dart';
 
@@ -44,16 +44,18 @@ class DatePicker extends StatelessWidget {
                     currentDate.year, currentDate.month, currentDate.day - 1));
               }),
           GestureDetector(
-            onTap: () async {
-              DateTime date = await showCupertinoModalBottomSheet(
-                expand: false,
-                context: context,
-                backgroundColor: Colors.transparent,
-                builder: (context) => TracktionCalendar(currentDate),
-              );
-              if (date == null) return;
-              changeDate(date);
-            },
+            onTap: () => showCupertinoModalBottomSheet(
+              expand: false,
+              context: context,
+              backgroundColor: Colors.transparent,
+              builder: (context) => CalendarWorkoutScreen(
+                  actionIcon: Icons.exit_to_app,
+                  actionLabel: "Go to Workout",
+                  onWorkoutSelected: (date) {
+                    changeDate(date);
+                    Navigator.of(context).pop();
+                  }),
+            ),
             child: Text(
                 '${currentDate.day}-${currentDate.month}-${currentDate.year}',
                 style: TextStyle(color: Colors.black)),

@@ -4,6 +4,7 @@ import 'package:tracktion/models/app/RoutineSlim.dart';
 import 'package:tracktion/models/app/body-parts.dart';
 import 'package:tracktion/models/db/migration.dart';
 import 'package:tracktion/models/db/migration2.dart';
+import 'package:tracktion/models/tables/Preferences.dart';
 import 'package:tracktion/models/tables/Routines.dart';
 import 'package:tracktion/models/tables/WorkOut.dart';
 
@@ -26,6 +27,7 @@ part 'database.g.dart';
   RoutineGroup,
   Routine,
   RoutineSet,
+  Preferences
 ])
 class SQLDatabase extends _$SQLDatabase {
   // SQLDatabase()
@@ -55,11 +57,14 @@ class SQLDatabase extends _$SQLDatabase {
         // await delete(reps).go();
         if (!details.wasCreated) return;
 
+        final _preferences =
+            preferencesList.map((e) => into(preferences).insert(e));
         final exes = exercisesMigration.map((e) => into(exercises).insert(e));
         final bds =
             bodyPartsMigration.map((e) => into(exerciseBodyParts).insert(e));
 
         await Future.wait(exes);
+        await Future.wait(_preferences);
         await Future.wait(bds);
       });
 
