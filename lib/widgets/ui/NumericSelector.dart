@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+enum Direction {
+  left,
+  right,
+}
+
 class NumericSelector extends StatelessWidget {
   final dynamic value;
-  final Function(String) onPress;
+  final Function(Direction) onPress;
 
   const NumericSelector({Key key, this.value, this.onPress}) : super(key: key);
 
@@ -18,7 +23,7 @@ class NumericSelector extends StatelessWidget {
               FontAwesomeIcons.chevronLeft,
               size: 14,
             ),
-            onPressed: () => onPress("left")),
+            onPressed: () => onPress(Direction.left)),
         Text(value.toString(), style: const TextStyle(color: Colors.black)),
         IconButton(
             visualDensity: VisualDensity.compact,
@@ -26,7 +31,7 @@ class NumericSelector extends StatelessWidget {
               FontAwesomeIcons.chevronRight,
               size: 14,
             ),
-            onPressed: () => onPress("rigth")),
+            onPressed: () => onPress(Direction.right)),
       ],
     );
   }

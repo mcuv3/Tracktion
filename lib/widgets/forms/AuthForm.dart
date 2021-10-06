@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tracktion/bloc/auth/auth_cubit.dart';
+import 'package:tracktion/colors/constants.dart';
 import "package:tracktion/colors/custom_colors.dart";
 
 class AuthForm extends StatefulWidget {
@@ -25,47 +26,58 @@ class _AuthFormState extends State<AuthForm> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        TextFormField(
-            controller: emailController,
-            textAlign: TextAlign.start,
-            style: Theme.of(context).textTheme.caption,
-            cursorRadius: Radius.circular(10),
-            decoration: InputDecoration(
-                errorStyle: TextStyle(color: Colors.white),
-                prefixIcon: Icon(
-                  Icons.email,
-                  size: 20,
-                ),
-                fillColor: Colors.white,
-                filled: true,
-                hintText: 'Email')),
+        Container(
+          decoration: BoxDecoration(boxShadow: shadowList),
+          child: TextFormField(
+              controller: emailController,
+              textAlign: TextAlign.start,
+              style: Theme.of(context).textTheme.caption,
+              cursorRadius: Radius.circular(10),
+              decoration: InputDecoration(
+                  errorStyle: TextStyle(color: Colors.white),
+                  prefixIcon: Icon(
+                    Icons.email,
+                    size: 20,
+                  ),
+                  fillColor: Colors.white,
+                  filled: true,
+                  hintText: 'Email')),
+        ),
         SizedBox(
           height: 20,
         ),
-        TextFormField(
-            controller: passwordController,
-            textAlign: TextAlign.start,
-            style: Theme.of(context).textTheme.caption,
-            cursorRadius: Radius.circular(10),
-            enableSuggestions: false,
-            autocorrect: false,
-            obscureText: true,
-            decoration: InputDecoration(
-                errorStyle: TextStyle(color: Colors.white),
-                prefixIcon: Icon(
-                  Icons.security,
-                  size: 20,
-                ),
-                fillColor: Colors.white,
-                filled: true,
-                hintText: 'Password')),
+        Container(
+          decoration: BoxDecoration(boxShadow: shadowList),
+          child: TextFormField(
+              controller: passwordController,
+              textAlign: TextAlign.start,
+              style: Theme.of(context).textTheme.caption,
+              cursorRadius: Radius.circular(10),
+              enableSuggestions: false,
+              autocorrect: false,
+              obscureText: true,
+              decoration: InputDecoration(
+                  errorStyle: TextStyle(color: Colors.white),
+                  prefixIcon: Icon(
+                    Icons.security,
+                    size: 20,
+                  ),
+                  fillColor: Colors.white,
+                  filled: true,
+                  hintText: 'Password')),
+        ),
         SizedBox(
           height: 20,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            OutlinedButton(
+            ElevatedButton(
+              style: TextButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(8.0),
+                  )),
               child: Text(
                 'Sign Up',
                 style: TextStyle(
@@ -77,7 +89,7 @@ class _AuthFormState extends State<AuthForm> {
             SizedBox(
               width: 10,
             ),
-            TextButton(
+            ElevatedButton(
               style: TextButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.routines,
                   shape: RoundedRectangleBorder(

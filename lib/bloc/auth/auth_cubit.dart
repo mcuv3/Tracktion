@@ -5,6 +5,7 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:flutter_twitter_login/flutter_twitter_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
+import 'package:tracktion/models/db/database.dart';
 
 part 'auth_state.dart';
 
@@ -17,7 +18,8 @@ enum LoginType {
 }
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit() : super(AuthInitial());
+  final SQLDatabase db;
+  AuthCubit(this.db) : super(AuthInitial());
 
   void listenUser() {
     FirebaseAuth.instance.authStateChanges().listen((User user) {
@@ -48,9 +50,11 @@ class AuthCubit extends Cubit<AuthState> {
               email, password, type == LoginType.CredentialsSignIn);
           break;
       }
+      final isNew = user.additionalUserInfo.isNewUser;
+      if (isNew) await this.saveUserName(user);
       emit(AuthSuccess(user.user));
     } on FirebaseAuthException catch (e) {
-      var message = "Something wen wrong, plase retry later.";
+      var message = "Something wen wrong, please retry later.";
       switch (e.code) {
         case 'weak-password':
           message = 'The password provided is too weak.';
@@ -143,5 +147,10 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     await FirebaseAuth.instance.signOut();
     emit(AuthInitial());
+  }
+
+  saveUserName(UserCredential user) {
+    return this.db.savePreference(
+        PreferencesCompanion.insert(key: "name", value: user.user.displayName));
   }
 }

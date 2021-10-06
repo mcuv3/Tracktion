@@ -353,6 +353,50 @@ class SQLDatabase extends _$SQLDatabase {
     return wksMap;
   }
 
+  Future<modelsApp.PreferenceApp> loadPreferences() async {
+    final ps = await select(preferences).get();
+
+    final _pf = modelsApp.PreferenceApp();
+
+    ps.forEach((row) {
+      _pf.addPreference(row.key, row);
+      switch (row.key) {
+        case "name":
+          _pf.name = row.value;
+          break;
+        case "nickname":
+          _pf.nickname = row.value;
+          break;
+        case "age":
+          _pf.age = int.tryParse(row.value) ?? 0;
+          break;
+        case "weight":
+          _pf.weight = double.tryParse(row.value) ?? 0.0;
+          break;
+        case "defaultIncrement":
+          _pf.defaultIncrement = double.parse(row.value);
+          break;
+        case "metric":
+          _pf.metric =
+              row.value == "kg" ? modelsApp.Metric.kg : modelsApp.Metric.lbs;
+          break;
+        default:
+          break;
+      }
+    });
+
+    return _pf;
+  }
+
+  Future<void> savePreferences(modelsApp.PreferenceApp _preferences) async {
+    final saves =
+        _preferences.preferences.map((p) => into(preferences).insert(p));
+    await Future.wait(saves);
+  }
+
+  Future<void> savePreference(PreferencesCompanion preference) =>
+      into(preferences).insert(preference, mode: InsertMode.insertOrReplace);
+
   // UPDATES AND CRETIONS
 
   Future<void> saveExercise(ExerciseWithBodyParts entry) {

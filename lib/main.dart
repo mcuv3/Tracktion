@@ -10,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:tracktion/bloc/auth/auth_cubit.dart';
 import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
+import 'package:tracktion/bloc/user/user_cubit.dart';
 import 'package:tracktion/bloc/workout-picker/workoutpicker_bloc.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
 import 'package:tracktion/models/db/database.dart';
@@ -104,11 +105,18 @@ class _TracktionAppState extends State<TracktionApp> {
     return RepositoryProvider<SQLDatabase>(
       create: (context) => constructDb(),
       child: BlocProvider(
-          create: (BuildContext context) => AuthCubit()..listenUser(),
+          create: (BuildContext context) =>
+              AuthCubit(RepositoryProvider.of<SQLDatabase>(context))
+                ..listenUser(),
           child: MultiBlocProvider(
             providers: [
               BlocProvider<ExerciseBloc>(
                 create: (BuildContext context) => ExerciseBloc(
+                  RepositoryProvider.of<SQLDatabase>(context),
+                ),
+              ),
+              BlocProvider<UserCubit>(
+                create: (BuildContext context) => UserCubit(
                   RepositoryProvider.of<SQLDatabase>(context),
                 ),
               ),
