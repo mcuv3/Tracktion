@@ -24,11 +24,12 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
   var form = GlobalKey<FormState>();
   var formValues = {
     "nickname": "",
-    "age": 0.0,
-    "wight": 0.0,
+    "age": "0.0",
+    "weight": "0.0",
     "metric": Metric.kg,
-    "defaultIncrement": 2.5
+    "defaultIncrement": "2.5"
   };
+  var fetched = false;
 
   @override
   void initState() {
@@ -36,6 +37,18 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
       BlocProvider.of<UserCubit>(this.context).loadUserPreferences();
     });
     super.initState();
+  }
+
+  void submitForm() {
+    if (!form.currentState.validate()) return;
+
+    BlocProvider.of<UserCubit>(this.context).saveUserPreferences(PreferenceApp(
+      age: int.parse(formValues["age"]),
+      defaultIncrement: double.parse(formValues["defaultIncrement"]),
+      metric: formValues["metric"],
+      nickname: formValues["nickname"],
+      weight: double.parse(formValues["weight"]),
+    ));
   }
 
   Widget buildSection(String name, BuildContext context) {
@@ -60,8 +73,17 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
 
   onChangeForm(String key, dynamic value) {
     setState(() {
+      print(key);
+      print(value);
       formValues[key] = value;
     });
+  }
+
+  String isValidPositiveNumber(String value) {
+    final v = double.tryParse(value);
+    if (v == null) return "Must be a number.";
+    if (v <= 0) return "Must be positive number.";
+    return null;
   }
 
   @override
@@ -78,18 +100,45 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
           padding: EdgeInsets.all(15),
           child: Form(
             key: form,
-            child: BlocBuilder<UserCubit, UserState>(builder: (context, state) {
+            child:
+                BlocConsumer<UserCubit, UserState>(listener: (context, state) {
               if (state is UserPreferences) {
+                setState(() {
+                  fetched = true;
+                  formValues = {
+                    "nickname": state.preferences.name,
+                    "age": state.preferences.age.toString(),
+                    "weight": state.preferences.weight.toString(),
+                    "metric": state.preferences.metric,
+                    "defaultIncrement":
+                        state.preferences.defaultIncrement.toString()
+                  };
+                  print(formValues);
+                });
+              }
+
+              if (state is UserPreferencesSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.green.shade400,
+                ));
+              }
+              if (state is UserPreferencesError) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.red.shade400,
+                ));
+              }
+            }, builder: (context, state) {
+              if (state is UserPreferences && !fetched) {
                 formValues = {
-                  "nickname": state.preferences.name,
-                  "age": state.preferences.age,
-                  "wight": state.preferences.weight,
+                  "nickname": state.preferences.nickname,
+                  "age": state.preferences.age.toString(),
+                  "weight": state.preferences.weight.toString(),
                   "metric": state.preferences.metric,
                   "defaultIncrement": state.preferences.defaultIncrement
                 };
-                print(formValues);
               }
-
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -105,6 +154,7 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
                           child: TracktionInput(
                             change: (v) => onChangeForm("nickname", v),
                             hint: "mcuve",
+                            validator: (v) => v.isEmpty ? "Required" : null,
                             initialValue: formValues["nickname"],
                           ))),
                   SizedBox(
@@ -116,6 +166,8 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
                       rightWidget: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: TracktionInput(
+                            keyboardType: TextInputType.number,
+                            validator: isValidPositiveNumber,
                             change: (v) => onChangeForm("weight", v),
                             hint: "weight",
                             initialValue: formValues["weight"],
@@ -125,6 +177,8 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
                       rightWidget: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: TracktionInput(
+                            keyboardType: TextInputType.number,
+                            validator: isValidPositiveNumber,
                             change: (v) => onChangeForm("age", v),
                             hint: "age",
                             initialValue: formValues["age"].toString(),
@@ -158,11 +212,27 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: NumericSelector(
                               value: formValues["defaultIncrement"],
-                              onPress: (direction) {}))),
+                              onPress: (direction) {
+                                final val = double.tryParse(
+                                    formValues["defaultIncrement"]);
+                                if (val == null ||
+                                    (val <= 0.5 && direction == Direction.left))
+                                  return;
+                                final newVal = val +
+                                    (direction == Direction.left ? -0.5 : 0.5);
+                                setState(() {
+                                  formValues["defaultIncrement"] =
+                                      newVal.toString();
+                                });
+                              }))),
                   SizedBox(
                     height: 10,
                   ),
-                  SaveFormActions(onCancel: () {}, onSave: () {})
+                  SaveFormActions(
+                      onCancel: () {
+                        Navigator.of(context).pushNamed("/home");
+                      },
+                      onSave: submitForm)
                 ],
               );
             }),

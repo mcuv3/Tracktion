@@ -14,10 +14,9 @@ class Select<T> extends StatefulWidget {
 }
 
 class _SelectState<T> extends State<Select<T>> {
-  bool isSelected = false;
-
   @override
   Widget build(BuildContext context) {
+    bool isSelected = widget.value != null;
     return GestureDetector(
       onTap: () {
         bottomSheetOptions(

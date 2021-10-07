@@ -42,19 +42,27 @@ class PreferenceApp {
     return ps;
   }
 
+  @override
+  String toString() {
+    return "PreferenceApp{metric: $metric, nickname: $nickname, name: $name, weight: $weight, defaultIncrement: $defaultIncrement, age: $age, preferences: $_preferences}";
+  }
+
   PreferenceApp copyWith(
-          {Metric metric,
-          String nickname,
-          String name,
-          double weight,
-          double defaultIncrement,
-          int age}) =>
-      PreferenceApp(
-        metric: metric ?? this.metric,
-        nickname: nickname ?? this.nickname,
-        name: name ?? this.name,
-        weight: weight ?? this.weight,
-        defaultIncrement: defaultIncrement ?? this.defaultIncrement,
-        age: age ?? this.age,
-      );
+      {Metric metric,
+      String nickname,
+      String name,
+      double weight,
+      double defaultIncrement,
+      int age}) {
+    final copy = PreferenceApp(
+      metric: metric ?? this.metric,
+      nickname: nickname ?? this.nickname,
+      name: name ?? this.name,
+      weight: weight ?? this.weight,
+      defaultIncrement: defaultIncrement ?? this.defaultIncrement,
+      age: age ?? this.age,
+    );
+    copy._preferences = _preferences;
+    return copy;
+  }
 }

@@ -30,6 +30,7 @@ dependencies:
   flutter_twitter_login: ^1.1.0
   font_awesome_flutter: ^8.11.0
   modal_bottom_sheet: ^1.0.0+1
+  fluttertoast: ^8.0.8
   table_calendar: ^3.0.2
   # flutter_cupertino_date_picker: ^1.0.26+2
     # git:
