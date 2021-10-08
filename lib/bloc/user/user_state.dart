@@ -5,6 +5,8 @@ abstract class UserState {}
 
 class UserInitial extends UserState {}
 
+class UserLoading extends UserState {}
+
 class UserPreferences extends UserState {
   final PreferenceApp preferences;
   UserPreferences(this.preferences);

@@ -102,21 +102,6 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
             key: form,
             child:
                 BlocConsumer<UserCubit, UserState>(listener: (context, state) {
-              if (state is UserPreferences) {
-                setState(() {
-                  fetched = true;
-                  formValues = {
-                    "nickname": state.preferences.name,
-                    "age": state.preferences.age.toString(),
-                    "weight": state.preferences.weight.toString(),
-                    "metric": state.preferences.metric,
-                    "defaultIncrement":
-                        state.preferences.defaultIncrement.toString()
-                  };
-                  print(formValues);
-                });
-              }
-
               if (state is UserPreferencesSuccess) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(state.message),
@@ -130,15 +115,22 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
                 ));
               }
             }, builder: (context, state) {
+              if (state is UserLoading) {
+                return Center(child: CircularProgressIndicator());
+              }
+
               if (state is UserPreferences && !fetched) {
+                fetched = true;
                 formValues = {
                   "nickname": state.preferences.nickname,
                   "age": state.preferences.age.toString(),
                   "weight": state.preferences.weight.toString(),
                   "metric": state.preferences.metric,
-                  "defaultIncrement": state.preferences.defaultIncrement
+                  "defaultIncrement":
+                      state.preferences.defaultIncrement.toString()
                 };
               }
+
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

@@ -10,12 +10,14 @@ class UserCubit extends Cubit<UserState> {
   UserCubit(this.db) : super(UserInitial());
 
   loadUserPreferences() async {
+    emit(UserLoading());
     final preferences = await this.db.loadPreferences();
     emit(UserPreferences(preferences));
   }
 
   saveUserPreferences(PreferenceApp preferences) async {
     final oldPreferences = (state as UserPreferences).preferences;
+    emit(UserLoading());
     try {
       final newPreferences = oldPreferences.copyWith(
         age: preferences.age,
@@ -29,6 +31,7 @@ class UserCubit extends Cubit<UserState> {
       emit(UserPreferencesSuccess("Saved successfully."));
       emit(UserPreferences(newPreferences));
     } catch (e) {
+      print(e);
       emit(UserPreferencesError("Error saving preferences."));
       emit(UserPreferences(oldPreferences));
     }

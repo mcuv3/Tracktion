@@ -389,8 +389,8 @@ class SQLDatabase extends _$SQLDatabase {
   }
 
   Future<void> savePreferences(modelsApp.PreferenceApp _preferences) async {
-    final saves =
-        _preferences.preferences.map((p) => into(preferences).insert(p));
+    final saves = _preferences.preferences.map(
+        (p) => into(preferences).insert(p, mode: InsertMode.insertOrReplace));
     await Future.wait(saves);
   }
 
