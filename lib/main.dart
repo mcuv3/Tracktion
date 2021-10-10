@@ -13,10 +13,12 @@ import 'package:tracktion/bloc/exercise/exercise_bloc.dart';
 import 'package:tracktion/bloc/user/user_cubit.dart';
 import 'package:tracktion/bloc/workout-picker/workoutpicker_bloc.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
+import 'package:tracktion/global.dart';
 import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/screens/routine/routine-main-screen.dart';
 import 'package:tracktion/screens/routine/routines-screen.dart';
 import 'package:tracktion/screens/workout/workout-routine-search-screen.dart';
+import 'package:tracktion/wrappers/withPreferences.dart';
 
 import './screens/index.dart';
 import 'bloc/exercise-stream/exercisestream_cubit.dart';
@@ -145,69 +147,73 @@ class _TracktionAppState extends State<TracktionApp> {
                   create: (BuildContext context) => ExerciseStreamCubit(
                       db: RepositoryProvider.of<SQLDatabase>(context))),
             ],
-            child: MaterialApp(
-              debugShowCheckedModeBanner: false,
-              color: Colors.black,
-              builder: (BuildContext context, Widget widget) {
-                Widget error = Text('...rendering error...');
-                if (widget is Scaffold || widget is Navigator)
-                  error = Scaffold(body: Center(child: error));
-                ErrorWidget.builder =
-                    (FlutterErrorDetails errorDetails) => error;
-                return widget;
-              },
-              theme: ThemeData(
-                  brightness: WidgetsBinding.instance.window.platformBrightness,
-                  fontFamily: 'CarterOne',
-                  primarySwatch: Colors.red,
-                  primaryColor: Color(0xFFB71C1C),
-                  accentColor: Color(0xFF9E9E9E),
-                  visualDensity: VisualDensity.adaptivePlatformDensity,
-                  iconTheme: IconThemeData(color: Colors.black),
-                  textTheme: TextTheme(
-                    caption: TextStyle(color: Colors.black),
-                    headline6:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ).apply(
-                    bodyColor: Colors.red,
-                    displayColor: Colors.black,
-                  ),
-                  buttonTheme: const ButtonThemeData(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(4.0),
-                      ),
+            child: TracktionGlobals(
+              child: MaterialApp(
+                debugShowCheckedModeBanner: false,
+                color: Colors.black,
+                builder: (BuildContext context, Widget widget) {
+                  Widget error = Text('...rendering error...');
+                  if (widget is Scaffold || widget is Navigator)
+                    error = Scaffold(body: Center(child: error));
+                  ErrorWidget.builder =
+                      (FlutterErrorDetails errorDetails) => error;
+                  return widget;
+                },
+                theme: ThemeData(
+                    brightness:
+                        WidgetsBinding.instance.window.platformBrightness,
+                    fontFamily: 'CarterOne',
+                    primarySwatch: Colors.red,
+                    primaryColor: Color(0xFFB71C1C),
+                    accentColor: Color(0xFF9E9E9E),
+                    visualDensity: VisualDensity.adaptivePlatformDensity,
+                    iconTheme: IconThemeData(color: Colors.black),
+                    textTheme: TextTheme(
+                      caption: TextStyle(color: Colors.black),
+                      headline6:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ).apply(
+                      bodyColor: Colors.red,
+                      displayColor: Colors.black,
                     ),
-                  )),
-              home: StreamBuilder<User>(
-                stream: FirebaseAuth.instance.authStateChanges(),
-                builder: (context, stream) {
-                  final user = stream.data;
+                    buttonTheme: const ButtonThemeData(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(4.0),
+                        ),
+                      ),
+                    )),
+                home: StreamBuilder<User>(
+                  stream: FirebaseAuth.instance.authStateChanges(),
+                  builder: (context, stream) {
+                    final user = stream.data;
 
-                  final state = stream.connectionState;
+                    final state = stream.connectionState;
 
-                  if (state == ConnectionState.waiting ||
-                      state == ConnectionState.none) return LoadingScreen();
+                    if (state == ConnectionState.waiting ||
+                        state == ConnectionState.none) return LoadingScreen();
 
-                  if (user != null) return MainScreen();
+                    if (user != null) return WithPreferences(MainScreen());
 
-                  return AuthScreen();
+                    return AuthScreen();
+                  },
+                ),
+                routes: {
+                  MainScreen.routeName: (ctx) => MainScreen(),
+                  BodyPartsScreen.routeName: (ctx) => BodyPartsScreen(),
+                  SearchExercise.routeName: (ctx) => SearchExercise(),
+                  AddEditBodyPartsScreen.routeName: (ctx) =>
+                      AddEditBodyPartsScreen(),
+                  ExerciseWorkOut.routeName: (ctx) => ExerciseWorkOut(),
+                  WorkOutScreen.routeName: (ctx) => WorkOutScreen(),
+                  RoutineMainScreen.routeName: (ctx) => RoutineMainScreen(),
+                  RoutinesScreen.routeName: (ctx) => RoutinesScreen(),
+                  WorkoutRoutinePicker.routeName: (ctx) =>
+                      WorkoutRoutinePicker(),
+                  ConfigurationUserScreen.routeName: (ctx) =>
+                      ConfigurationUserScreen(),
                 },
               ),
-              routes: {
-                MainScreen.routeName: (ctx) => MainScreen(),
-                BodyPartsScreen.routeName: (ctx) => BodyPartsScreen(),
-                SearchExercise.routeName: (ctx) => SearchExercise(),
-                AddEditBodyPartsScreen.routeName: (ctx) =>
-                    AddEditBodyPartsScreen(),
-                ExerciseWorkOut.routeName: (ctx) => ExerciseWorkOut(),
-                WorkOutScreen.routeName: (ctx) => WorkOutScreen(),
-                RoutineMainScreen.routeName: (ctx) => RoutineMainScreen(),
-                RoutinesScreen.routeName: (ctx) => RoutinesScreen(),
-                WorkoutRoutinePicker.routeName: (ctx) => WorkoutRoutinePicker(),
-                ConfigurationUserScreen.routeName: (ctx) =>
-                    ConfigurationUserScreen(),
-              },
             ),
           )),
     );

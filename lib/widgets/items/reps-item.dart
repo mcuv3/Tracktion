@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracktion/global.dart';
 import 'package:tracktion/widgets/ui/CardInkwell.dart';
 
 class RepItem extends StatelessWidget {
@@ -25,6 +26,7 @@ class RepItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyle = TextStyle(fontSize: 18, color: Colors.black);
     final deviceWidth = MediaQuery.of(context).size.width;
+    final _weight = TracktionGlobals.of(context).getWeightString(weight);
     //TODO: fix this is logic please
     return CardInkwell(
       AnimatedContainer(
@@ -56,7 +58,7 @@ class RepItem extends StatelessWidget {
                 width: deviceWidth * 0.2,
                 child: FittedBox(
                   fit: reps >= 999 ? BoxFit.contain : BoxFit.none,
-                  child: Text("$weight kg", style: textStyle),
+                  child: Text(_weight, style: textStyle),
                 ),
               ),
               VerticalDivider(

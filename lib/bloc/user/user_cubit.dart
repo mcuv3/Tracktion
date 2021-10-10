@@ -9,10 +9,11 @@ class UserCubit extends Cubit<UserState> {
   final SQLDatabase db;
   UserCubit(this.db) : super(UserInitial());
 
-  loadUserPreferences() async {
+  Future<PreferenceApp> loadUserPreferences() async {
     emit(UserLoading());
     final preferences = await this.db.loadPreferences();
     emit(UserPreferences(preferences));
+    return preferences;
   }
 
   saveUserPreferences(PreferenceApp preferences) async {

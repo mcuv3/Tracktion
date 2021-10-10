@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracktion/bloc/user/user_cubit.dart';
 import "package:tracktion/colors/custom_colors.dart";
+import 'package:tracktion/global.dart';
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/widgets/Drawer.dart';
 import 'package:tracktion/widgets/inputs/Select.dart';
@@ -22,6 +23,7 @@ class ConfigurationUserScreen extends StatefulWidget {
 
 class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
   var form = GlobalKey<FormState>();
+  var preferences = PreferenceApp();
   var formValues = {
     "nickname": "",
     "age": "0.0",
@@ -42,13 +44,15 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
   void submitForm() {
     if (!form.currentState.validate()) return;
 
-    BlocProvider.of<UserCubit>(this.context).saveUserPreferences(PreferenceApp(
+    preferences = PreferenceApp(
       age: int.parse(formValues["age"]),
       defaultIncrement: double.parse(formValues["defaultIncrement"]),
       metric: formValues["metric"],
       nickname: formValues["nickname"],
       weight: double.parse(formValues["weight"]),
-    ));
+    );
+
+    BlocProvider.of<UserCubit>(this.context).saveUserPreferences(preferences);
   }
 
   Widget buildSection(String name, BuildContext context) {
@@ -103,6 +107,7 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
             child:
                 BlocConsumer<UserCubit, UserState>(listener: (context, state) {
               if (state is UserPreferencesSuccess) {
+                TracktionGlobals.of(context).updatePreferences(preferences);
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(state.message),
                   backgroundColor: Colors.green.shade400,
@@ -146,7 +151,9 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
                           child: TracktionInput(
                             change: (v) => onChangeForm("nickname", v),
                             hint: "mcuve",
-                            validator: (v) => v.isEmpty ? "Required" : null,
+                            validator: (v) => v.replaceAll(" ", "").isEmpty
+                                ? "Required"
+                                : null,
                             initialValue: formValues["nickname"],
                           ))),
                   SizedBox(
@@ -170,7 +177,12 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
                           padding: EdgeInsets.symmetric(horizontal: 20),
                           child: TracktionInput(
                             keyboardType: TextInputType.number,
-                            validator: isValidPositiveNumber,
+                            validator: (v) {
+                              final val = int.tryParse(v);
+                              if (val == null || val <= 0)
+                                return "Invalid age.";
+                              return null;
+                            },
                             change: (v) => onChangeForm("age", v),
                             hint: "age",
                             initialValue: formValues["age"].toString(),

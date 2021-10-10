@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tracktion/global.dart';
 import 'package:tracktion/models/app/rep.dart';
+import 'package:tracktion/util/enumToString.dart';
 
 import '../../colors/custom_colors.dart';
 
@@ -12,15 +14,21 @@ class WorkoutRepConfiguration extends StatelessWidget {
   Widget build(BuildContext context) {
     var values = {
       "reps": rep.reps,
-      "weight": rep.weight,
+      "weight": TracktionGlobals.of(context).getWeight(rep.weight),
       "rpe": rep.rpe,
     };
+    final _metric =
+        enumToString(TracktionGlobals.of(context).userPreferencesApp.metric);
+    final _defaultIncrement =
+        TracktionGlobals.of(context).userPreferencesApp.defaultIncrement;
+
     return WillPopScope(
       onWillPop: () async {
         Navigator.of(context).pop(Rep(
             id: rep.id,
-            reps: values["reps"],
-            weight: values["weight"],
+            reps:
+                values["reps"], // return to kg if metric is lbs or otherwise kg
+            weight: TracktionGlobals.of(context).getKg(values["weight"]),
             rpe: values["rpe"],
             notes: rep.notes,
             setId: rep.setId));
@@ -40,15 +48,16 @@ class WorkoutRepConfiguration extends StatelessWidget {
               child: RepInput(
                 values: values,
                 inputName: "reps",
+                increment: 1,
               ),
             ),
-            TitleRepInput(title: "Weight (kg)"),
+            TitleRepInput(title: "Weight ($_metric)"),
             Container(
               height: 100,
               child: RepInput(
                 values: values,
                 inputName: "weight",
-                isFloat: true,
+                increment: _defaultIncrement,
               ),
             ),
             TitleRepInput(title: "RPE"),
@@ -57,6 +66,7 @@ class WorkoutRepConfiguration extends StatelessWidget {
               child: RepInput(
                 values: values,
                 inputName: "rpe",
+                increment: 1,
               ),
             ),
           ],
@@ -88,11 +98,11 @@ class RepInput extends StatefulWidget {
   const RepInput(
       {Key key,
       @required this.values,
-      this.isFloat = false,
+      @required this.increment,
       @required this.inputName})
       : super(key: key);
-  final bool isFloat;
   final String inputName;
+  final double increment;
   final Map<String, num> values;
 
   @override
@@ -109,18 +119,19 @@ class _RepInputState extends State<RepInput> {
   }
 
   void changeValueHandler({String value, num increment}) {
-    final val = widget.isFloat ? double.tryParse(value) : int.tryParse(value);
+    final isDouble = widget.increment is double;
+    final val = isDouble ? double.tryParse(value) : int.tryParse(value);
 
     var finalValue;
     if (val == null || val < 0) {
-      finalValue = widget.isFloat ? 0.0 : 0;
+      finalValue = isDouble ? 0.0 : 0;
     } else {
       if (increment == null)
         finalValue = val;
       else if (val + increment >= 0)
         finalValue = val + increment;
       else
-        finalValue = widget.isFloat ? 0.0 : 0;
+        finalValue = isDouble ? 0.0 : 0;
       if (isRpe()) {
         finalValue = !isValidRpe(finalValue) ? 10 : finalValue;
       }
@@ -150,8 +161,7 @@ class _RepInputState extends State<RepInput> {
             ),
             onPressed: () {
               changeValueHandler(
-                  value: controller.text,
-                  increment: widget.isFloat ? -2.5 : -1);
+                  value: controller.text, increment: -1 * widget.increment);
             },
           ),
         ),
@@ -186,7 +196,7 @@ class _RepInputState extends State<RepInput> {
             ),
             onPressed: () {
               changeValueHandler(
-                  value: controller.text, increment: widget.isFloat ? 2.5 : 1);
+                  value: controller.text, increment: widget.increment);
             },
           ),
         ),

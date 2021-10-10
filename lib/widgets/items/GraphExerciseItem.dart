@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import "package:tracktion/colors/custom_colors.dart";
+import 'package:tracktion/global.dart';
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/app/set.dart';
 import 'package:tracktion/util/analysis/getSetMaxWeigth.dart';
@@ -44,6 +45,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     final sets = widget.set.exercise.lastWorkouts;
+    final _getWeight = TracktionGlobals.of(context).getWeightString;
 
     return Container(
       margin: EdgeInsets.all(10),
@@ -145,7 +147,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                         Text("Max Weight Set", // TODO REMPLACE FOR 1MR
                             style: TextStyle(
                                 color: Colors.white.withOpacity(0.5))),
-                        Text("${widget.set.maxWeigth} kg",
+                        Text(_getWeight(widget.set.maxWeigth),
                             style: TextStyle(color: Colors.white)),
                       ],
                     )),
@@ -159,7 +161,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                       Text("Workout Volume",
                           style:
                               TextStyle(color: Colors.white.withOpacity(0.5))),
-                      Text("${widget.set.volume.toString()} kg",
+                      Text(_getWeight(widget.set.volume),
                           style: TextStyle(color: Colors.white)),
                     ],
                   ),
@@ -181,7 +183,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                         Text("Max Weight",
                             style: TextStyle(
                                 color: Colors.white.withOpacity(0.5))),
-                        Text("${widget.set.exercise.maxWeigth} kg",
+                        Text(_getWeight(widget.set.exercise.maxWeigth),
                             style: TextStyle(color: Colors.white)),
                       ],
                     )),
@@ -195,7 +197,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                       Text("Max Volume",
                           style:
                               TextStyle(color: Colors.white.withOpacity(0.5))),
-                      Text("${widget.set.exercise.maxVolume} kg",
+                      Text(_getWeight(widget.set.exercise.maxVolume),
                           style: TextStyle(color: Colors.white)),
                     ],
                   ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:tracktion/bloc/auth/auth_cubit.dart';
+import 'package:tracktion/global.dart';
 import 'package:tracktion/screens/exercise/body-parts-screen.dart';
 import 'package:tracktion/screens/index.dart';
 import 'package:tracktion/screens/routine/routine-main-screen.dart';
@@ -39,10 +40,7 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Theme.of(context).textTheme.apply(
-          bodyColor: Colors.pink,
-          displayColor: Colors.pink,
-        );
+    final userName = TracktionGlobals.of(context).userPreferencesApp.nickname;
     return Scaffold(
       backgroundColor: Colors.white,
       drawer: MainDrawer(),
@@ -84,8 +82,28 @@ class MainScreen extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-            child: Text("Start hitting your PR’s",
-                style: TextStyle(color: Colors.black, fontSize: 24)),
+            child: RichText(
+              text: TextSpan(
+                  style: TextStyle(
+                      fontFamily: "CarterOne",
+                      fontSize: 20,
+                      color: Colors.black),
+                  children: <TextSpan>[
+                    if (userName != null || userName != "")
+                      TextSpan(
+                          text: userName.toUpperCase().split(" ")[0],
+                          style: TextStyle(
+                              fontSize: 24,
+                              color: Theme.of(context).colorScheme.routines)),
+                    TextSpan(
+                      text: " Let's start hitting those ",
+                    ),
+                    TextSpan(
+                        text: "PR’s",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.routines)),
+                  ]),
+            ),
           ),
           Container(
             height: 400,

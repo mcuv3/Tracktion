@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:tracktion/bloc/exercise-stream/exercisestream_cubit.dart';
 import 'package:tracktion/bloc/workout/workout_bloc.dart';
+import 'package:tracktion/global.dart';
 import 'package:tracktion/models/app/exercise.dart';
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/app/rep.dart';
@@ -97,7 +98,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
   void editRepHandler(Rep rep, int indexRep) async {
     var values = {
       "reps": rep.reps,
-      "weight": rep.weight,
+      "weight": TracktionGlobals.of(context).getWeight(rep.weight),
       "rpe": rep.rpe,
     };
 
