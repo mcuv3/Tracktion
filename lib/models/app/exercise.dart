@@ -12,8 +12,8 @@ class Exercise {
   final String name;
   final Difficulty difficulty;
   final String notes;
-  double maxWeigth;
-  int maxWeigthSetId;
+  double maxWeight;
+  int maxWeightSetId;
   double maxVolume;
   int maxVolumeSetId;
   List<SetResume> lastWorkouts;
@@ -26,10 +26,10 @@ class Exercise {
       @required this.difficulty,
       @required this.bodyParts,
       @required this.lastWorkouts,
-      @required this.maxWeigth,
+      @required this.maxWeight,
       @required this.maxVolume,
       @required this.maxVolumeSetId,
-      @required this.maxWeigthSetId,
+      @required this.maxWeightSetId,
       this.notes});
 
   set bodyPartSet(List<BodyPartEnum> bds) {
@@ -64,7 +64,7 @@ class Exercise {
               setId: record["setId"],
               reps: record["reps"],
               date: DateTime.parse(record["date"]),
-              maxWeigth: record["maxWeigth"],
+              maxWeight: record["maxWeight"],
               volume: record["volume"]))
           .toList();
     } catch (e) {
@@ -81,19 +81,19 @@ class Exercise {
       {SQLDatabase db, int setId, double newSetWeight}) async {
     var delete = newSetWeight == null;
 
-    if (this.maxWeigthSetId == setId &&
-        ((!delete && newSetWeight < this.maxWeigth) || delete)) {
-      final results = await db.findMaxWeigth(this.id, setId);
+    if (this.maxWeightSetId == setId &&
+        ((!delete && newSetWeight < this.maxWeight) || delete)) {
+      final results = await db.findmaxWeight(this.id, setId);
       if (results == null) return this;
 
-      final nextMaxWeigth = results[1];
+      final nextmaxWeight = results[1];
 
-      if (!delete && newSetWeight >= nextMaxWeigth) {
-        this.maxWeigthSetId = setId;
-        this.maxWeigth = newSetWeight;
+      if (!delete && newSetWeight >= nextmaxWeight) {
+        this.maxWeightSetId = setId;
+        this.maxWeight = newSetWeight;
       } else {
-        this.maxWeigthSetId = results[0];
-        this.maxWeigth = results[1];
+        this.maxWeightSetId = results[0];
+        this.maxWeight = results[1];
       }
     }
   }
@@ -120,20 +120,20 @@ class Exercise {
   }
 
   syncMaxes(
-      {double volume, double maxWeigth, bool willDelete = false, int setId}) {
+      {double volume, double maxWeight, bool willDelete = false, int setId}) {
     if (this.lastWorkouts.length == 0) {
       this.maxVolumeSetId = null;
-      this.maxWeigthSetId = null;
+      this.maxWeightSetId = null;
       this.maxVolume = 0.0;
-      this.maxWeigth = 0.0;
+      this.maxWeight = 0.0;
     } else if (!willDelete) {
       if (volume > this.maxVolume) {
         this.maxVolume = volume;
         this.maxVolumeSetId = setId;
       }
-      if (maxWeigth > this.maxWeigth) {
-        this.maxWeigth = maxWeigth;
-        this.maxWeigthSetId = setId;
+      if (maxWeight > this.maxWeight) {
+        this.maxWeight = maxWeight;
+        this.maxWeightSetId = setId;
       }
     }
   }
@@ -142,28 +142,28 @@ class Exercise {
       id: this.id,
       difficulty: this.difficulty,
       maxVolumeSetId: this.maxVolumeSetId,
-      maxWeigthSetId: this.maxWeigthSetId,
+      maxWeightSetId: this.maxWeightSetId,
       name: this.name,
       notes: this.notes,
       lastWorkouts: this.lastWorkouts,
-      maxWeigth: this.maxWeigth,
+      maxWeight: this.maxWeight,
       maxVolume: this.maxVolume,
       bodyParts: this.bodyParts);
 }
 
 class SetResume {
   int setId;
-  final double maxWeigth;
+  final double maxWeight;
   final int reps;
   final DateTime date;
   final double volume;
-  SetResume({this.setId, this.maxWeigth, this.reps, this.date, this.volume});
+  SetResume({this.setId, this.maxWeight, this.reps, this.date, this.volume});
 
   Map<String, dynamic> toJson() {
     return {
       "setId": this.setId,
       "reps": this.reps,
-      "maxWeigth": this.maxWeigth,
+      "maxWeight": this.maxWeight,
       "volume": this.volume,
       "date": this.date.toString()
     };
@@ -171,6 +171,6 @@ class SetResume {
 
   @override
   String toString() {
-    return 'SetResume(reps:${this.reps},maxWeigth:${this.maxWeigth},volume:${this.volume},day:${this.date.day})';
+    return 'SetResume(reps:${this.reps},maxWeight:${this.maxWeight},volume:${this.volume},day:${this.date.day})';
   }
 }

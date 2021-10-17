@@ -30,9 +30,9 @@ List<double> getMaxWeight(List<SetResume> sets) {
 
   if (_sets.length == 0) return [0.0, 100.0];
 
-  if (_sets.length == 1) return [0.0, sets[0].maxWeigth];
+  if (_sets.length == 1) return [0.0, sets[0].maxWeight];
 
-  _sets.sort((s1, s2) => s1.maxWeigth.compareTo(s2.maxWeigth));
+  _sets.sort((s1, s2) => s1.maxWeight.compareTo(s2.maxWeight));
 
-  return [_sets[0].maxWeigth, _sets[_sets.length - 1].maxWeigth];
+  return [_sets[0].maxWeight, _sets[_sets.length - 1].maxWeight];
 }

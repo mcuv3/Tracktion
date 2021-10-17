@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tracktion/models/tables/Routines.dart';
-import 'package:tracktion/util/analysis/getSetMaxWeigth.dart';
+import 'package:tracktion/util/analysis/getSetMaxWeight.dart';
 import 'package:tracktion/util/analysis/getSetVolume.dart';
 import 'package:tracktion/util/analysis/mergeSetLastWorkout.dart';
 import 'package:tracktion/util/toDayDate.dart';
@@ -133,7 +133,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       var newOrUpdatedSet = modelsApp.SetResume(
           setId: event.set.id,
           date: event.date,
-          maxWeigth: maxWeight,
+          maxWeight: maxWeight,
           volume: volume,
           reps: event.set.reps.length);
 
@@ -145,7 +145,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
         await exe.verifyMaxVolume(
             newSetVolume: newOrUpdatedSet.volume, setId: newOrUpdatedSet.setId);
         await exe.verifyMaxWeight(
-            newSetWeight: newOrUpdatedSet.maxWeigth,
+            newSetWeight: newOrUpdatedSet.maxWeight,
             setId: newOrUpdatedSet.setId);
       } else {
         if (exe.lastWorkouts.length >= 12) exe.lastWorkouts.removeAt(11);
@@ -163,7 +163,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
               id: event.set.id,
               exercise: exe,
               volume: volume,
-              maxWeigth: maxWeight,
+              maxWeight: maxWeight,
               reps: event.set.reps),
           workout.id);
 
@@ -176,7 +176,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
         exe.lastWorkouts[0].setId = setId;
         if (exe.lastWorkouts.length == 1) {
           exe.maxVolumeSetId = setId;
-          exe.maxWeigthSetId = setId;
+          exe.maxWeightSetId = setId;
         }
       }
 
@@ -201,7 +201,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
               }).toList();
 
               return modelsApp.SetWorkout(
-                  maxWeigth: set.maxWeigth,
+                  maxWeight: set.maxWeight,
                   volume: set.volume,
                   reps: filteredReps,
                   exercise: set.exercise,
@@ -227,7 +227,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
         final reps = await this._getRoutineReps(set, exe);
 
         sets.add(modelsApp.SetWorkout(
-            maxWeigth: 0,
+            maxWeight: 0,
             volume: 0,
             reps: reps,
             exercise: modelsApp.Exercise(
@@ -238,8 +238,8 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
                     modelsApp.Exercise.stringToLastWorkouts(exe.lastWorkouts),
                 maxVolume: exe.maxVolume,
                 maxVolumeSetId: exe.maxVolumeSetId,
-                maxWeigth: exe.maxWeigth,
-                maxWeigthSetId: exe.maxWeigthSetId,
+                maxWeight: exe.maxWeight,
+                maxWeightSetId: exe.maxWeightSetId,
                 name: exe.name,
                 notes: exe.notes),
             id: null));
@@ -356,11 +356,11 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       this.db.insertExercise(Exercise(
           id: exe.id,
           maxVolumeSetId: exe.maxVolumeSetId,
-          maxWeigthSetId: exe.maxWeigthSetId,
+          maxWeightSetId: exe.maxWeightSetId,
           difficulty: exe.difficulty,
           lastWorkouts: exe.lastWorkoutsToString(),
           maxVolume: exe.maxVolume,
-          maxWeigth: exe.maxWeigth,
+          maxWeight: exe.maxWeight,
           name: exe.name,
           notes: exe.notes));
 }

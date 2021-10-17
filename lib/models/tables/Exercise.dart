@@ -15,8 +15,8 @@ class Exercises extends Table {
   TextColumn get name => text().withLength(min: 1, max: 50)();
   TextColumn get lastWorkouts => text()();
   RealColumn get maxVolume => real()();
-  RealColumn get maxWeigth => real()();
-  IntColumn get maxWeigthSetId => integer().nullable()();
+  RealColumn get maxWeight => real()();
+  IntColumn get maxWeightSetId => integer().nullable()();
   IntColumn get maxVolumeSetId => integer().nullable()();
   TextColumn get notes => text().withLength(max: 200).nullable()();
   IntColumn get difficulty => intEnum<Difficulty>()();

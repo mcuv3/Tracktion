@@ -17,6 +17,7 @@ import 'package:tracktion/global.dart';
 import 'package:tracktion/models/db/database.dart';
 import 'package:tracktion/screens/routine/routine-main-screen.dart';
 import 'package:tracktion/screens/routine/routines-screen.dart';
+import 'package:tracktion/screens/under-development-screen.dart';
 import 'package:tracktion/screens/workout/workout-routine-search-screen.dart';
 import 'package:tracktion/wrappers/withPreferences.dart';
 
@@ -212,6 +213,8 @@ class _TracktionAppState extends State<TracktionApp> {
                       WorkoutRoutinePicker(),
                   ConfigurationUserScreen.routeName: (ctx) =>
                       ConfigurationUserScreen(),
+                  UnderDevelopmentScreen.routeName: (ctx) =>
+                      UnderDevelopmentScreen(),
                 },
               ),
             ),

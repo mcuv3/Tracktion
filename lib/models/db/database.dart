@@ -50,11 +50,6 @@ class SQLDatabase extends _$SQLDatabase {
         print("Updating database");
         await m.createAll();
       }, beforeOpen: (details) async {
-        // print("Was created");
-        // print(details.wasCreated);
-        // await delete(workouts).go();
-        // await delete(setWorkouts).go();
-        // await delete(reps).go();
         if (!details.wasCreated) return;
 
         final _preferences =
@@ -62,8 +57,14 @@ class SQLDatabase extends _$SQLDatabase {
         final exes = exercisesMigration.map((e) => into(exercises).insert(e));
         final bds =
             bodyPartsMigration.map((e) => into(exerciseBodyParts).insert(e));
+        final routinesGroups =
+            routineGroupMigrations.map((e) => into(routineGroup).insert(e));
+        final _routines =
+            routinesMigrations.map((e) => into(routine).insert(e));
 
         await Future.wait(exes);
+        await Future.wait(routinesGroups);
+        await Future.wait(_routines);
         await Future.wait(_preferences);
         await Future.wait(bds);
       });
@@ -185,11 +186,11 @@ class SQLDatabase extends _$SQLDatabase {
       final exercise = modelsApp.Exercise(
           id: exe.id,
           maxVolumeSetId: exe.maxVolumeSetId,
-          maxWeigthSetId: exe.maxWeigthSetId,
+          maxWeightSetId: exe.maxWeightSetId,
           lastWorkouts:
               modelsApp.Exercise.stringToLastWorkouts(exe.lastWorkouts),
           maxVolume: exe.maxVolume,
-          maxWeigth: exe.maxWeigth,
+          maxWeight: exe.maxWeight,
           name: exe.name,
           difficulty: exe.difficulty,
           notes: exe.notes,
@@ -198,7 +199,7 @@ class SQLDatabase extends _$SQLDatabase {
           id: setWk.id,
           exercise: exercise,
           reps: [repetition],
-          maxWeigth: setWk.maxWeigth,
+          maxWeight: setWk.maxWeight,
           volume: setWk.volume));
     } else {
       sets[indexSet].reps = [...sets[indexSet].reps, repetition];
@@ -248,11 +249,11 @@ class SQLDatabase extends _$SQLDatabase {
       exes.add(exeApp.Exercise(
           id: exercise.id,
           maxVolumeSetId: exercise.maxVolumeSetId,
-          maxWeigthSetId: exercise.maxWeigthSetId,
+          maxWeightSetId: exercise.maxWeightSetId,
           lastWorkouts:
               modelsApp.Exercise.stringToLastWorkouts(exercise.lastWorkouts),
           maxVolume: exercise.maxVolume,
-          maxWeigth: exercise.maxWeigth,
+          maxWeight: exercise.maxWeight,
           name: exercise.name,
           bodyParts: [bodyPart],
           difficulty: exercise.difficulty,
@@ -319,8 +320,8 @@ class SQLDatabase extends _$SQLDatabase {
     }).getSingle();
   }
 
-  Future<List> findMaxWeigth(int exerciseId, int setId) async {
-    final max = setWorkouts.maxWeigth.max();
+  Future<List> findmaxWeight(int exerciseId, int setId) async {
+    final max = setWorkouts.maxWeight.max();
     final id = setWorkouts.id;
 
     final query = selectOnly(setWorkouts)
@@ -422,7 +423,7 @@ class SQLDatabase extends _$SQLDatabase {
       final repsSet = set.reps;
       final setId = await into(setWorkouts).insert(
           SetWorkout(
-              maxWeigth: set.maxWeigth,
+              maxWeight: set.maxWeight,
               volume: set.volume,
               id: set.id,
               workOutId: workoutId,

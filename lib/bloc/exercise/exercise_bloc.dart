@@ -41,13 +41,13 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
       final exeEntity = Exercise(
           id: exe.id,
           maxVolumeSetId: exe.maxVolumeSetId,
-          maxWeigthSetId: exe.maxWeigthSetId,
+          maxWeightSetId: exe.maxWeightSetId,
           difficulty: exe.difficulty,
           name: exe.name,
           notes: exe.notes,
           lastWorkouts: exe.lastWorkoutsToString(),
           maxVolume: exe.maxVolume,
-          maxWeigth: exe.maxWeigth);
+          maxWeight: exe.maxWeight);
 
       await db.deleteExercise(exeEntity);
 
@@ -70,12 +70,12 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
           id: exe.id,
           difficulty: exe.difficulty,
           maxVolumeSetId: exe.maxVolumeSetId,
-          maxWeigthSetId: exe.maxWeigthSetId,
+          maxWeightSetId: exe.maxWeightSetId,
           name: exe.name,
           notes: exe.notes,
           lastWorkouts: exe.lastWorkoutsToString(),
           maxVolume: exe.maxVolume,
-          maxWeigth: exe.maxWeigth);
+          maxWeight: exe.maxWeight);
 
       final exeWithBd =
           ExerciseWithBodyParts(bodyParts: exe.bodyParts, exe: exeDb);
@@ -104,7 +104,7 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
           notes: exe.notes,
           lastWorkouts: "",
           maxVolume: 0.0,
-          maxWeigth: 0.0);
+          maxWeight: 0.0);
       final exeWithBd =
           ExerciseWithBodyParts(bodyParts: exe.bodyParts, exe: exeDb);
       await db.saveExercise(exeWithBd);
@@ -116,7 +116,7 @@ class ExerciseBloc extends Bloc<ExerciseEvent, ExerciseState> {
     }
   }
 
-  Stream<ExerciseState> _fetchAllExercises( FetchAllExercises e ) async* {
+  Stream<ExerciseState> _fetchAllExercises(FetchAllExercises e) async* {
     yield ExercisesLoading();
     try {
       final exes = await db.streamExerciseByName();

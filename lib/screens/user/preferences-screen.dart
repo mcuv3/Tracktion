@@ -7,6 +7,7 @@ import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/widgets/Drawer.dart';
 import 'package:tracktion/widgets/inputs/Select.dart';
 import 'package:tracktion/widgets/inputs/input.dart';
+import 'package:tracktion/widgets/modals/confirmationModal.dart';
 import 'package:tracktion/widgets/ui/Divided.dart';
 import 'package:tracktion/widgets/ui/NumericSelector.dart';
 import 'package:tracktion/widgets/ui/SaveFormActions.dart';
@@ -92,154 +93,164 @@ class _ConfigurationUserScreenState extends State<ConfigurationUserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      drawer: MainDrawer(),
-      appBar: AppBar(
-        title: Text("Preferences"),
-        elevation: 4,
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(15),
-          child: Form(
-            key: form,
-            child:
-                BlocConsumer<UserCubit, UserState>(listener: (context, state) {
-              if (state is UserPreferencesSuccess) {
-                TracktionGlobals.of(context).updatePreferences(preferences);
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.green.shade400,
-                ));
-              }
-              if (state is UserPreferencesError) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.red.shade400,
-                ));
-              }
-            }, builder: (context, state) {
-              if (state is UserLoading) {
-                return Center(child: CircularProgressIndicator());
-              }
+    return WillPopScope(
+      onWillPop: () async {
+        final shouldSave = await confirmationModal(
+            context: context, message: "Do you want to save your changes?");
+        if (shouldSave) submitForm();
+        return true;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        drawer: MainDrawer(),
+        appBar: AppBar(
+          title: Text("Preferences"),
+          elevation: 4,
+        ),
+        body: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(15),
+            child: Form(
+              key: form,
+              child: BlocConsumer<UserCubit, UserState>(
+                  listener: (context, state) {
+                if (state is UserPreferencesSuccess) {
+                  TracktionGlobals.of(context).updatePreferences(preferences);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.green.shade400,
+                  ));
+                }
+                if (state is UserPreferencesError) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.red.shade400,
+                  ));
+                }
+              }, builder: (context, state) {
+                if (state is UserLoading) {
+                  return Center(child: CircularProgressIndicator());
+                }
 
-              if (state is UserPreferences && !fetched) {
-                fetched = true;
-                formValues = {
-                  "nickname": state.preferences.nickname,
-                  "age": state.preferences.age.toString(),
-                  "weight": state.preferences.weight.toString(),
-                  "metric": state.preferences.metric,
-                  "defaultIncrement":
-                      state.preferences.defaultIncrement.toString()
-                };
-              }
+                if (state is UserPreferences && !fetched) {
+                  fetched = true;
+                  formValues = {
+                    "nickname": state.preferences.nickname,
+                    "age": state.preferences.age.toString(),
+                    "weight": state.preferences.weight.toString(),
+                    "metric": state.preferences.metric,
+                    "defaultIncrement":
+                        state.preferences.defaultIncrement.toString()
+                  };
+                }
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  buildSection("User", context),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Divided(
-                      leftWidget:
-                          Text("Nickname", style: TextStyle(fontSize: 18)),
-                      rightWidget: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: TracktionInput(
-                            change: (v) => onChangeForm("nickname", v),
-                            hint: "mcuve",
-                            validator: (v) => v.replaceAll(" ", "").isEmpty
-                                ? "Required"
-                                : null,
-                            initialValue: formValues["nickname"],
-                          ))),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Divided(
-                      leftWidget:
-                          Text("Weight", style: TextStyle(fontSize: 18)),
-                      rightWidget: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: TracktionInput(
-                            keyboardType: TextInputType.number,
-                            validator: isValidPositiveNumber,
-                            change: (v) => onChangeForm("weight", v),
-                            hint: "weight",
-                            initialValue: formValues["weight"],
-                          ))),
-                  Divided(
-                      leftWidget: Text("Age", style: TextStyle(fontSize: 18)),
-                      rightWidget: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: TracktionInput(
-                            keyboardType: TextInputType.number,
-                            validator: (v) {
-                              final val = int.tryParse(v);
-                              if (val == null || val <= 0)
-                                return "Invalid age.";
-                              return null;
-                            },
-                            change: (v) => onChangeForm("age", v),
-                            hint: "age",
-                            initialValue: formValues["age"].toString(),
-                          ))),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  buildSection("Application", context),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Divided(
-                      leftWidget:
-                          Text("Metric", style: TextStyle(fontSize: 18)),
-                      rightWidget: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: Select<Metric>(
-                            options: Metric.values,
-                            onSelect: (v) {
-                              onChangeForm("metric", v);
-                            },
-                            value: formValues["metric"],
-                          ))),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Divided(
-                      leftWidget:
-                          Text("Default Inc", style: TextStyle(fontSize: 18)),
-                      rightWidget: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20),
-                          child: NumericSelector(
-                              value: formValues["defaultIncrement"],
-                              onPress: (direction) {
-                                final val = double.tryParse(
-                                    formValues["defaultIncrement"]);
-                                if (val == null ||
-                                    (val <= 0.5 && direction == Direction.left))
-                                  return;
-                                final newVal = val +
-                                    (direction == Direction.left ? -0.5 : 0.5);
-                                setState(() {
-                                  formValues["defaultIncrement"] =
-                                      newVal.toString();
-                                });
-                              }))),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  SaveFormActions(
-                      onCancel: () {
-                        Navigator.of(context).pushNamed("/home");
-                      },
-                      onSave: submitForm)
-                ],
-              );
-            }),
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildSection("User", context),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Divided(
+                        leftWidget:
+                            Text("Nickname", style: TextStyle(fontSize: 18)),
+                        rightWidget: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: TracktionInput(
+                              change: (v) => onChangeForm("nickname", v),
+                              hint: "mcuve",
+                              validator: (v) => v.replaceAll(" ", "").isEmpty
+                                  ? "Required"
+                                  : null,
+                              initialValue: formValues["nickname"],
+                            ))),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Divided(
+                        leftWidget:
+                            Text("Weight", style: TextStyle(fontSize: 18)),
+                        rightWidget: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: TracktionInput(
+                              keyboardType: TextInputType.number,
+                              validator: isValidPositiveNumber,
+                              change: (v) => onChangeForm("weight", v),
+                              hint: "weight",
+                              initialValue: formValues["weight"],
+                            ))),
+                    Divided(
+                        leftWidget: Text("Age", style: TextStyle(fontSize: 18)),
+                        rightWidget: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: TracktionInput(
+                              keyboardType: TextInputType.number,
+                              validator: (v) {
+                                final val = int.tryParse(v);
+                                if (val == null || val <= 0)
+                                  return "Invalid age.";
+                                return null;
+                              },
+                              change: (v) => onChangeForm("age", v),
+                              hint: "age",
+                              initialValue: formValues["age"].toString(),
+                            ))),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    buildSection("Application", context),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Divided(
+                        leftWidget:
+                            Text("Metric", style: TextStyle(fontSize: 18)),
+                        rightWidget: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Select<Metric>(
+                              options: Metric.values,
+                              onSelect: (v) {
+                                onChangeForm("metric", v);
+                              },
+                              value: formValues["metric"],
+                            ))),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Divided(
+                        leftWidget:
+                            Text("Default Inc", style: TextStyle(fontSize: 18)),
+                        rightWidget: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: NumericSelector(
+                                value: formValues["defaultIncrement"],
+                                onPress: (direction) {
+                                  final val = double.tryParse(
+                                      formValues["defaultIncrement"]);
+                                  if (val == null ||
+                                      (val <= 0.5 &&
+                                          direction == Direction.left)) return;
+                                  final newVal = val +
+                                      (direction == Direction.left
+                                          ? -0.5
+                                          : 0.5);
+                                  setState(() {
+                                    formValues["defaultIncrement"] =
+                                        newVal.toString();
+                                  });
+                                }))),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SaveFormActions(
+                        onCancel: () {
+                          Navigator.of(context).pushNamed("/home");
+                        },
+                        onSave: submitForm)
+                  ],
+                );
+              }),
+            ),
           ),
         ),
       ),

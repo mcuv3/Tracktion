@@ -13,6 +13,8 @@ import 'package:tracktion/widgets/modals/showAnimatedModal.dart';
 
 final _random = new Random();
 
+// TODO: test every copy scenario.
+
 int ran(int min, int max) => min + _random.nextInt(max - min);
 
 class WorkoutRoutinePicker extends StatefulWidget {

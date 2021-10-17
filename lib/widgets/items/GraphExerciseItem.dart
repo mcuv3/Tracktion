@@ -5,7 +5,7 @@ import "package:tracktion/colors/custom_colors.dart";
 import 'package:tracktion/global.dart';
 import 'package:tracktion/models/app/index.dart';
 import 'package:tracktion/models/app/set.dart';
-import 'package:tracktion/util/analysis/getSetMaxWeigth.dart';
+import 'package:tracktion/util/analysis/getSetMaxWeight.dart';
 
 import '../../util/mapWithIndex.dart';
 
@@ -147,7 +147,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                         Text("Max Weight Set", // TODO REMPLACE FOR 1MR
                             style: TextStyle(
                                 color: Colors.white.withOpacity(0.5))),
-                        Text(_getWeight(widget.set.maxWeigth),
+                        Text(_getWeight(widget.set.maxWeight),
                             style: TextStyle(color: Colors.white)),
                       ],
                     )),
@@ -183,7 +183,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
                         Text("Max Weight",
                             style: TextStyle(
                                 color: Colors.white.withOpacity(0.5))),
-                        Text(_getWeight(widget.set.exercise.maxWeigth),
+                        Text(_getWeight(widget.set.exercise.maxWeight),
                             style: TextStyle(color: Colors.white)),
                       ],
                     )),
@@ -351,7 +351,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
       lineBarsData: [
         LineChartBarData(
           spots: sets.reversed
-              .mapIndex((e, i) => FlSpot(i.toDouble(), e.maxWeigth))
+              .mapIndex((e, i) => FlSpot(i.toDouble(), e.maxWeight))
               .toList(),
           isCurved: true,
           colors: [

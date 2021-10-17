@@ -5,14 +5,14 @@ import './index.dart';
 class SetWorkout {
   int id;
   Exercise exercise;
-  double maxWeigth;
+  double maxWeight;
   double volume;
   List<Rep> reps;
   SetWorkout({
     @required this.id,
     @required this.exercise,
     @required this.reps,
-    @required this.maxWeigth,
+    @required this.maxWeight,
     @required this.volume,
   });
 
@@ -23,6 +23,6 @@ class SetWorkout {
 
   @override
   String toString() {
-    return "{Exe:${this.exercise.name} reps:${this.reps.length} maxWeigth:${this.maxWeigth} volume:${this.volume}}";
+    return "{Exe:${this.exercise.name} reps:${this.reps.length} maxWeight:${this.maxWeight} volume:${this.volume}}";
   }
 }

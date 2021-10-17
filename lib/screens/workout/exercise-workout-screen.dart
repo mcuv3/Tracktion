@@ -120,7 +120,7 @@ class _ExerciseWorkOutState extends State<ExerciseWorkOut> {
     if (noReps && !fromWorkout) return true;
 
     var _set = SetWorkout(
-        id: setId, exercise: exs, reps: reps, maxWeigth: 0, volume: 0);
+        id: setId, exercise: exs, reps: reps, maxWeight: 0, volume: 0);
 
     if (fromWorkout && noReps) {
       var willDelete =
