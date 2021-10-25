@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:869607421583:android:e17334b72c65f3007062fa",
         "android_client_info": {
-          "package_name": "com.mcuve.tracktion"
+          "package_name": "com.mcuve.Tracktion"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "869607421583-42vbfl9ol64gpa40io51c6ekjrg0cur3.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.mcuve.tracktion",
+            "package_name": "com.mcuve.Tracktion",
             "certificate_hash": "7f03cbcc2526e30ba7095ada23867def74bb8cf3"
           }
         },

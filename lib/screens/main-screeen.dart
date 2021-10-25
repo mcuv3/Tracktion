@@ -133,7 +133,7 @@ class MainScreen extends StatelessWidget {
                     context,
                     3),
                 makeFeatureBox(
-                    'Analysis', // TODO: go to under development screen
+                    'Analysis',
                     Theme.of(context).colorScheme.analysis,
                     BodyPartsScreen.routeName,
                     context,

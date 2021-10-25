@@ -166,7 +166,8 @@ class _SearchExerciseState extends State<SearchExercise> {
                         );
                       }
 
-                      if (state is ExercisesLoading) {
+                      if (state is ExercisesLoading ||
+                          state is ExercisesInitial) {
                         main = Center(
                           child: CircularProgressIndicator(
                             backgroundColor:

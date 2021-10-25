@@ -726,4 +726,4 @@ List<db.RoutineSetCompanion> routineSetsMigrations = [
   ).toCompanion(true),
 ];
 
-// TODO: add routines routine sets etc.
+// TODO: add routines sets to migrations

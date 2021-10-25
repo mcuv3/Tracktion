@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 project(runner LANGUAGES CXX)
 
-set(BINARY_NAME "tracktion")
-set(APPLICATION_ID "com.example.tracktion")
+set(BINARY_NAME "Tracktion")
+set(APPLICATION_ID "com.mcuve.Tracktion")
 
 cmake_policy(SET CMP0063 NEW)
 
