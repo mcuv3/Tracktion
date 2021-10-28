@@ -2,6 +2,7 @@ import 'package:moor/moor.dart';
 import 'package:moor_flutter/moor_flutter.dart';
 import 'package:tracktion/models/app/RoutineSlim.dart';
 import 'package:tracktion/models/app/body-parts.dart';
+import 'package:tracktion/models/db/migration-routines.dart';
 import 'package:tracktion/models/db/migration.dart';
 import 'package:tracktion/models/db/migration2.dart';
 import 'package:tracktion/models/tables/Preferences.dart';
@@ -61,10 +62,13 @@ class SQLDatabase extends _$SQLDatabase {
             routineGroupMigrations.map((e) => into(routineGroup).insert(e));
         final _routines =
             routinesMigrations.map((e) => into(routine).insert(e));
+        final _routinesSets =
+            routineSetsMigration.map((e) => into(routineSet).insert(e));
 
         await Future.wait(exes);
         await Future.wait(routinesGroups);
         await Future.wait(_routines);
+        await Future.wait(_routinesSets);
         await Future.wait(_preferences);
         await Future.wait(bds);
       });

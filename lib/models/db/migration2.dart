@@ -64,4 +64,12 @@ List<db.ExerciseBodyPart> bodyPartsMigration = [
   db.ExerciseBodyPart(exerciseId: 43, bodyPart: BodyPartEnum.Shoulders),
   db.ExerciseBodyPart(exerciseId: 44, bodyPart: BodyPartEnum.Arms),
   db.ExerciseBodyPart(exerciseId: 45, bodyPart: BodyPartEnum.Arms),
+  db.ExerciseBodyPart(exerciseId: 47, bodyPart: BodyPartEnum.Hamstrings),
+  db.ExerciseBodyPart(exerciseId: 47, bodyPart: BodyPartEnum.Gluteus),
+  db.ExerciseBodyPart(exerciseId: 48, bodyPart: BodyPartEnum.Hamstrings),
+  db.ExerciseBodyPart(exerciseId: 49, bodyPart: BodyPartEnum.Arms),
+  db.ExerciseBodyPart(exerciseId: 49, bodyPart: BodyPartEnum.Chest),
+  db.ExerciseBodyPart(exerciseId: 50, bodyPart: BodyPartEnum.Chest),
+  db.ExerciseBodyPart(exerciseId: 51, bodyPart: BodyPartEnum.Back),
+  db.ExerciseBodyPart(exerciseId: 52, bodyPart: BodyPartEnum.Quadriceps),
 ];
