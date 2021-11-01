@@ -533,6 +533,26 @@ List<db.Exercise> exercisesMigration = [
       maxVolume: 0.0,
       maxVolumeSetId: null,
       maxWeightSetId: null),
+  db.Exercise(
+      id: 53,
+      name: "Shoulder Press",
+      notes: "",
+      difficulty: Difficulty.Pro,
+      lastWorkouts: "",
+      maxWeight: 0.0,
+      maxVolume: 0.0,
+      maxVolumeSetId: null,
+      maxWeightSetId: null),
+  db.Exercise(
+      id: 54,
+      name: "PullOver",
+      notes: "",
+      difficulty: Difficulty.Pro,
+      lastWorkouts: "",
+      maxWeight: 0.0,
+      maxVolume: 0.0,
+      maxVolumeSetId: null,
+      maxWeightSetId: null),
 ];
 
 List<db.RoutineGroupCompanion> routineGroupMigrations = [
