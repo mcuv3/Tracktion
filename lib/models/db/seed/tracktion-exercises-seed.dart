@@ -633,6 +633,26 @@ List<db.Exercise> exercisesMigration = [
       maxVolume: 0.0,
       maxVolumeSetId: null,
       maxWeightSetId: null),
+  db.Exercise(
+      id: 63,
+      name: "Tricep PressDown",
+      notes: "",
+      difficulty: Difficulty.Easy,
+      lastWorkouts: "",
+      maxWeight: 0.0,
+      maxVolume: 0.0,
+      maxVolumeSetId: null,
+      maxWeightSetId: null),
+  db.Exercise(
+      id: 64,
+      name: "Glute Ham Raise",
+      notes: "",
+      difficulty: Difficulty.Hard,
+      lastWorkouts: "",
+      maxWeight: 0.0,
+      maxVolume: 0.0,
+      maxVolumeSetId: null,
+      maxWeightSetId: null),
 ];
 
 List<db.RoutineGroupCompanion> routineGroupMigrations = [
@@ -657,13 +677,13 @@ List<db.RoutineGroupCompanion> routineGroupMigrations = [
     level: Level.Beginner,
     imageUrl: "",
   ).toCompanion(true),
-  db.RoutineGroupData(
-    id: 4,
-    name: "Creator 5 Split",
-    description: "Legs - Push - Pull - Legs - Upper",
-    level: Level.Advance,
-    imageUrl: "",
-  ).toCompanion(true),
+  // db.RoutineGroupData(
+  //   id: 4,
+  //   name: "Creator 5 Split",
+  //   description: "Legs - Push - Pull - Legs - Upper",
+  //   level: Level.Advance,
+  //   imageUrl: "",
+  // ).toCompanion(true),
 ];
 
 List<db.RoutineCompanion> routinesMigrations = [
@@ -819,71 +839,58 @@ List<db.RoutineCompanion> routinesMigrations = [
           bodyParts: RoutineBodyParts({}),
           groupId: 3)
       .toCompanion(true),
-  // Creators workout
-  db.RoutineData(
-          id: 16,
-          name: "Legs #1",
-          difficulty: Difficulty.Pro,
-          duration: 60,
-          timesCopied: 0,
-          notes: "Leg day number 1.",
-          bodyParts: RoutineBodyParts({}),
-          groupId: 4)
-      .toCompanion(true),
-  db.RoutineData(
-          id: 17,
-          name: "Push Day",
-          difficulty: Difficulty.Hard,
-          duration: 60,
-          timesCopied: 0,
-          notes: "Chest focus day.",
-          bodyParts: RoutineBodyParts({}),
-          groupId: 4)
-      .toCompanion(true),
-  db.RoutineData(
-          id: 18,
-          name: "Pull Day",
-          difficulty: Difficulty.Normal,
-          duration: 60,
-          timesCopied: 0,
-          notes: "Back focus day.",
-          bodyParts: RoutineBodyParts({}),
-          groupId: 4)
-      .toCompanion(true),
-  db.RoutineData(
-          id: 19,
-          name: "Legs #2",
-          difficulty: Difficulty.Pro,
-          duration: 60,
-          timesCopied: 0,
-          notes: "Leg day part 2",
-          bodyParts: RoutineBodyParts({}),
-          groupId: 4)
-      .toCompanion(true),
-  db.RoutineData(
-          id: 20,
-          name: "Upper Body",
-          difficulty: Difficulty.Hard,
-          duration: 60,
-          timesCopied: 0,
-          notes: "Push/Pull day.",
-          bodyParts: RoutineBodyParts({}),
-          groupId: 4)
-      .toCompanion(true),
+  // // Creators workout
+  // db.RoutineData(
+  //         id: 16,
+  //         name: "Legs #1",
+  //         difficulty: Difficulty.Pro,
+  //         duration: 60,
+  //         timesCopied: 0,
+  //         notes: "Leg day number 1.",
+  //         bodyParts: RoutineBodyParts({}),
+  //         groupId: 4)
+  //     .toCompanion(true),
+  // db.RoutineData(
+  //         id: 17,
+  //         name: "Push Day",
+  //         difficulty: Difficulty.Hard,
+  //         duration: 60,
+  //         timesCopied: 0,
+  //         notes: "Chest focus day.",
+  //         bodyParts: RoutineBodyParts({}),
+  //         groupId: 4)
+  //     .toCompanion(true),
+  // db.RoutineData(
+  //         id: 18,
+  //         name: "Pull Day",
+  //         difficulty: Difficulty.Normal,
+  //         duration: 60,
+  //         timesCopied: 0,
+  //         notes: "Back focus day.",
+  //         bodyParts: RoutineBodyParts({}),
+  //         groupId: 4)
+  //     .toCompanion(true),
+  // db.RoutineData(
+  //         id: 19,
+  //         name: "Legs #2",
+  //         difficulty: Difficulty.Pro,
+  //         duration: 60,
+  //         timesCopied: 0,
+  //         notes: "Leg day part 2",
+  //         bodyParts: RoutineBodyParts({}),
+  //         groupId: 4)
+  //     .toCompanion(true),
+  // db.RoutineData(
+  //         id: 20,
+  //         name: "Upper Body",
+  //         difficulty: Difficulty.Hard,
+  //         duration: 60,
+  //         timesCopied: 0,
+  //         notes: "Push/Pull day.",
+  //         bodyParts: RoutineBodyParts({}),
+  //         groupId: 4)
+  //     .toCompanion(true),
 ];
 
-List<db.RoutineSetCompanion> routineSetsMigrations = [
-  db.RoutineSetData(
-    id: 1,
-    targetRpe: 8,
-    routineId: 1,
-    copyMethod: CopyMethod.Previous,
-    exerciseName: "DeadLift",
-    exerciseId: 1,
-    series: 3,
-    percentage: null,
-    notes: "Push day number 1.",
-  ).toCompanion(true),
-];
 
 // TODO: add routines sets to migrations
