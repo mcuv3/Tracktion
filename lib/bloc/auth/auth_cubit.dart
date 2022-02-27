@@ -2,10 +2,10 @@ import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:flutter_twitter_login/flutter_twitter_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
 import 'package:tracktion/models/db/database.dart';
+import 'package:twitter_login/twitter_login.dart' as tw;
 
 part 'auth_state.dart';
 
@@ -112,22 +112,44 @@ class AuthCubit extends Cubit<AuthState> {
     final consumerKey = dotenv.env['TWITTER_CUSTOMER_KEY'];
     final consumerSecret = dotenv.env['TWITTER_CUSTOMER_SECRET'];
 
-    final TwitterLogin twitterLogin = new TwitterLogin(
-      consumerKey: consumerKey,
-      consumerSecret: consumerSecret,
-    );
+    // final TwitterLogin twitterLogin = new TwitterLogin(
+    //   consumerKey: consumerKey,
+    //   consumerSecret: consumerSecret,
+    // );
 
     // Trigger the sign-in flow
-    final TwitterLoginResult loginResult = await twitterLogin.authorize();
+    // final TwitterLoginResult loginResult = await twitterLogin.authorize();
 
     // Get the Logged In session
-    final TwitterSession twitterSession = loginResult.session;
+    // final TwitterSession twitterSession = loginResult.session;
 
     // Create a credential from the access token
-    final twitterAuthCredential = TwitterAuthProvider.credential(
-      accessToken: twitterSession.token,
-      secret: twitterSession.secret,
+    // final twitterAuthCredential = TwitterAuthProvider.credential(
+    //   accessToken: twitterSession.token,
+    //   secret: twitterSession.secret,
+    // );
+
+    final twitterLogin = tw.TwitterLogin(
+      /// Consumer API keys
+      apiKey: consumerKey,
+
+      /// Consumer API Secret keys
+      apiSecretKey: consumerSecret,
+
+      /// Registered Callback URLs in TwitterApp
+      /// Android is a deeplink
+      /// iOS is a URLScheme
+      redirectURI: 'example://',
     );
+
+    /// Forces the user to enter their credentials
+    /// to ensure the correct users account is authorized.
+    /// If you want to implement Twitter account switching, set [force_login] to true
+    /// login(forceLogin: true);
+    final authResult = await twitterLogin.login();
+
+    final AuthCredential twitterAuthCredential = TwitterAuthProvider.credential(
+        accessToken: authResult.authToken, secret: authResult.authTokenSecret);
 
     // Once signed in, return the UserCredential
     return FirebaseAuth.instance.signInWithCredential(twitterAuthCredential);

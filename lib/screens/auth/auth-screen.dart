@@ -45,7 +45,7 @@ class AuthScreen extends StatelessWidget {
                                 fontSize: 34),
                           ),
                           Text(
-                              "An app where you can track freely your workouts to ensure  progress in your journy.",
+                              "Start tracking your workouts, ensure you're making progress and be the best version of yourself.",
                               style: TextStyle(
                                 color: Colors.grey,
                               )),

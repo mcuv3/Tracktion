@@ -30,25 +30,23 @@ class Exercise extends DataClass implements Insertable<Exercise> {
   factory Exercise.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
-    final doubleType = db.typeSystem.forDartType<double>();
     return Exercise(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
-      lastWorkouts: stringType
+      id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      name: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}name']),
+      lastWorkouts: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}last_workouts']),
-      maxVolume: doubleType
+      maxVolume: const RealType()
           .mapFromDatabaseResponse(data['${effectivePrefix}max_volume']),
-      maxWeight: doubleType
-          .mapFromDatabaseResponse(data['${effectivePrefix}max_weigth']),
-      maxWeightSetId: intType
-          .mapFromDatabaseResponse(data['${effectivePrefix}max_weigth_set_id']),
-      maxVolumeSetId: intType
+      maxWeight: const RealType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}max_weight']),
+      maxWeightSetId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}max_weight_set_id']),
+      maxVolumeSetId: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}max_volume_set_id']),
-      notes:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}notes']),
-      difficulty: $ExercisesTable.$converter0.mapToDart(intType
+      notes: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}notes']),
+      difficulty: $ExercisesTable.$converter0.mapToDart(const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}difficulty'])),
     );
   }
@@ -68,10 +66,10 @@ class Exercise extends DataClass implements Insertable<Exercise> {
       map['max_volume'] = Variable<double>(maxVolume);
     }
     if (!nullToAbsent || maxWeight != null) {
-      map['max_weigth'] = Variable<double>(maxWeight);
+      map['max_weight'] = Variable<double>(maxWeight);
     }
     if (!nullToAbsent || maxWeightSetId != null) {
-      map['max_weigth_set_id'] = Variable<int>(maxWeightSetId);
+      map['max_weight_set_id'] = Variable<int>(maxWeightSetId);
     }
     if (!nullToAbsent || maxVolumeSetId != null) {
       map['max_volume_set_id'] = Variable<int>(maxVolumeSetId);
@@ -182,24 +180,10 @@ class Exercise extends DataClass implements Insertable<Exercise> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      id.hashCode,
-      $mrjc(
-          name.hashCode,
-          $mrjc(
-              lastWorkouts.hashCode,
-              $mrjc(
-                  maxVolume.hashCode,
-                  $mrjc(
-                      maxWeight.hashCode,
-                      $mrjc(
-                          maxWeightSetId.hashCode,
-                          $mrjc(
-                              maxVolumeSetId.hashCode,
-                              $mrjc(
-                                  notes.hashCode, difficulty.hashCode)))))))));
+  int get hashCode => Object.hash(id, name, lastWorkouts, maxVolume, maxWeight,
+      maxWeightSetId, maxVolumeSetId, notes, difficulty);
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Exercise &&
           other.id == this.id &&
@@ -265,8 +249,8 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
       if (name != null) 'name': name,
       if (lastWorkouts != null) 'last_workouts': lastWorkouts,
       if (maxVolume != null) 'max_volume': maxVolume,
-      if (maxWeight != null) 'max_weigth': maxWeight,
-      if (maxWeightSetId != null) 'max_weigth_set_id': maxWeightSetId,
+      if (maxWeight != null) 'max_weight': maxWeight,
+      if (maxWeightSetId != null) 'max_weight_set_id': maxWeightSetId,
       if (maxVolumeSetId != null) 'max_volume_set_id': maxVolumeSetId,
       if (notes != null) 'notes': notes,
       if (difficulty != null) 'difficulty': difficulty,
@@ -312,10 +296,10 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
       map['max_volume'] = Variable<double>(maxVolume.value);
     }
     if (maxWeight.present) {
-      map['max_weigth'] = Variable<double>(maxWeight.value);
+      map['max_weight'] = Variable<double>(maxWeight.value);
     }
     if (maxWeightSetId.present) {
-      map['max_weigth_set_id'] = Variable<int>(maxWeightSetId.value);
+      map['max_weight_set_id'] = Variable<int>(maxWeightSetId.value);
     }
     if (maxVolumeSetId.present) {
       map['max_volume_set_id'] = Variable<int>(maxVolumeSetId.value);
@@ -349,113 +333,75 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
 
 class $ExercisesTable extends Exercises
     with TableInfo<$ExercisesTable, Exercise> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String _alias;
-  $ExercisesTable(this._db, [this._alias]);
+  $ExercisesTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
+  GeneratedColumn<int> _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
-  GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
-        hasAutoIncrement: true, declaredAsPrimaryKey: true);
-  }
-
+  GeneratedColumn<int> get id =>
+      _id ??= GeneratedColumn<int>('id', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: false,
+          defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _nameMeta = const VerificationMeta('name');
-  GeneratedTextColumn _name;
+  GeneratedColumn<String> _name;
   @override
-  GeneratedTextColumn get name => _name ??= _constructName();
-  GeneratedTextColumn _constructName() {
-    return GeneratedTextColumn('name', $tableName, false,
-        minTextLength: 1, maxTextLength: 50);
-  }
-
+  GeneratedColumn<String> get name => _name ??= GeneratedColumn<String>(
+      'name', aliasedName, false,
+      additionalChecks:
+          GeneratedColumn.checkTextLength(minTextLength: 1, maxTextLength: 50),
+      type: const StringType(),
+      requiredDuringInsert: true);
   final VerificationMeta _lastWorkoutsMeta =
       const VerificationMeta('lastWorkouts');
-  GeneratedTextColumn _lastWorkouts;
+  GeneratedColumn<String> _lastWorkouts;
   @override
-  GeneratedTextColumn get lastWorkouts =>
-      _lastWorkouts ??= _constructLastWorkouts();
-  GeneratedTextColumn _constructLastWorkouts() {
-    return GeneratedTextColumn(
-      'last_workouts',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<String> get lastWorkouts => _lastWorkouts ??=
+      GeneratedColumn<String>('last_workouts', aliasedName, false,
+          type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _maxVolumeMeta = const VerificationMeta('maxVolume');
-  GeneratedRealColumn _maxVolume;
+  GeneratedColumn<double> _maxVolume;
   @override
-  GeneratedRealColumn get maxVolume => _maxVolume ??= _constructMaxVolume();
-  GeneratedRealColumn _constructMaxVolume() {
-    return GeneratedRealColumn(
-      'max_volume',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<double> get maxVolume =>
+      _maxVolume ??= GeneratedColumn<double>('max_volume', aliasedName, false,
+          type: const RealType(), requiredDuringInsert: true);
   final VerificationMeta _maxWeightMeta = const VerificationMeta('maxWeight');
-  GeneratedRealColumn _maxWeight;
+  GeneratedColumn<double> _maxWeight;
   @override
-  GeneratedRealColumn get maxWeight => _maxWeight ??= _constructmaxWeight();
-  GeneratedRealColumn _constructmaxWeight() {
-    return GeneratedRealColumn(
-      'max_weigth',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<double> get maxWeight =>
+      _maxWeight ??= GeneratedColumn<double>('max_weight', aliasedName, false,
+          type: const RealType(), requiredDuringInsert: true);
   final VerificationMeta _maxWeightSetIdMeta =
       const VerificationMeta('maxWeightSetId');
-  GeneratedIntColumn _maxWeightSetId;
+  GeneratedColumn<int> _maxWeightSetId;
   @override
-  GeneratedIntColumn get maxWeightSetId =>
-      _maxWeightSetId ??= _constructmaxWeightSetId();
-  GeneratedIntColumn _constructmaxWeightSetId() {
-    return GeneratedIntColumn(
-      'max_weigth_set_id',
-      $tableName,
-      true,
-    );
-  }
-
+  GeneratedColumn<int> get maxWeightSetId => _maxWeightSetId ??=
+      GeneratedColumn<int>('max_weight_set_id', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
   final VerificationMeta _maxVolumeSetIdMeta =
       const VerificationMeta('maxVolumeSetId');
-  GeneratedIntColumn _maxVolumeSetId;
+  GeneratedColumn<int> _maxVolumeSetId;
   @override
-  GeneratedIntColumn get maxVolumeSetId =>
-      _maxVolumeSetId ??= _constructMaxVolumeSetId();
-  GeneratedIntColumn _constructMaxVolumeSetId() {
-    return GeneratedIntColumn(
-      'max_volume_set_id',
-      $tableName,
-      true,
-    );
-  }
-
+  GeneratedColumn<int> get maxVolumeSetId => _maxVolumeSetId ??=
+      GeneratedColumn<int>('max_volume_set_id', aliasedName, true,
+          type: const IntType(), requiredDuringInsert: false);
   final VerificationMeta _notesMeta = const VerificationMeta('notes');
-  GeneratedTextColumn _notes;
+  GeneratedColumn<String> _notes;
   @override
-  GeneratedTextColumn get notes => _notes ??= _constructNotes();
-  GeneratedTextColumn _constructNotes() {
-    return GeneratedTextColumn('notes', $tableName, true, maxTextLength: 200);
-  }
-
+  GeneratedColumn<String> get notes =>
+      _notes ??= GeneratedColumn<String>('notes', aliasedName, true,
+          additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 200),
+          type: const StringType(),
+          requiredDuringInsert: false);
   final VerificationMeta _difficultyMeta = const VerificationMeta('difficulty');
-  GeneratedIntColumn _difficulty;
+  GeneratedColumnWithTypeConverter<Difficulty, int> _difficulty;
   @override
-  GeneratedIntColumn get difficulty => _difficulty ??= _constructDifficulty();
-  GeneratedIntColumn _constructDifficulty() {
-    return GeneratedIntColumn(
-      'difficulty',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumnWithTypeConverter<Difficulty, int> get difficulty =>
+      _difficulty ??= GeneratedColumn<int>('difficulty', aliasedName, false,
+              type: const IntType(), requiredDuringInsert: true)
+          .withConverter<Difficulty>($ExercisesTable.$converter0);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -469,11 +415,9 @@ class $ExercisesTable extends Exercises
         difficulty
       ];
   @override
-  $ExercisesTable get asDslTable => this;
+  String get aliasedName => _alias ?? 'exercises';
   @override
-  String get $tableName => _alias ?? 'exercises';
-  @override
-  final String actualTableName = 'exercises';
+  String get actualTableName => 'exercises';
   @override
   VerificationContext validateIntegrity(Insertable<Exercise> instance,
       {bool isInserting = false}) {
@@ -502,17 +446,17 @@ class $ExercisesTable extends Exercises
     } else if (isInserting) {
       context.missing(_maxVolumeMeta);
     }
-    if (data.containsKey('max_weigth')) {
+    if (data.containsKey('max_weight')) {
       context.handle(_maxWeightMeta,
-          maxWeight.isAcceptableOrUnknown(data['max_weigth'], _maxWeightMeta));
+          maxWeight.isAcceptableOrUnknown(data['max_weight'], _maxWeightMeta));
     } else if (isInserting) {
       context.missing(_maxWeightMeta);
     }
-    if (data.containsKey('max_weigth_set_id')) {
+    if (data.containsKey('max_weight_set_id')) {
       context.handle(
           _maxWeightSetIdMeta,
           maxWeightSetId.isAcceptableOrUnknown(
-              data['max_weigth_set_id'], _maxWeightSetIdMeta));
+              data['max_weight_set_id'], _maxWeightSetIdMeta));
     }
     if (data.containsKey('max_volume_set_id')) {
       context.handle(
@@ -532,13 +476,13 @@ class $ExercisesTable extends Exercises
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Exercise map(Map<String, dynamic> data, {String tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return Exercise.fromData(data, _db, prefix: effectivePrefix);
+    return Exercise.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
   $ExercisesTable createAlias(String alias) {
-    return $ExercisesTable(_db, alias);
+    return $ExercisesTable(attachedDatabase, alias);
   }
 
   static TypeConverter<Difficulty, int> $converter0 =
@@ -554,12 +498,11 @@ class ExerciseBodyPart extends DataClass
       Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
     return ExerciseBodyPart(
-      exerciseId: intType
+      exerciseId: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}exercise_id']),
-      bodyPart: $ExerciseBodyPartsTable.$converter0.mapToDart(
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}body_part'])),
+      bodyPart: $ExerciseBodyPartsTable.$converter0.mapToDart(const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}body_part'])),
     );
   }
   @override
@@ -618,9 +561,9 @@ class ExerciseBodyPart extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(exerciseId.hashCode, bodyPart.hashCode));
+  int get hashCode => Object.hash(exerciseId, bodyPart);
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is ExerciseBodyPart &&
           other.exerciseId == this.exerciseId &&
@@ -682,41 +625,29 @@ class ExerciseBodyPartsCompanion extends UpdateCompanion<ExerciseBodyPart> {
 
 class $ExerciseBodyPartsTable extends ExerciseBodyParts
     with TableInfo<$ExerciseBodyPartsTable, ExerciseBodyPart> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String _alias;
-  $ExerciseBodyPartsTable(this._db, [this._alias]);
+  $ExerciseBodyPartsTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _exerciseIdMeta = const VerificationMeta('exerciseId');
-  GeneratedIntColumn _exerciseId;
+  GeneratedColumn<int> _exerciseId;
   @override
-  GeneratedIntColumn get exerciseId => _exerciseId ??= _constructExerciseId();
-  GeneratedIntColumn _constructExerciseId() {
-    return GeneratedIntColumn(
-      'exercise_id',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<int> get exerciseId =>
+      _exerciseId ??= GeneratedColumn<int>('exercise_id', aliasedName, false,
+          type: const IntType(), requiredDuringInsert: true);
   final VerificationMeta _bodyPartMeta = const VerificationMeta('bodyPart');
-  GeneratedIntColumn _bodyPart;
+  GeneratedColumnWithTypeConverter<BodyPartEnum, int> _bodyPart;
   @override
-  GeneratedIntColumn get bodyPart => _bodyPart ??= _constructBodyPart();
-  GeneratedIntColumn _constructBodyPart() {
-    return GeneratedIntColumn(
-      'body_part',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumnWithTypeConverter<BodyPartEnum, int> get bodyPart =>
+      _bodyPart ??= GeneratedColumn<int>('body_part', aliasedName, false,
+              type: const IntType(), requiredDuringInsert: true)
+          .withConverter<BodyPartEnum>($ExerciseBodyPartsTable.$converter0);
   @override
   List<GeneratedColumn> get $columns => [exerciseId, bodyPart];
   @override
-  $ExerciseBodyPartsTable get asDslTable => this;
+  String get aliasedName => _alias ?? 'exercise_body_parts';
   @override
-  String get $tableName => _alias ?? 'exercise_body_parts';
-  @override
-  final String actualTableName = 'exercise_body_parts';
+  String get actualTableName => 'exercise_body_parts';
   @override
   VerificationContext validateIntegrity(Insertable<ExerciseBodyPart> instance,
       {bool isInserting = false}) {
@@ -738,13 +669,13 @@ class $ExerciseBodyPartsTable extends ExerciseBodyParts
   Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
   @override
   ExerciseBodyPart map(Map<String, dynamic> data, {String tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return ExerciseBodyPart.fromData(data, _db, prefix: effectivePrefix);
+    return ExerciseBodyPart.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
   $ExerciseBodyPartsTable createAlias(String alias) {
-    return $ExerciseBodyPartsTable(_db, alias);
+    return $ExerciseBodyPartsTable(attachedDatabase, alias);
   }
 
   static TypeConverter<BodyPartEnum, int> $converter0 =
@@ -764,15 +695,14 @@ class Migration extends DataClass implements Insertable<Migration> {
   factory Migration.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return Migration(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      endPoint: stringType
+      id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      endPoint: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}end_point']),
-      payload:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}payload']),
-      verb: stringType.mapFromDatabaseResponse(data['${effectivePrefix}verb']),
+      payload: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}payload']),
+      verb: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}verb']),
     );
   }
   @override
@@ -846,10 +776,9 @@ class Migration extends DataClass implements Insertable<Migration> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(endPoint.hashCode, $mrjc(payload.hashCode, verb.hashCode))));
+  int get hashCode => Object.hash(id, endPoint, payload, verb);
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Migration &&
           other.id == this.id &&
@@ -936,62 +865,42 @@ class MigrationsCompanion extends UpdateCompanion<Migration> {
 
 class $MigrationsTable extends Migrations
     with TableInfo<$MigrationsTable, Migration> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String _alias;
-  $MigrationsTable(this._db, [this._alias]);
+  $MigrationsTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
+  GeneratedColumn<int> _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
-  GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
-        hasAutoIncrement: true, declaredAsPrimaryKey: true);
-  }
-
+  GeneratedColumn<int> get id =>
+      _id ??= GeneratedColumn<int>('id', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: false,
+          defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _endPointMeta = const VerificationMeta('endPoint');
-  GeneratedTextColumn _endPoint;
+  GeneratedColumn<String> _endPoint;
   @override
-  GeneratedTextColumn get endPoint => _endPoint ??= _constructEndPoint();
-  GeneratedTextColumn _constructEndPoint() {
-    return GeneratedTextColumn(
-      'end_point',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<String> get endPoint =>
+      _endPoint ??= GeneratedColumn<String>('end_point', aliasedName, false,
+          type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _payloadMeta = const VerificationMeta('payload');
-  GeneratedTextColumn _payload;
+  GeneratedColumn<String> _payload;
   @override
-  GeneratedTextColumn get payload => _payload ??= _constructPayload();
-  GeneratedTextColumn _constructPayload() {
-    return GeneratedTextColumn(
-      'payload',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<String> get payload =>
+      _payload ??= GeneratedColumn<String>('payload', aliasedName, false,
+          type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _verbMeta = const VerificationMeta('verb');
-  GeneratedTextColumn _verb;
+  GeneratedColumn<String> _verb;
   @override
-  GeneratedTextColumn get verb => _verb ??= _constructVerb();
-  GeneratedTextColumn _constructVerb() {
-    return GeneratedTextColumn(
-      'verb',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<String> get verb =>
+      _verb ??= GeneratedColumn<String>('verb', aliasedName, false,
+          type: const StringType(), requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [id, endPoint, payload, verb];
   @override
-  $MigrationsTable get asDslTable => this;
+  String get aliasedName => _alias ?? 'migrations';
   @override
-  String get $tableName => _alias ?? 'migrations';
-  @override
-  final String actualTableName = 'migrations';
+  String get actualTableName => 'migrations';
   @override
   VerificationContext validateIntegrity(Insertable<Migration> instance,
       {bool isInserting = false}) {
@@ -1025,13 +934,13 @@ class $MigrationsTable extends Migrations
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Migration map(Map<String, dynamic> data, {String tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return Migration.fromData(data, _db, prefix: effectivePrefix);
+    return Migration.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
   $MigrationsTable createAlias(String alias) {
-    return $MigrationsTable(_db, alias);
+    return $MigrationsTable(attachedDatabase, alias);
   }
 }
 
@@ -1050,17 +959,15 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
   factory SetWorkout.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final doubleType = db.typeSystem.forDartType<double>();
     return SetWorkout(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      volume:
-          doubleType.mapFromDatabaseResponse(data['${effectivePrefix}volume']),
-      maxWeight: doubleType
-          .mapFromDatabaseResponse(data['${effectivePrefix}max_weigth']),
-      workOutId: intType
+      id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      volume: const RealType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}volume']),
+      maxWeight: const RealType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}max_weight']),
+      workOutId: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}work_out_id']),
-      exerciseId: intType
+      exerciseId: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}exercise_id']),
     );
   }
@@ -1074,7 +981,7 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
       map['volume'] = Variable<double>(volume);
     }
     if (!nullToAbsent || maxWeight != null) {
-      map['max_weigth'] = Variable<double>(maxWeight);
+      map['max_weight'] = Variable<double>(maxWeight);
     }
     if (!nullToAbsent || workOutId != null) {
       map['work_out_id'] = Variable<int>(workOutId);
@@ -1151,14 +1058,9 @@ class SetWorkout extends DataClass implements Insertable<SetWorkout> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      id.hashCode,
-      $mrjc(
-          volume.hashCode,
-          $mrjc(maxWeight.hashCode,
-              $mrjc(workOutId.hashCode, exerciseId.hashCode)))));
+  int get hashCode => Object.hash(id, volume, maxWeight, workOutId, exerciseId);
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is SetWorkout &&
           other.id == this.id &&
@@ -1201,7 +1103,7 @@ class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (volume != null) 'volume': volume,
-      if (maxWeight != null) 'max_weigth': maxWeight,
+      if (maxWeight != null) 'max_weight': maxWeight,
       if (workOutId != null) 'work_out_id': workOutId,
       if (exerciseId != null) 'exercise_id': exerciseId,
     });
@@ -1232,7 +1134,7 @@ class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
       map['volume'] = Variable<double>(volume.value);
     }
     if (maxWeight.present) {
-      map['max_weigth'] = Variable<double>(maxWeight.value);
+      map['max_weight'] = Variable<double>(maxWeight.value);
     }
     if (workOutId.present) {
       map['work_out_id'] = Variable<int>(workOutId.value);
@@ -1258,69 +1160,53 @@ class SetWorkoutsCompanion extends UpdateCompanion<SetWorkout> {
 
 class $SetWorkoutsTable extends SetWorkouts
     with TableInfo<$SetWorkoutsTable, SetWorkout> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String _alias;
-  $SetWorkoutsTable(this._db, [this._alias]);
+  $SetWorkoutsTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
+  GeneratedColumn<int> _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
-  GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
-        hasAutoIncrement: true, declaredAsPrimaryKey: true);
-  }
-
+  GeneratedColumn<int> get id =>
+      _id ??= GeneratedColumn<int>('id', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: false,
+          defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _volumeMeta = const VerificationMeta('volume');
-  GeneratedRealColumn _volume;
+  GeneratedColumn<double> _volume;
   @override
-  GeneratedRealColumn get volume => _volume ??= _constructVolume();
-  GeneratedRealColumn _constructVolume() {
-    return GeneratedRealColumn(
-      'volume',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<double> get volume =>
+      _volume ??= GeneratedColumn<double>('volume', aliasedName, false,
+          type: const RealType(), requiredDuringInsert: true);
   final VerificationMeta _maxWeightMeta = const VerificationMeta('maxWeight');
-  GeneratedRealColumn _maxWeight;
+  GeneratedColumn<double> _maxWeight;
   @override
-  GeneratedRealColumn get maxWeight => _maxWeight ??= _constructmaxWeight();
-  GeneratedRealColumn _constructmaxWeight() {
-    return GeneratedRealColumn(
-      'max_weigth',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<double> get maxWeight =>
+      _maxWeight ??= GeneratedColumn<double>('max_weight', aliasedName, false,
+          type: const RealType(), requiredDuringInsert: true);
   final VerificationMeta _workOutIdMeta = const VerificationMeta('workOutId');
-  GeneratedIntColumn _workOutId;
+  GeneratedColumn<int> _workOutId;
   @override
-  GeneratedIntColumn get workOutId => _workOutId ??= _constructWorkOutId();
-  GeneratedIntColumn _constructWorkOutId() {
-    return GeneratedIntColumn('work_out_id', $tableName, false,
-        $customConstraints: 'NOT NULL REFERENCES workouts (id)');
-  }
-
+  GeneratedColumn<int> get workOutId =>
+      _workOutId ??= GeneratedColumn<int>('work_out_id', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: true,
+          $customConstraints: 'NOT NULL REFERENCES workouts (id)');
   final VerificationMeta _exerciseIdMeta = const VerificationMeta('exerciseId');
-  GeneratedIntColumn _exerciseId;
+  GeneratedColumn<int> _exerciseId;
   @override
-  GeneratedIntColumn get exerciseId => _exerciseId ??= _constructExerciseId();
-  GeneratedIntColumn _constructExerciseId() {
-    return GeneratedIntColumn('exercise_id', $tableName, false,
-        $customConstraints: 'NOT NULL REFERENCES exercises (id)');
-  }
-
+  GeneratedColumn<int> get exerciseId =>
+      _exerciseId ??= GeneratedColumn<int>('exercise_id', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: true,
+          $customConstraints: 'NOT NULL REFERENCES exercises (id)');
   @override
   List<GeneratedColumn> get $columns =>
       [id, volume, maxWeight, workOutId, exerciseId];
   @override
-  $SetWorkoutsTable get asDslTable => this;
+  String get aliasedName => _alias ?? 'set_workouts';
   @override
-  String get $tableName => _alias ?? 'set_workouts';
-  @override
-  final String actualTableName = 'set_workouts';
+  String get actualTableName => 'set_workouts';
   @override
   VerificationContext validateIntegrity(Insertable<SetWorkout> instance,
       {bool isInserting = false}) {
@@ -1335,9 +1221,9 @@ class $SetWorkoutsTable extends SetWorkouts
     } else if (isInserting) {
       context.missing(_volumeMeta);
     }
-    if (data.containsKey('max_weigth')) {
+    if (data.containsKey('max_weight')) {
       context.handle(_maxWeightMeta,
-          maxWeight.isAcceptableOrUnknown(data['max_weigth'], _maxWeightMeta));
+          maxWeight.isAcceptableOrUnknown(data['max_weight'], _maxWeightMeta));
     } else if (isInserting) {
       context.missing(_maxWeightMeta);
     }
@@ -1362,13 +1248,13 @@ class $SetWorkoutsTable extends SetWorkouts
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   SetWorkout map(Map<String, dynamic> data, {String tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return SetWorkout.fromData(data, _db, prefix: effectivePrefix);
+    return SetWorkout.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
   $SetWorkoutsTable createAlias(String alias) {
-    return $SetWorkoutsTable(_db, alias);
+    return $SetWorkoutsTable(attachedDatabase, alias);
   }
 }
 
@@ -1380,14 +1266,11 @@ class Workout extends DataClass implements Insertable<Workout> {
   factory Workout.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final dateTimeType = db.typeSystem.forDartType<DateTime>();
-    final stringType = db.typeSystem.forDartType<String>();
     return Workout(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      date:
-          dateTimeType.mapFromDatabaseResponse(data['${effectivePrefix}date']),
-      metadata: stringType
+      id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      date: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}date']),
+      metadata: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}metadata']),
     );
   }
@@ -1451,10 +1334,9 @@ class Workout extends DataClass implements Insertable<Workout> {
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(id.hashCode, $mrjc(date.hashCode, metadata.hashCode)));
+  int get hashCode => Object.hash(id, date, metadata);
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Workout &&
           other.id == this.id &&
@@ -1525,50 +1407,36 @@ class WorkoutsCompanion extends UpdateCompanion<Workout> {
 }
 
 class $WorkoutsTable extends Workouts with TableInfo<$WorkoutsTable, Workout> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String _alias;
-  $WorkoutsTable(this._db, [this._alias]);
+  $WorkoutsTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
+  GeneratedColumn<int> _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
-  GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
-        hasAutoIncrement: true, declaredAsPrimaryKey: true);
-  }
-
+  GeneratedColumn<int> get id =>
+      _id ??= GeneratedColumn<int>('id', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: false,
+          defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _dateMeta = const VerificationMeta('date');
-  GeneratedDateTimeColumn _date;
+  GeneratedColumn<DateTime> _date;
   @override
-  GeneratedDateTimeColumn get date => _date ??= _constructDate();
-  GeneratedDateTimeColumn _constructDate() {
-    return GeneratedDateTimeColumn(
-      'date',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<DateTime> get date =>
+      _date ??= GeneratedColumn<DateTime>('date', aliasedName, false,
+          type: const IntType(), requiredDuringInsert: true);
   final VerificationMeta _metadataMeta = const VerificationMeta('metadata');
-  GeneratedTextColumn _metadata;
+  GeneratedColumn<String> _metadata;
   @override
-  GeneratedTextColumn get metadata => _metadata ??= _constructMetadata();
-  GeneratedTextColumn _constructMetadata() {
-    return GeneratedTextColumn(
-      'metadata',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<String> get metadata =>
+      _metadata ??= GeneratedColumn<String>('metadata', aliasedName, false,
+          type: const StringType(), requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [id, date, metadata];
   @override
-  $WorkoutsTable get asDslTable => this;
+  String get aliasedName => _alias ?? 'workouts';
   @override
-  String get $tableName => _alias ?? 'workouts';
-  @override
-  final String actualTableName = 'workouts';
+  String get actualTableName => 'workouts';
   @override
   VerificationContext validateIntegrity(Insertable<Workout> instance,
       {bool isInserting = false}) {
@@ -1596,13 +1464,13 @@ class $WorkoutsTable extends Workouts with TableInfo<$WorkoutsTable, Workout> {
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Workout map(Map<String, dynamic> data, {String tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return Workout.fromData(data, _db, prefix: effectivePrefix);
+    return Workout.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
   $WorkoutsTable createAlias(String alias) {
-    return $WorkoutsTable(_db, alias);
+    return $WorkoutsTable(attachedDatabase, alias);
   }
 }
 
@@ -1623,17 +1491,18 @@ class Rep extends DataClass implements Insertable<Rep> {
   factory Rep.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final doubleType = db.typeSystem.forDartType<double>();
-    final stringType = db.typeSystem.forDartType<String>();
     return Rep(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      weight:
-          doubleType.mapFromDatabaseResponse(data['${effectivePrefix}weight']),
-      reps: intType.mapFromDatabaseResponse(data['${effectivePrefix}reps']),
-      rpe: intType.mapFromDatabaseResponse(data['${effectivePrefix}rpe']),
-      note: stringType.mapFromDatabaseResponse(data['${effectivePrefix}note']),
-      setId: intType.mapFromDatabaseResponse(data['${effectivePrefix}set_id']),
+      id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      weight: const RealType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}weight']),
+      reps: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}reps']),
+      rpe: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}rpe']),
+      note: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}note']),
+      setId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}set_id']),
     );
   }
   @override
@@ -1722,14 +1591,9 @@ class Rep extends DataClass implements Insertable<Rep> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      id.hashCode,
-      $mrjc(
-          weight.hashCode,
-          $mrjc(reps.hashCode,
-              $mrjc(rpe.hashCode, $mrjc(note.hashCode, setId.hashCode))))));
+  int get hashCode => Object.hash(id, weight, reps, rpe, note, setId);
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Rep &&
           other.id == this.id &&
@@ -1840,80 +1704,59 @@ class RepsCompanion extends UpdateCompanion<Rep> {
 }
 
 class $RepsTable extends Reps with TableInfo<$RepsTable, Rep> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String _alias;
-  $RepsTable(this._db, [this._alias]);
+  $RepsTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
+  GeneratedColumn<int> _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
-  GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
-        hasAutoIncrement: true, declaredAsPrimaryKey: true);
-  }
-
+  GeneratedColumn<int> get id =>
+      _id ??= GeneratedColumn<int>('id', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: false,
+          defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _weightMeta = const VerificationMeta('weight');
-  GeneratedRealColumn _weight;
+  GeneratedColumn<double> _weight;
   @override
-  GeneratedRealColumn get weight => _weight ??= _constructWeight();
-  GeneratedRealColumn _constructWeight() {
-    return GeneratedRealColumn(
-      'weight',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<double> get weight =>
+      _weight ??= GeneratedColumn<double>('weight', aliasedName, false,
+          type: const RealType(), requiredDuringInsert: true);
   final VerificationMeta _repsMeta = const VerificationMeta('reps');
-  GeneratedIntColumn _reps;
+  GeneratedColumn<int> _reps;
   @override
-  GeneratedIntColumn get reps => _reps ??= _constructReps();
-  GeneratedIntColumn _constructReps() {
-    return GeneratedIntColumn(
-      'reps',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<int> get reps =>
+      _reps ??= GeneratedColumn<int>('reps', aliasedName, false,
+          type: const IntType(), requiredDuringInsert: true);
   final VerificationMeta _rpeMeta = const VerificationMeta('rpe');
-  GeneratedIntColumn _rpe;
+  GeneratedColumn<int> _rpe;
   @override
-  GeneratedIntColumn get rpe => _rpe ??= _constructRpe();
-  GeneratedIntColumn _constructRpe() {
-    return GeneratedIntColumn(
-      'rpe',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<int> get rpe =>
+      _rpe ??= GeneratedColumn<int>('rpe', aliasedName, false,
+          type: const IntType(), requiredDuringInsert: true);
   final VerificationMeta _noteMeta = const VerificationMeta('note');
-  GeneratedTextColumn _note;
+  GeneratedColumn<String> _note;
   @override
-  GeneratedTextColumn get note => _note ??= _constructNote();
-  GeneratedTextColumn _constructNote() {
-    return GeneratedTextColumn('note', $tableName, false,
-        maxTextLength: 155, defaultValue: const Constant(""));
-  }
-
+  GeneratedColumn<String> get note =>
+      _note ??= GeneratedColumn<String>('note', aliasedName, false,
+          additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 155),
+          type: const StringType(),
+          requiredDuringInsert: false,
+          defaultValue: const Constant(""));
   final VerificationMeta _setIdMeta = const VerificationMeta('setId');
-  GeneratedIntColumn _setId;
+  GeneratedColumn<int> _setId;
   @override
-  GeneratedIntColumn get setId => _setId ??= _constructSetId();
-  GeneratedIntColumn _constructSetId() {
-    return GeneratedIntColumn('set_id', $tableName, false,
-        $customConstraints: 'NOT NULL REFERENCES sets (id)');
-  }
-
+  GeneratedColumn<int> get setId =>
+      _setId ??= GeneratedColumn<int>('set_id', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: true,
+          $customConstraints: 'NOT NULL REFERENCES sets (id)');
   @override
   List<GeneratedColumn> get $columns => [id, weight, reps, rpe, note, setId];
   @override
-  $RepsTable get asDslTable => this;
+  String get aliasedName => _alias ?? 'reps';
   @override
-  String get $tableName => _alias ?? 'reps';
-  @override
-  final String actualTableName = 'reps';
+  String get actualTableName => 'reps';
   @override
   VerificationContext validateIntegrity(Insertable<Rep> instance,
       {bool isInserting = false}) {
@@ -1957,13 +1800,13 @@ class $RepsTable extends Reps with TableInfo<$RepsTable, Rep> {
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Rep map(Map<String, dynamic> data, {String tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return Rep.fromData(data, _db, prefix: effectivePrefix);
+    return Rep.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
   $RepsTable createAlias(String alias) {
-    return $RepsTable(_db, alias);
+    return $RepsTable(attachedDatabase, alias);
   }
 }
 
@@ -1984,17 +1827,16 @@ class RoutineGroupData extends DataClass
       Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return RoutineGroupData(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
-      description: stringType
+      id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      name: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}name']),
+      description: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}description']),
-      imageUrl: stringType
+      imageUrl: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}image_url']),
-      level: $RoutineGroupTable.$converter0.mapToDart(
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}level'])),
+      level: $RoutineGroupTable.$converter0.mapToDart(const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}level'])),
     );
   }
   @override
@@ -2083,14 +1925,9 @@ class RoutineGroupData extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      id.hashCode,
-      $mrjc(
-          name.hashCode,
-          $mrjc(description.hashCode,
-              $mrjc(imageUrl.hashCode, level.hashCode)))));
+  int get hashCode => Object.hash(id, name, description, imageUrl, level);
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is RoutineGroupData &&
           other.id == this.id &&
@@ -2191,74 +2028,54 @@ class RoutineGroupCompanion extends UpdateCompanion<RoutineGroupData> {
 
 class $RoutineGroupTable extends RoutineGroup
     with TableInfo<$RoutineGroupTable, RoutineGroupData> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String _alias;
-  $RoutineGroupTable(this._db, [this._alias]);
+  $RoutineGroupTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
+  GeneratedColumn<int> _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
-  GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
-        hasAutoIncrement: true, declaredAsPrimaryKey: true);
-  }
-
+  GeneratedColumn<int> get id =>
+      _id ??= GeneratedColumn<int>('id', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: false,
+          defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _nameMeta = const VerificationMeta('name');
-  GeneratedTextColumn _name;
+  GeneratedColumn<String> _name;
   @override
-  GeneratedTextColumn get name => _name ??= _constructName();
-  GeneratedTextColumn _constructName() {
-    return GeneratedTextColumn(
-      'name',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<String> get name =>
+      _name ??= GeneratedColumn<String>('name', aliasedName, false,
+          type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _descriptionMeta =
       const VerificationMeta('description');
-  GeneratedTextColumn _description;
+  GeneratedColumn<String> _description;
   @override
-  GeneratedTextColumn get description =>
-      _description ??= _constructDescription();
-  GeneratedTextColumn _constructDescription() {
-    return GeneratedTextColumn('description', $tableName, false,
-        minTextLength: 0, maxTextLength: 250);
-  }
-
+  GeneratedColumn<String> get description => _description ??=
+      GeneratedColumn<String>('description', aliasedName, false,
+          additionalChecks: GeneratedColumn.checkTextLength(
+              minTextLength: 0, maxTextLength: 250),
+          type: const StringType(),
+          requiredDuringInsert: true);
   final VerificationMeta _imageUrlMeta = const VerificationMeta('imageUrl');
-  GeneratedTextColumn _imageUrl;
+  GeneratedColumn<String> _imageUrl;
   @override
-  GeneratedTextColumn get imageUrl => _imageUrl ??= _constructImageUrl();
-  GeneratedTextColumn _constructImageUrl() {
-    return GeneratedTextColumn(
-      'image_url',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<String> get imageUrl =>
+      _imageUrl ??= GeneratedColumn<String>('image_url', aliasedName, false,
+          type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _levelMeta = const VerificationMeta('level');
-  GeneratedIntColumn _level;
+  GeneratedColumnWithTypeConverter<Level, int> _level;
   @override
-  GeneratedIntColumn get level => _level ??= _constructLevel();
-  GeneratedIntColumn _constructLevel() {
-    return GeneratedIntColumn(
-      'level',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumnWithTypeConverter<Level, int> get level =>
+      _level ??= GeneratedColumn<int>('level', aliasedName, false,
+              type: const IntType(), requiredDuringInsert: true)
+          .withConverter<Level>($RoutineGroupTable.$converter0);
   @override
   List<GeneratedColumn> get $columns =>
       [id, name, description, imageUrl, level];
   @override
-  $RoutineGroupTable get asDslTable => this;
+  String get aliasedName => _alias ?? 'routine_group';
   @override
-  String get $tableName => _alias ?? 'routine_group';
-  @override
-  final String actualTableName = 'routine_group';
+  String get actualTableName => 'routine_group';
   @override
   VerificationContext validateIntegrity(Insertable<RoutineGroupData> instance,
       {bool isInserting = false}) {
@@ -2295,13 +2112,13 @@ class $RoutineGroupTable extends RoutineGroup
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   RoutineGroupData map(Map<String, dynamic> data, {String tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return RoutineGroupData.fromData(data, _db, prefix: effectivePrefix);
+    return RoutineGroupData.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
   $RoutineGroupTable createAlias(String alias) {
-    return $RoutineGroupTable(_db, alias);
+    return $RoutineGroupTable(attachedDatabase, alias);
   }
 
   static TypeConverter<Level, int> $converter0 =
@@ -2329,22 +2146,21 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
   factory RoutineData.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return RoutineData(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      groupId:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}group_id']),
-      name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
-      duration:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}duration']),
-      difficulty: $RoutineTable.$converter0.mapToDart(intType
+      id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      groupId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}group_id']),
+      name: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}name']),
+      duration: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}duration']),
+      difficulty: $RoutineTable.$converter0.mapToDart(const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}difficulty'])),
-      notes:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}notes']),
-      timesCopied: intType
+      notes: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}notes']),
+      timesCopied: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}times_copied']),
-      bodyParts: $RoutineTable.$converter1.mapToDart(stringType
+      bodyParts: $RoutineTable.$converter1.mapToDart(const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}body_parts'])),
     );
   }
@@ -2468,22 +2284,10 @@ class RoutineData extends DataClass implements Insertable<RoutineData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      id.hashCode,
-      $mrjc(
-          groupId.hashCode,
-          $mrjc(
-              name.hashCode,
-              $mrjc(
-                  duration.hashCode,
-                  $mrjc(
-                      difficulty.hashCode,
-                      $mrjc(
-                          notes.hashCode,
-                          $mrjc(
-                              timesCopied.hashCode, bodyParts.hashCode))))))));
+  int get hashCode => Object.hash(
+      id, groupId, name, duration, difficulty, notes, timesCopied, bodyParts);
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is RoutineData &&
           other.id == this.id &&
@@ -2620,104 +2424,77 @@ class RoutineCompanion extends UpdateCompanion<RoutineData> {
 }
 
 class $RoutineTable extends Routine with TableInfo<$RoutineTable, RoutineData> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String _alias;
-  $RoutineTable(this._db, [this._alias]);
+  $RoutineTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
+  GeneratedColumn<int> _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
-  GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
-        hasAutoIncrement: true, declaredAsPrimaryKey: true);
-  }
-
+  GeneratedColumn<int> get id =>
+      _id ??= GeneratedColumn<int>('id', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: false,
+          defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _groupIdMeta = const VerificationMeta('groupId');
-  GeneratedIntColumn _groupId;
+  GeneratedColumn<int> _groupId;
   @override
-  GeneratedIntColumn get groupId => _groupId ??= _constructGroupId();
-  GeneratedIntColumn _constructGroupId() {
-    return GeneratedIntColumn('group_id', $tableName, false,
-        $customConstraints: 'NOT NULL REFERENCES grouproutines (id)');
-  }
-
+  GeneratedColumn<int> get groupId =>
+      _groupId ??= GeneratedColumn<int>('group_id', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: true,
+          $customConstraints: 'NOT NULL REFERENCES grouproutines (id)');
   final VerificationMeta _nameMeta = const VerificationMeta('name');
-  GeneratedTextColumn _name;
+  GeneratedColumn<String> _name;
   @override
-  GeneratedTextColumn get name => _name ??= _constructName();
-  GeneratedTextColumn _constructName() {
-    return GeneratedTextColumn(
-      'name',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<String> get name =>
+      _name ??= GeneratedColumn<String>('name', aliasedName, false,
+          type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _durationMeta = const VerificationMeta('duration');
-  GeneratedIntColumn _duration;
+  GeneratedColumn<int> _duration;
   @override
-  GeneratedIntColumn get duration => _duration ??= _constructDuration();
-  GeneratedIntColumn _constructDuration() {
-    return GeneratedIntColumn(
-      'duration',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<int> get duration =>
+      _duration ??= GeneratedColumn<int>('duration', aliasedName, false,
+          type: const IntType(), requiredDuringInsert: true);
   final VerificationMeta _difficultyMeta = const VerificationMeta('difficulty');
-  GeneratedIntColumn _difficulty;
+  GeneratedColumnWithTypeConverter<Difficulty, int> _difficulty;
   @override
-  GeneratedIntColumn get difficulty => _difficulty ??= _constructDifficulty();
-  GeneratedIntColumn _constructDifficulty() {
-    return GeneratedIntColumn(
-      'difficulty',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumnWithTypeConverter<Difficulty, int> get difficulty =>
+      _difficulty ??= GeneratedColumn<int>('difficulty', aliasedName, false,
+              type: const IntType(), requiredDuringInsert: true)
+          .withConverter<Difficulty>($RoutineTable.$converter0);
   final VerificationMeta _notesMeta = const VerificationMeta('notes');
-  GeneratedTextColumn _notes;
+  GeneratedColumn<String> _notes;
   @override
-  GeneratedTextColumn get notes => _notes ??= _constructNotes();
-  GeneratedTextColumn _constructNotes() {
-    return GeneratedTextColumn('notes', $tableName, false,
-        maxTextLength: 155, defaultValue: const Constant(""));
-  }
-
+  GeneratedColumn<String> get notes =>
+      _notes ??= GeneratedColumn<String>('notes', aliasedName, false,
+          additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 155),
+          type: const StringType(),
+          requiredDuringInsert: false,
+          defaultValue: const Constant(""));
   final VerificationMeta _timesCopiedMeta =
       const VerificationMeta('timesCopied');
-  GeneratedIntColumn _timesCopied;
+  GeneratedColumn<int> _timesCopied;
   @override
-  GeneratedIntColumn get timesCopied =>
-      _timesCopied ??= _constructTimesCopied();
-  GeneratedIntColumn _constructTimesCopied() {
-    return GeneratedIntColumn('times_copied', $tableName, false,
-        defaultValue: const Constant(0));
-  }
-
+  GeneratedColumn<int> get timesCopied =>
+      _timesCopied ??= GeneratedColumn<int>('times_copied', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: false,
+          defaultValue: const Constant(0));
   final VerificationMeta _bodyPartsMeta = const VerificationMeta('bodyParts');
-  GeneratedTextColumn _bodyParts;
+  GeneratedColumnWithTypeConverter<RoutineBodyParts, String> _bodyParts;
   @override
-  GeneratedTextColumn get bodyParts => _bodyParts ??= _constructBodyParts();
-  GeneratedTextColumn _constructBodyParts() {
-    return GeneratedTextColumn(
-      'body_parts',
-      $tableName,
-      true,
-    );
-  }
-
+  GeneratedColumnWithTypeConverter<RoutineBodyParts, String> get bodyParts =>
+      _bodyParts ??= GeneratedColumn<String>('body_parts', aliasedName, true,
+              type: const StringType(), requiredDuringInsert: false)
+          .withConverter<RoutineBodyParts>($RoutineTable.$converter1);
   @override
   List<GeneratedColumn> get $columns =>
       [id, groupId, name, duration, difficulty, notes, timesCopied, bodyParts];
   @override
-  $RoutineTable get asDslTable => this;
+  String get aliasedName => _alias ?? 'routine';
   @override
-  String get $tableName => _alias ?? 'routine';
-  @override
-  final String actualTableName = 'routine';
+  String get actualTableName => 'routine';
   @override
   VerificationContext validateIntegrity(Insertable<RoutineData> instance,
       {bool isInserting = false}) {
@@ -2763,13 +2540,13 @@ class $RoutineTable extends Routine with TableInfo<$RoutineTable, RoutineData> {
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   RoutineData map(Map<String, dynamic> data, {String tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return RoutineData.fromData(data, _db, prefix: effectivePrefix);
+    return RoutineData.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
   $RoutineTable createAlias(String alias) {
-    return $RoutineTable(_db, alias);
+    return $RoutineTable(attachedDatabase, alias);
   }
 
   static TypeConverter<Difficulty, int> $converter0 =
@@ -2804,28 +2581,26 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
       Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
-    final doubleType = db.typeSystem.forDartType<double>();
     return RoutineSetData(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      exerciseName: stringType
+      id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      exerciseName: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}exercise_name']),
-      exerciseId: intType
+      exerciseId: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}exercise_id']),
-      routineId:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}routine_id']),
-      series: intType.mapFromDatabaseResponse(data['${effectivePrefix}series']),
-      repmax:
-          doubleType.mapFromDatabaseResponse(data['${effectivePrefix}repmax']),
-      percentage: doubleType
+      routineId: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}routine_id']),
+      series: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}series']),
+      repmax: const RealType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}repmax']),
+      percentage: const RealType()
           .mapFromDatabaseResponse(data['${effectivePrefix}percentage']),
-      copyMethod: $RoutineSetTable.$converter0.mapToDart(intType
+      copyMethod: $RoutineSetTable.$converter0.mapToDart(const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}copy_method'])),
-      targetRpe:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}target_rpe']),
-      notes:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}notes']),
+      targetRpe: const IntType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}target_rpe']),
+      notes: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}notes']),
     );
   }
   @override
@@ -2969,26 +2744,10 @@ class RoutineSetData extends DataClass implements Insertable<RoutineSetData> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      id.hashCode,
-      $mrjc(
-          exerciseName.hashCode,
-          $mrjc(
-              exerciseId.hashCode,
-              $mrjc(
-                  routineId.hashCode,
-                  $mrjc(
-                      series.hashCode,
-                      $mrjc(
-                          repmax.hashCode,
-                          $mrjc(
-                              percentage.hashCode,
-                              $mrjc(
-                                  copyMethod.hashCode,
-                                  $mrjc(targetRpe.hashCode,
-                                      notes.hashCode))))))))));
+  int get hashCode => Object.hash(id, exerciseName, exerciseId, routineId,
+      series, repmax, percentage, copyMethod, targetRpe, notes);
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is RoutineSetData &&
           other.id == this.id &&
@@ -3150,113 +2909,85 @@ class RoutineSetCompanion extends UpdateCompanion<RoutineSetData> {
 
 class $RoutineSetTable extends RoutineSet
     with TableInfo<$RoutineSetTable, RoutineSetData> {
-  final GeneratedDatabase _db;
-  final String _alias;
-  $RoutineSetTable(this._db, [this._alias]);
-  final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
-  GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
-        hasAutoIncrement: true, declaredAsPrimaryKey: true);
-  }
-
+  final GeneratedDatabase attachedDatabase;
+  final String _alias;
+  $RoutineSetTable(this.attachedDatabase, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedColumn<int> _id;
+  @override
+  GeneratedColumn<int> get id =>
+      _id ??= GeneratedColumn<int>('id', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: false,
+          defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _exerciseNameMeta =
       const VerificationMeta('exerciseName');
-  GeneratedTextColumn _exerciseName;
+  GeneratedColumn<String> _exerciseName;
   @override
-  GeneratedTextColumn get exerciseName =>
-      _exerciseName ??= _constructExerciseName();
-  GeneratedTextColumn _constructExerciseName() {
-    return GeneratedTextColumn(
-      'exercise_name',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<String> get exerciseName => _exerciseName ??=
+      GeneratedColumn<String>('exercise_name', aliasedName, false,
+          type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _exerciseIdMeta = const VerificationMeta('exerciseId');
-  GeneratedIntColumn _exerciseId;
+  GeneratedColumn<int> _exerciseId;
   @override
-  GeneratedIntColumn get exerciseId => _exerciseId ??= _constructExerciseId();
-  GeneratedIntColumn _constructExerciseId() {
-    return GeneratedIntColumn('exercise_id', $tableName, false,
-        $customConstraints: 'NOT NULL REFERENCES exercises (id)');
-  }
-
+  GeneratedColumn<int> get exerciseId =>
+      _exerciseId ??= GeneratedColumn<int>('exercise_id', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: true,
+          $customConstraints: 'NOT NULL REFERENCES exercises (id)');
   final VerificationMeta _routineIdMeta = const VerificationMeta('routineId');
-  GeneratedIntColumn _routineId;
+  GeneratedColumn<int> _routineId;
   @override
-  GeneratedIntColumn get routineId => _routineId ??= _constructRoutineId();
-  GeneratedIntColumn _constructRoutineId() {
-    return GeneratedIntColumn('routine_id', $tableName, false,
-        $customConstraints: 'NOT NULL REFERENCES routines (id)');
-  }
-
+  GeneratedColumn<int> get routineId =>
+      _routineId ??= GeneratedColumn<int>('routine_id', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: true,
+          $customConstraints: 'NOT NULL REFERENCES routines (id)');
   final VerificationMeta _seriesMeta = const VerificationMeta('series');
-  GeneratedIntColumn _series;
+  GeneratedColumn<int> _series;
   @override
-  GeneratedIntColumn get series => _series ??= _constructSeries();
-  GeneratedIntColumn _constructSeries() {
-    return GeneratedIntColumn('series', $tableName, false,
-        defaultValue: const Constant(3));
-  }
-
+  GeneratedColumn<int> get series =>
+      _series ??= GeneratedColumn<int>('series', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: false,
+          defaultValue: const Constant(3));
   final VerificationMeta _repmaxMeta = const VerificationMeta('repmax');
-  GeneratedRealColumn _repmax;
+  GeneratedColumn<double> _repmax;
   @override
-  GeneratedRealColumn get repmax => _repmax ??= _constructRepmax();
-  GeneratedRealColumn _constructRepmax() {
-    return GeneratedRealColumn(
-      'repmax',
-      $tableName,
-      true,
-    );
-  }
-
+  GeneratedColumn<double> get repmax =>
+      _repmax ??= GeneratedColumn<double>('repmax', aliasedName, true,
+          type: const RealType(), requiredDuringInsert: false);
   final VerificationMeta _percentageMeta = const VerificationMeta('percentage');
-  GeneratedRealColumn _percentage;
+  GeneratedColumn<double> _percentage;
   @override
-  GeneratedRealColumn get percentage => _percentage ??= _constructPercentage();
-  GeneratedRealColumn _constructPercentage() {
-    return GeneratedRealColumn('percentage', $tableName, false,
-        defaultValue: const Constant(0.0));
-  }
-
+  GeneratedColumn<double> get percentage =>
+      _percentage ??= GeneratedColumn<double>('percentage', aliasedName, false,
+          type: const RealType(),
+          requiredDuringInsert: false,
+          defaultValue: const Constant(0.0));
   final VerificationMeta _copyMethodMeta = const VerificationMeta('copyMethod');
-  GeneratedIntColumn _copyMethod;
+  GeneratedColumnWithTypeConverter<CopyMethod, int> _copyMethod;
   @override
-  GeneratedIntColumn get copyMethod => _copyMethod ??= _constructCopyMethod();
-  GeneratedIntColumn _constructCopyMethod() {
-    return GeneratedIntColumn(
-      'copy_method',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumnWithTypeConverter<CopyMethod, int> get copyMethod =>
+      _copyMethod ??= GeneratedColumn<int>('copy_method', aliasedName, false,
+              type: const IntType(), requiredDuringInsert: true)
+          .withConverter<CopyMethod>($RoutineSetTable.$converter0);
   final VerificationMeta _targetRpeMeta = const VerificationMeta('targetRpe');
-  GeneratedIntColumn _targetRpe;
+  GeneratedColumn<int> _targetRpe;
   @override
-  GeneratedIntColumn get targetRpe => _targetRpe ??= _constructTargetRpe();
-  GeneratedIntColumn _constructTargetRpe() {
-    return GeneratedIntColumn(
-      'target_rpe',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<int> get targetRpe =>
+      _targetRpe ??= GeneratedColumn<int>('target_rpe', aliasedName, false,
+          type: const IntType(), requiredDuringInsert: true);
   final VerificationMeta _notesMeta = const VerificationMeta('notes');
-  GeneratedTextColumn _notes;
+  GeneratedColumn<String> _notes;
   @override
-  GeneratedTextColumn get notes => _notes ??= _constructNotes();
-  GeneratedTextColumn _constructNotes() {
-    return GeneratedTextColumn('notes', $tableName, false,
-        maxTextLength: 155, defaultValue: const Constant(""));
-  }
-
+  GeneratedColumn<String> get notes =>
+      _notes ??= GeneratedColumn<String>('notes', aliasedName, false,
+          additionalChecks: GeneratedColumn.checkTextLength(maxTextLength: 155),
+          type: const StringType(),
+          requiredDuringInsert: false,
+          defaultValue: const Constant(""));
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -3271,11 +3002,9 @@ class $RoutineSetTable extends RoutineSet
         notes
       ];
   @override
-  $RoutineSetTable get asDslTable => this;
+  String get aliasedName => _alias ?? 'routine_set';
   @override
-  String get $tableName => _alias ?? 'routine_set';
-  @override
-  final String actualTableName = 'routine_set';
+  String get actualTableName => 'routine_set';
   @override
   VerificationContext validateIntegrity(Insertable<RoutineSetData> instance,
       {bool isInserting = false}) {
@@ -3338,13 +3067,13 @@ class $RoutineSetTable extends RoutineSet
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   RoutineSetData map(Map<String, dynamic> data, {String tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return RoutineSetData.fromData(data, _db, prefix: effectivePrefix);
+    return RoutineSetData.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
   $RoutineSetTable createAlias(String alias) {
-    return $RoutineSetTable(_db, alias);
+    return $RoutineSetTable(attachedDatabase, alias);
   }
 
   static TypeConverter<CopyMethod, int> $converter0 =
@@ -3359,13 +3088,12 @@ class Preference extends DataClass implements Insertable<Preference> {
   factory Preference.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
-    final stringType = db.typeSystem.forDartType<String>();
     return Preference(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      key: stringType.mapFromDatabaseResponse(data['${effectivePrefix}key']),
-      value:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}value']),
+      id: const IntType().mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      key: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}key']),
+      value: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}value']),
     );
   }
   @override
@@ -3427,10 +3155,9 @@ class Preference extends DataClass implements Insertable<Preference> {
   }
 
   @override
-  int get hashCode =>
-      $mrjf($mrjc(id.hashCode, $mrjc(key.hashCode, value.hashCode)));
+  int get hashCode => Object.hash(id, key, value);
   @override
-  bool operator ==(dynamic other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Preference &&
           other.id == this.id &&
@@ -3502,50 +3229,36 @@ class PreferencesCompanion extends UpdateCompanion<Preference> {
 
 class $PreferencesTable extends Preferences
     with TableInfo<$PreferencesTable, Preference> {
-  final GeneratedDatabase _db;
+  @override
+  final GeneratedDatabase attachedDatabase;
   final String _alias;
-  $PreferencesTable(this._db, [this._alias]);
+  $PreferencesTable(this.attachedDatabase, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
+  GeneratedColumn<int> _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
-  GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
-        hasAutoIncrement: true, declaredAsPrimaryKey: true);
-  }
-
+  GeneratedColumn<int> get id =>
+      _id ??= GeneratedColumn<int>('id', aliasedName, false,
+          type: const IntType(),
+          requiredDuringInsert: false,
+          defaultConstraints: 'PRIMARY KEY AUTOINCREMENT');
   final VerificationMeta _keyMeta = const VerificationMeta('key');
-  GeneratedTextColumn _key;
+  GeneratedColumn<String> _key;
   @override
-  GeneratedTextColumn get key => _key ??= _constructKey();
-  GeneratedTextColumn _constructKey() {
-    return GeneratedTextColumn(
-      'key',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<String> get key =>
+      _key ??= GeneratedColumn<String>('key', aliasedName, false,
+          type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _valueMeta = const VerificationMeta('value');
-  GeneratedTextColumn _value;
+  GeneratedColumn<String> _value;
   @override
-  GeneratedTextColumn get value => _value ??= _constructValue();
-  GeneratedTextColumn _constructValue() {
-    return GeneratedTextColumn(
-      'value',
-      $tableName,
-      false,
-    );
-  }
-
+  GeneratedColumn<String> get value =>
+      _value ??= GeneratedColumn<String>('value', aliasedName, false,
+          type: const StringType(), requiredDuringInsert: true);
   @override
   List<GeneratedColumn> get $columns => [id, key, value];
   @override
-  $PreferencesTable get asDslTable => this;
+  String get aliasedName => _alias ?? 'preferences';
   @override
-  String get $tableName => _alias ?? 'preferences';
-  @override
-  final String actualTableName = 'preferences';
+  String get actualTableName => 'preferences';
   @override
   VerificationContext validateIntegrity(Insertable<Preference> instance,
       {bool isInserting = false}) {
@@ -3573,13 +3286,13 @@ class $PreferencesTable extends Preferences
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Preference map(Map<String, dynamic> data, {String tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return Preference.fromData(data, _db, prefix: effectivePrefix);
+    return Preference.fromData(data, attachedDatabase,
+        prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
   @override
   $PreferencesTable createAlias(String alias) {
-    return $PreferencesTable(_db, alias);
+    return $PreferencesTable(attachedDatabase, alias);
   }
 }
 

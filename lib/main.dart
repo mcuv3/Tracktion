@@ -26,6 +26,7 @@ import 'bloc/exercise-stream/exercisestream_cubit.dart';
 import 'bloc/routine-group/routine_bloc.dart';
 import 'bloc/routine/routine_bloc.dart';
 import 'bloc/routines/routines_bloc.dart';
+import 'firebase_options.dart';
 import 'plugins/desktop/desktop.dart';
 
 // TODO: migrate to null safety
@@ -33,7 +34,10 @@ import 'plugins/desktop/desktop.dart';
 void main() async {
   await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   setTargetPlatformForDesktop();
   runApp(TracktionApp());
 }

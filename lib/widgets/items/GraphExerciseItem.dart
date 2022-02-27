@@ -243,7 +243,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
         bottomTitles: SideTitles(
           showTitles: true,
           reservedSize: 22,
-          getTextStyles: (value) => const TextStyle(
+          getTextStyles: (ctx, value) => const TextStyle(
               color: Color(0xff68737d),
               fontWeight: FontWeight.bold,
               fontSize: 16),
@@ -253,7 +253,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
         leftTitles: SideTitles(
           interval: interval,
           showTitles: true,
-          getTextStyles: (value) => const TextStyle(
+          getTextStyles: (ctx, value) => const TextStyle(
             color: Color(0xff67727d),
             fontWeight: FontWeight.bold,
             fontSize: 15,
@@ -321,7 +321,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
         bottomTitles: SideTitles(
           showTitles: true,
           reservedSize: 22,
-          getTextStyles: (value) => const TextStyle(
+          getTextStyles: (ctx, value) => const TextStyle(
               color: Color(0xff68737d),
               fontWeight: FontWeight.bold,
               fontSize: 16),
@@ -331,7 +331,7 @@ class _GraphExerciseItemState extends State<GraphExerciseItem> {
         leftTitles: SideTitles(
           interval: interval,
           showTitles: true,
-          getTextStyles: (value) => const TextStyle(
+          getTextStyles: (ctx, value) => const TextStyle(
             color: Color(0xff67727d),
             fontWeight: FontWeight.bold,
             fontSize: 15,
